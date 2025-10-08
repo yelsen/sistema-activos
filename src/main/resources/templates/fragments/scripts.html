@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="scripts">
+        <!-- Libs JS -->
+        <script th:src="@{/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+        <script th:src="@{/libs/simplebar/dist/simplebar.min.js}"></script>
+
+        <!-- Theme JS -->
+        <script th:src="@{/libs/apexcharts/dist/apexcharts.min.js}"></script>
+        <script th:src="@{/libs/swiper/swiper-bundle.min.js}"></script>
+        <script th:src="@{/js/theme.min.js}"></script>
+        <script th:src="@{/js/vendors/sidebarnav.js}"></script>
+
+        <!-- Extras -->
+        <script th:src="@{/js/vendors/chart.js}"></script>
+        <script th:src="@{/js/vendors/swiper.js}"></script>
+
+        <!-- dropzone -->
+        <script th:src="@{/libs/dropzone/dist/dropzone-min.js}"></script>
+        <!-- flatpickr -->
+        <script th:src="@{/libs/flatpickr/dist/flatpickr.min.js}"></script>
+        <!-- quill js -->
+        <script th:src="@{/libs/quill/dist/quill.js}"></script>
+        <script th:src="@{/js/vendors/editor.js}"></script>
+        <script th:src="@{/js/vendors/flatpickr.js}"></script>
+        <!--<script th:src="@{/js/vendors/dropzone.js}"></script>-->       
+        
+        <!-- choices -->
+        <script th:src="@{/libs/choices.js/public/assets/scripts/choices.min.js}"></script>
+        <script th:src="@{/js/vendors/choice.js}"></script>
+        
+    </div>
+</body>
+
+</html>

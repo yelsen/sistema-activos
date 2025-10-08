@@ -1,0 +1,5 @@
+package pe.edu.unasam.activos.common.enums;
+
+public enum EstadoLicencia {
+    ACTIVA, VENCIDA, POR_VENCER, SUSPENDIDA, CANCELADA
+}

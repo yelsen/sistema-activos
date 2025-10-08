@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta content="Punto.digital" name="author">
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>Iniciar Sesión | Sistema de Activos UNASAM</title>
+    <link rel="icon" type="image/png" th:href="@{/images/unasam.png}">
+
+    <!-- Theme CSS -->
+    <link rel="stylesheet" th:href="@{/libs/simplebar/dist/simplebar.min.css}" />
+    <link rel="stylesheet" th:href="@{/libs/@tabler/icons-webfont/tabler-icons.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/theme.min.css}">
+
+    <!-- Modos de color -->
+    <script th:src="@{/js/vendors/color-modes.js}"></script>
+    <script>
+        if (localStorage.getItem('sidebarExpanded') === 'false') {
+            document.documentElement.classList.add('collapsed');
+            document.documentElement.classList.remove('expanded');
+        } else {
+            document.documentElement.classList.remove('collapsed');
+            document.documentElement.classList.add('expanded');
+        }
+    </script>
+
+    <!-- Libs CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com/" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&amp;display=swap" />
+</head>
+
+<body>
+    <main class="d-flex flex-column justify-content-center vh-100">
+        <!-- Inicio de sesión -->
+        <section>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-5 col-lg-6 col-md-8 col-12">
+                        <div class="card card-lg mb-6">
+                            <div class="card-body p-5 p-md-6">
+                                <!-- Logo y títulos -->
+                                <div class="text-center mb-5">
+                                    <div class="mb-4">
+                                        <img class="img-fluid" style="width: 15%; height: auto;"
+                                            th:src="@{/images/unasam.png}" alt="Logo UNASAM" />
+                                    </div>
+                                    <h1 class="h1 fw-bold mb-2">Bienvenido</h1>
+                                    <p class="text-muted mb-1 fw-semibold">
+                                        Sistema de Activos Tecnológicos
+                                    </p>
+                                    <p class="text-muted small mb-0">
+                                        Universidad Nacional Santiago Antúnez de Mayolo
+                                    </p>
+                                </div>
+
+                                <!-- Mensajes de error y éxito -->
+                                <div th:if="${param.error}" class="alert alert-danger border-0 rounded-3 mb-4 fade show" role="alert">
+                                    <i class="ti ti-alert-circle me-2"></i>
+                                    <span>Usuario o contraseña incorrectos.</span>
+                                </div>
+                                <div th:if="${param.locked}" class="alert alert-warning border-0 rounded-3 mb-4 fade show" role="alert">
+                                    <i class="ti ti-lock me-2"></i>
+                                    <span>Cuenta bloqueada por 15 minutos debido a múltiples intentos fallidos.</span>
+                                </div>
+
+                                <div th:if="${param.logout}" class="alert alert-success border-0 rounded-3 mb-4 fade show"
+                                    role="alert">
+                                    <i class="ti ti-check me-2"></i>
+                                    <span>Has cerrado sesión exitosamente.</span>
+                                </div>
+
+                                <!-- Formulario de login -->
+                                <form class="needs-validation" th:action="@{/login}" method="post" novalidate autocomplete="off">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <!-- Campo de email -->
+                                    <div class="mb-3">
+                                        <label for="signinEmailInput" class="form-label">
+                                            Usuario
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control" id="signinEmailInput" name="username"
+                                            required autofocus />
+                                        <div class="invalid-feedback">Por favor, introduzca el usuario.</div>
+                                    </div>
+
+                                    <!-- Campo de contraseña -->
+                                    <div class="mb-4">
+                                        <label for="formSignUpPassword" class="form-label">
+                                            Contraseña
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="password-field position-relative">
+                                            <input type="password" class="form-control" id="formSignUpPassword" name="password" required />
+                                            <span class="passwordToggler cursor-pointer">
+                                                <i class="ti ti-eye-off"></i>
+                                            </span>
+                                            <div class="invalid-feedback">Por favor, introduzca la contraseña.</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Opciones adicionales -->
+                                    <div class="mb-4 d-flex align-items-center justify-content-between">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="rememberMeCheckbox"
+                                                name="remember-me" />
+                                            <label class="form-check-label text-muted" for="rememberMeCheckbox">
+                                                Recuérdame
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <a class="text-primary text-decoration-none small fw-semibold"
+                                                th:href="@{/forgot-password}">
+                                                ¿Olvidaste tu contraseña?
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <!-- Botón de submit -->
+                                    <div class="d-grid mb-2">
+                                        <button class="btn btn-primary btn-lg fw-semibold" type="submit">
+                                            <i class="ti ti-login me-2"></i>
+                                            Iniciar Sesión
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Toggle de tema -->
+        <div class="position-absolute end-0 bottom-0 m-4">
+            <div class="dropdown">
+                <button class="btn btn-light btn-icon rounded-circle d-flex align-items-center" type="button"
+                    aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+                    <i class="bi theme-icon-active lh-1">
+                        <i class="bi theme-icon bi-sun-fill"></i>
+                    </i>
+                    <span class="visually-hidden bs-theme-text">Cambiar tema</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow">
+                    <li>
+                        <button type="button" class="dropdown-item d-flex align-items-center active"
+                            data-bs-theme-value="light" aria-pressed="true">
+                            <i class="ti theme-icon ti ti-sun"></i>
+                            <span class="ms-2">Claro</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
+                            aria-pressed="false">
+                            <i class="ti theme-icon ti-moon-stars"></i>
+                            <span class="ms-2">Oscuro</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto"
+                            aria-pressed="false">
+                            <i class="ti theme-icon ti-circle-half-2"></i>
+                            <span class="ms-2">Sistema</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+    
+    <div th:fragment="scripts">
+        <!-- Libs JS -->
+        <script th:src="@{/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+    
+        <!-- Theme JS -->
+        <script th:src="@{/js/theme.min.js}"></script>
+    
+        <!-- Script adicional para el toggle de contraseña -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const passwordToggler = document.querySelector('.passwordToggler');
+                const passwordField = document.querySelector('#formSignUpPassword');
+                const icon = passwordToggler ? passwordToggler.querySelector('i') : null;
+    
+                if (passwordToggler && passwordField) {
+                    passwordToggler.addEventListener('click', function () {
+                        if (passwordField.type === 'password') {
+                            passwordField.type = 'text';
+                            icon.className = 'ti ti-eye';
+                        } else {
+                            passwordField.type = 'password';
+                            icon.className = 'ti ti-eye-off';
+                        }
+                    });
+                }
+            });
+        </script>
+    </div>
+</body>
+
+</html>

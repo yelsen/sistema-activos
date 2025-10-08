@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE | SGA-UNASAM">Sistema de Gestión de Activos</title>
+
+    <!-- Librerías externas -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+
+    <!-- Estilos propios -->
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+
+    <th:block layout:fragment="styles"></th:block>
+</head>
+<body>
+    <!-- Layout Container -->
+    <div class="layout-container">
+
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+
+            <!-- Header -->
+            <div th:replace="~{fragments/header :: header}"></div>
+
+            <!-- Content Wrapper -->
+            <div class="content-wrapper">
+
+                <!-- Contenido principal -->
+                <main class="content" layout:fragment="content">
+                    <!-- El contenido de cada página se insertará aquí -->
+                </main>
+
+                <!-- Footer -->
+                <div th:replace="~{fragments/footer :: footer}"></div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- =============================================== -->
+    <!-- MODAL DE CIERRE DE SESIÓN POR INACTIVIDAD -->
+    <!-- =============================================== -->
+    <div class="modal fade" id="session-timeout-modal" tabindex="-1" aria-labelledby="sessionTimeoutLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sessionTimeoutLabel">
+                        <i class="ti ti-clock-pause me-2"></i>Tu sesión está a punto de expirar
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <p>Debido a la inactividad, tu sesión se cerrará automáticamente en <strong id="session-countdown">60</strong> segundos.</p>
+                    <p>¿Deseas continuar con tu sesión?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="logout-now-btn">
+                        <i class="ti ti-logout me-2"></i>Cerrar Sesión Ahora
+                    </button>
+                    <button type="button" class="btn btn-primary" id="keep-session-btn">
+                        <i class="ti ti-player-play me-2"></i>Continuar Sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{fragments/sidebar :: sidebar-backdrop}"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Scripts propios -->
+    <script th:src="@{/js/main.js}" type="module"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <script th:src="@{/js/sidebar.js}"></script>
+    <script th:src="@{/js/components.js}"></script>
+
+    <!-- Script para manejar el cierre de sesión por inactividad -->
+    <script th:src="@{/js/session-timeout-handler.js}"></script>
+
+    <th:block layout:fragment="scripts"></th:block>
+</body>
+</html>

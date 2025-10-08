@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head>
+    <title>Listado de Activos</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Listado de Activos</h2>
+                <button class="btn btn-primary" id="openNewActivoModal">Nuevo Activo</button>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Example Row (replace with dynamic data) -->
+                        <tr>
+                            <td>1</td>
+                            <td>Laptop Dell</td>
+                            <td>Laptop para uso de oficina</td>
+                            <td><span class="badge badge-active">Activo</span></td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-icon dropdown-toggle" aria-label="Opciones"><i class="fas fa-ellipsis-v"></i></button>
+                                    <div class="dropdown-menu">
+                                        <a href="#" class="dropdown-item">Editar</a>
+                                        <a href="#" class="dropdown-item">Ver</a>
+                                        <a href="#" class="dropdown-item">Eliminar</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Monitor LG</td>
+                            <td>Monitor de 24 pulgadas</td>
+                            <td><span class="badge badge-warning">En Mantenimiento</span></td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-icon dropdown-toggle" aria-label="Opciones"><i class="fas fa-ellipsis-v"></i></button>
+                                    <div class="dropdown-menu">
+                                        <a href="#" class="dropdown-item">Editar</a>
+                                        <a href="#" class="dropdown-item">Ver</a>
+                                        <a href="#" class="dropdown-item">Eliminar</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Impresora HP</td>
+                            <td>Impresora multifuncional</td>
+                            <td><span class="badge badge-danger">Dado de Baja</span></td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-icon dropdown-toggle" aria-label="Opciones"><i class="fas fa-ellipsis-v"></i></button>
+                                    <div class="dropdown-menu">
+                                        <a href="#" class="dropdown-item">Editar</a>
+                                        <a href="#" class="dropdown-item">Ver</a>
+                                        <a href="#" class="dropdown-item">Eliminar</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- New Activo Modal -->
+        <div id="newActivoModal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Nuevo Activo</h3>
+                    <button class="modal-close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="nombreActivo">Nombre del Activo</label>
+                            <input type="text" id="nombreActivo" class="input" placeholder="Ej: Laptop, Monitor">
+                        </div>
+                        <div class="form-group">
+                            <label for="descripcionActivo">Descripción</label>
+                            <textarea id="descripcionActivo" class="textarea" rows="3" placeholder="Descripción detallada"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="estadoActivo">Estado</label>
+                            <select id="estadoActivo" class="select">
+                                <option value="activo">Activo</option>
+                                <option value="mantenimiento">En Mantenimiento</option>
+                                <option value="baja">Dado de Baja</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary modal-close-btn">Cancelar</button>
+                    <button class="btn btn-primary">Guardar Activo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const newActivoModal = new Modal('newActivoModal');
+                document.getElementById('openNewActivoModal').addEventListener('click', () => {
+                    newActivoModal.open();
+                });
+            });
+        </script>
+    </th:block>
+</body>
+</html>

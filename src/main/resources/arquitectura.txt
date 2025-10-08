@@ -1,0 +1,681 @@
+src/main/java/pe/edu/unasam/activos/
+│
+├── ActivosApplication.java
+│
+├── config/                          # Configuraciones
+│   ├── SecurityConfig.java          # Seguridad dual (MVC + JWT)
+│   ├── JwtConfig.java              # Configuración JWT
+│   ├── DatabaseConfig.java         # Configuración MySQL
+│   ├── WebConfig.java              # Configuración Web MVC
+│   └── ThymeleafConfig.java        # Configuración Thymeleaf
+│
+├── common/                          # Componentes transversales
+│   ├── exception/
+│   │   ├── GlobalExceptionHandler.java
+│   │   ├── NotFoundException.java
+│   │   ├── BadRequestException.java
+│   │   └── UnauthorizedException.java
+│   ├── util/
+│   │   ├── CodigoGenerator.java
+│   │   ├── ReporteUtil.java
+│   │   ├── DateUtil.java
+│   │   ├── ValidationUtil.java
+│   │   └── PasswordUtil.java
+│   ├── enums/                        # Enums del sistema
+│   │   ├── EstadoActivo.java
+│   │   ├── EstadoEquipo.java
+│   │   ├── EstadoAplicativo.java
+│   │   ├── EstadoMantenimiento.java
+│   │   ├── EstadoLicencia.java
+│   │   ├── EstadoAsignacion.java
+│   │   ├── EstadoOficina.java
+│   │   ├── EstadoRol.java
+│   │   ├── EstadoUsuario.java
+│   │   ├── EstadoPersona.java
+│   │   ├── EstadoResponsable.java
+│   │   ├── EstadoSesion.java
+│   │   ├── EstadoModulo.java
+│   │   ├── EstadoInstalacion.java
+│   │   ├── TipoServidor.java
+│   │   ├── TipoRecurso.java
+│   │   ├── TipoUnidad.java
+│   │   ├── TipoDato.java
+│   │   ├── MetodoAutenticacion.java
+│   │   ├── UsoApi.java
+│   │   ├── EstadoIntegracion.java
+│   │   ├── NivelCriticidad.java
+│   │   ├── Genero.java
+│   │   └── AccionAuditoria.java
+│   └── dto/                         # DTOs transversales
+│       ├── ApiResponse.java
+│       ├── PageResponse.java
+│       └── ErrorResponse.java
+│
+├── security/                        # Seguridad JWT
+│   ├── JwtService.java
+│   ├── JwtAuthenticationFilter.java
+│   ├── CustomUserDetailsService.java
+│   └── PasswordEncoder.java
+│
+├── modules/                         # 🔄 MÓDULOS CORREGIDOS
+│   │
+│   ├── sistema/                     # 🆕 GESTIÓN DEL SISTEMA (roles, usuarios, permisos, config)
+│   │   ├── web/
+│   │   │   ├── RolController.java
+│   │   │   ├── UsuarioController.java
+│   │   │   ├── PermisoController.java
+│   │   │   ├── ModuloController.java
+│   │   │   └── ConfiguracionController.java
+│   │   ├── api/
+│   │   │   ├── RolApiController.java
+│   │   │   ├── UsuarioApiController.java
+│   │   │   ├── PermisoApiController.java
+│   │   │   ├── ModuloApiController.java
+│   │   │   └── ConfiguracionApiController.java
+│   │   ├── service/
+│   │   │   ├── RolService.java
+│   │   │   ├── UsuarioService.java
+│   │   │   ├── PermisoService.java
+│   │   │   ├── RolPermisoService.java
+│   │   │   ├── ModuloSistemaService.java
+│   │   │   └── ConfiguracionSistemaService.java
+│   │   ├── domain/
+│   │   │   ├── Rol.java                    # roles table
+│   │   │   ├── Usuario.java                # usuarios table  
+│   │   │   ├── SesionUsuario.java          # sesion_usuarios table
+│   │   │   ├── Permiso.java                # permisos table
+│   │   │   ├── RolPermiso.java             # rol_permisos table
+│   │   │   ├── ModuloSistema.java          # modulo_sistemas table
+│   │   │   └── ConfiguracionSistema.java   # configuracion_sistemas table
+│   │   ├── repository/
+│   │   │   ├── RolRepository.java
+│   │   │   ├── UsuarioRepository.java
+│   │   │   ├── SesionUsuarioRepository.java
+│   │   │   ├── PermisoRepository.java
+│   │   │   ├── RolPermisoRepository.java
+│   │   │   ├── ModuloSistemaRepository.java
+│   │   │   └── ConfiguracionSistemaRepository.java
+│   │   └── dto/
+│   │       ├── RolRequest.java
+│   │       ├── RolResponse.java
+│   │       ├── UsuarioRequest.java
+│   │       ├── UsuarioResponse.java
+│   │       ├── PermisoRequest.java
+│   │       ├── PermisoResponse.java
+│   │       ├── RolPermisoRequest.java
+│   │       ├── ModuloRequest.java
+│   │       ├── ModuloResponse.java
+│   │       ├── ConfiguracionRequest.java
+│   │       └── ConfiguracionResponse.java
+│   │
+│   ├── auth/                        # 🔄 SOLO AUTENTICACIÓN (login/logout)
+│   │   ├── web/
+│   │   │   └── AuthController.java
+│   │   ├── api/
+│   │   │   └── ApiAuthController.java
+│   │   ├── service/
+│   │   │   ├── AuthService.java
+│   │   │   └── SesionService.java
+│   │   └── dto/
+│   │       ├── LoginRequest.java
+│   │       ├── TokenResponse.java
+│   │       ├── UserInfoResponse.java
+│   │       └── LogoutRequest.java
+│   │
+│   ├── dashboard/                   # Dashboard principal
+│   │   ├── web/
+│   │   │   └── DashboardController.java
+│   │   ├── api/
+│   │   │   └── DashboardApiController.java
+│   │   ├── service/
+│   │   │   └── DashboardService.java
+│   │   └── dto/
+│   │       ├── DashboardStatsDto.java
+│   │       ├── AlertasDto.java
+│   │       └── EstadisticasGeneralesDto.java
+│   │
+│   ├── personas/                    # ✅ Gestión de Personas (base para usuarios/responsables/técnicos)
+│   │   ├── web/
+│   │   │   ├── PersonaController.java
+│   │   │   ├── ResponsableController.java
+│   │   │   └── CargoController.java
+│   │   ├── api/
+│   │   │   ├── PersonaApiController.java
+│   │   │   ├── ResponsableApiController.java
+│   │   │   └── CargoApiController.java
+│   │   ├── service/
+│   │   │   ├── PersonaService.java
+│   │   │   ├── ResponsableService.java
+│   │   │   ├── CargoService.java
+│   │   │   └── TipoDocumentoService.java
+│   │   ├── domain/
+│   │   │   ├── Persona.java                # personas table (documento PK)
+│   │   │   ├── TipoDocumento.java          # tipo_documentos table
+│   │   │   ├── Responsable.java            # responsables table
+│   │   │   └── Cargo.java                  # cargos table
+│   │   ├── repository/
+│   │   │   ├── PersonaRepository.java
+│   │   │   ├── TipoDocumentoRepository.java
+│   │   │   ├── ResponsableRepository.java
+│   │   │   └── CargoRepository.java
+│   │   └── dto/
+│   │       ├── PersonaRequest.java
+│   │       ├── PersonaResponse.java
+│   │       ├── ResponsableRequest.java
+│   │       ├── ResponsableResponse.java
+│   │       ├── CargoRequest.java
+│   │       └── CargoResponse.java
+│   │
+│   ├── ubicaciones/                 # ✅ Gestión de Ubicaciones
+│   │   ├── web/
+│   │   │   ├── DepartamentoController.java
+│   │   │   ├── OficinaController.java
+│   │   │   ├── TipoOficinaController.java
+│   │   │   └── OrigenController.java
+│   │   ├── api/
+│   │   │   ├── DepartamentoApiController.java
+│   │   │   ├── OficinaApiController.java
+│   │   │   ├── TipoOficinaApiController.java
+│   │   │   └── OrigenApiController.java
+│   │   ├── service/
+│   │   │   ├── DepartamentoService.java
+│   │   │   ├── OficinaService.java
+│   │   │   ├── TipoOficinaService.java
+│   │   │   └── OrigenService.java
+│   │   ├── domain/
+│   │   │   ├── Departamento.java           # departamentos table
+│   │   │   ├── Oficina.java                # oficinas table
+│   │   │   ├── TipoOficina.java            # tipo_oficinas table
+│   │   │   └── Origen.java                 # origenes table
+│   │   ├── repository/
+│   │   │   ├── DepartamentoRepository.java
+│   │   │   ├── OficinaRepository.java
+│   │   │   ├── TipoOficinaRepository.java
+│   │   │   └── OrigenRepository.java
+│   │   └── dto/
+│   │       ├── DepartamentoRequest.java
+│   │       ├── DepartamentoResponse.java
+│   │       ├── OficinaRequest.java
+│   │       ├── OficinaResponse.java
+│   │       ├── TipoOficinaRequest.java
+│   │       ├── TipoOficinaResponse.java
+│   │       ├── OrigenRequest.java
+│   │       └── OrigenResponse.java
+│   │
+│   ├── proveedores/                 # ✅ Gestión de Proveedores
+│   │   ├── web/
+│   │   │   └── ProveedorController.java
+│   │   ├── api/
+│   │   │   └── ProveedorApiController.java
+│   │   ├── service/
+│   │   │   └── ProveedorService.java
+│   │   ├── domain/
+│   │   │   └── Proveedor.java              # proveedores table
+│   │   ├── repository/
+│   │   │   └── ProveedorRepository.java
+│   │   └── dto/
+│   │       ├── ProveedorRequest.java
+│   │       └── ProveedorResponse.java
+│   │
+│   ├── activos/                     # ✅ Gestión de Activos Base
+│   │   ├── web/
+│   │   │   └── ActivoController.java
+│   │   ├── api/
+│   │   │   └── ActivoApiController.java
+│   │   ├── service/
+│   │   │   ├── ActivoService.java
+│   │   │   └── ActivoValidationService.java
+│   │   ├── domain/
+│   │   │   └── Activo.java                 # activos table
+│   │   ├── repository/
+│   │   │   └── ActivoRepository.java
+│   │   └── dto/
+│   │       ├── ActivoRequest.java
+│   │       ├── ActivoResponse.java
+│   │       └── ActivoFilterDto.java
+│   │
+│   ├── equipos/                     # ✅ Gestión de Equipos Tecnológicos
+│   │   ├── web/
+│   │   │   ├── EquipoController.java
+│   │   │   ├── CategoriaEquipoController.java
+│   │   │   ├── MarcaController.java
+│   │   │   ├── ModeloController.java
+│   │   │   └── EspecificacionController.java
+│   │   ├── api/
+│   │   │   ├── EquipoApiController.java
+│   │   │   ├── CategoriaEquipoApiController.java
+│   │   │   ├── MarcaApiController.java
+│   │   │   ├── ModeloApiController.java
+│   │   │   └── EspecificacionApiController.java
+│   │   ├── service/
+│   │   │   ├── EquipoService.java
+│   │   │   ├── CategoriaEquipoService.java
+│   │   │   ├── MarcaService.java
+│   │   │   ├── ModeloService.java
+│   │   │   ├── EspecificacionService.java
+│   │   │   ├── UnidadService.java
+│   │   │   └── CategoriaComponenteService.java
+│   │   ├── domain/
+│   │   │   ├── Equipo.java                 # equipos table
+│   │   │   ├── CategoriaEquipo.java        # categoria_equipos table
+│   │   │   ├── Marca.java                  # marcas table
+│   │   │   ├── Modelo.java                 # modelos table
+│   │   │   ├── Especificacion.java         # especificaciones table
+│   │   │   ├── EquipoEspecificacion.java   # equipo_especificaciones table
+│   │   │   ├── Unidad.java                 # unidades table
+│   │   │   └── CategoriaComponente.java    # categoria_componentes table
+│   │   ├── repository/
+│   │   │   ├── EquipoRepository.java
+│   │   │   ├── CategoriaEquipoRepository.java
+│   │   │   ├── MarcaRepository.java
+│   │   │   ├── ModeloRepository.java
+│   │   │   ├── EspecificacionRepository.java
+│   │   │   ├── EquipoEspecificacionRepository.java
+│   │   │   ├── UnidadRepository.java
+│   │   │   └── CategoriaComponenteRepository.java
+│   │   └── dto/
+│   │       ├── EquipoRequest.java
+│   │       ├── EquipoResponse.java
+│   │       ├── CategoriaEquipoRequest.java
+│   │       ├── CategoriaEquipoResponse.java
+│   │       ├── MarcaRequest.java
+│   │       ├── MarcaResponse.java
+│   │       ├── ModeloRequest.java
+│   │       ├── ModeloResponse.java
+│   │       ├── EspecificacionRequest.java
+│   │       ├── EspecificacionResponse.java
+│   │       └── EquipoFilterDto.java
+│   │
+│   ├── aplicativos/                 # ✅ Gestión de Aplicativos y Software
+│   │   ├── web/
+│   │   │   ├── AplicativoController.java
+│   │   │   ├── TipoAplicativoController.java
+│   │   │   └── InstalacionController.java
+│   │   ├── api/
+│   │   │   ├── AplicativoApiController.java
+│   │   │   ├── TipoAplicativoApiController.java
+│   │   │   └── InstalacionApiController.java
+│   │   ├── service/
+│   │   │   ├── AplicativoService.java
+│   │   │   ├── TipoAplicativoService.java
+│   │   │   └── InstalacionAplicativoService.java
+│   │   ├── domain/
+│   │   │   ├── TipoAplicativo.java         # tipo_aplicativos table
+│   │   │   ├── Aplicativo.java             # aplicativos table
+│   │   │   ├── InstalacionAplicativo.java  # instalacion_aplicativos table
+│   │   │   └── ServidorAplicativo.java     # servidor_aplicativos table
+│   │   ├── repository/
+│   │   │   ├── TipoAplicativoRepository.java
+│   │   │   ├── AplicativoRepository.java
+│   │   │   ├── InstalacionAplicativoRepository.java
+│   │   │   └── ServidorAplicativoRepository.java
+│   │   └── dto/
+│   │       ├── TipoAplicativoRequest.java
+│   │       ├── TipoAplicativoResponse.java
+│   │       ├── AplicativoRequest.java
+│   │       ├── AplicativoResponse.java
+│   │       ├── InstalacionRequest.java
+│   │       └── InstalacionResponse.java
+│   │
+│   ├── servidores/                  # ✅ Gestión de Servidores
+│   │   ├── web/
+│   │   │   ├── ServidorController.java
+│   │   │   ├── RolServidorController.java
+│   │   │   └── RecursoController.java
+│   │   ├── api/
+│   │   │   ├── ServidorApiController.java
+│   │   │   ├── RolServidorApiController.java
+│   │   │   └── RecursoApiController.java
+│   │   ├── service/
+│   │   │   ├── ServidorService.java
+│   │   │   ├── RolServidorService.java
+│   │   │   └── RecursoService.java
+│   │   ├── domain/
+│   │   │   ├── RolServidor.java            # rol_servidores table
+│   │   │   ├── Servidor.java               # servidores table
+│   │   │   ├── Recurso.java                # recursos table
+│   │   │   └── ServidorRecurso.java        # servidor_recursos table
+│   │   ├── repository/
+│   │   │   ├── RolServidorRepository.java
+│   │   │   ├── ServidorRepository.java
+│   │   │   ├── RecursoRepository.java
+│   │   │   └── ServidorRecursoRepository.java
+│   │   └── dto/
+│   │       ├── RolServidorRequest.java
+│   │       ├── RolServidorResponse.java
+│   │       ├── ServidorRequest.java
+│   │       ├── ServidorResponse.java
+│   │       ├── RecursoRequest.java
+│   │       └── RecursoResponse.java
+│   │
+│   ├── apis/                        # ✅ Gestión de APIs
+│   │   ├── web/
+│   │   │   └── ApiController.java
+│   │   ├── api/
+│   │   │   └── ApiManagementController.java
+│   │   ├── service/
+│   │   │   └── ApiService.java
+│   │   ├── domain/
+│   │   │   ├── Api.java                    # apis table
+│   │   │   └── ApiAplicativo.java          # api_aplicativos table
+│   │   ├── repository/
+│   │   │   ├── ApiRepository.java
+│   │   │   └── ApiAplicativoRepository.java
+│   │   └── dto/
+│   │       ├── ApiRequest.java
+│   │       ├── ApiResponse.java
+│   │       └── ApiIntegracionDto.java
+│   │
+│   ├── licencias/                   # ✅ Gestión de Licencias
+│   │   ├── web/
+│   │   │   ├── LicenciaController.java
+│   │   │   ├── TipoLicenciaController.java
+│   │   │   └── AsignacionController.java
+│   │   ├── api/
+│   │   │   ├── LicenciaApiController.java
+│   │   │   ├── TipoLicenciaApiController.java
+│   │   │   └── AsignacionApiController.java
+│   │   ├── service/
+│   │   │   ├── LicenciaService.java
+│   │   │   ├── TipoLicenciaService.java
+│   │   │   └── LicenciaAsignacionService.java
+│   │   ├── domain/
+│   │   │   ├── TipoLicencia.java           # tipo_licencias table
+│   │   │   ├── Licencia.java               # licencias table
+│   │   │   └── LicenciaAsignacion.java     # licencia_asignaciones table
+│   │   ├── repository/
+│   │   │   ├── TipoLicenciaRepository.java
+│   │   │   ├── LicenciaRepository.java
+│   │   │   └── LicenciaAsignacionRepository.java
+│   │   └── dto/
+│   │       ├── TipoLicenciaRequest.java
+│   │       ├── TipoLicenciaResponse.java
+│   │       ├── LicenciaRequest.java
+│   │       ├── LicenciaResponse.java
+│   │       ├── AsignacionRequest.java
+│   │       └── AsignacionResponse.java
+│   │
+│   ├── mantenimientos/              # ✅ Gestión de Mantenimientos
+│   │   ├── web/
+│   │   │   ├── MantenimientoController.java
+│   │   │   ├── TipoMantenimientoController.java
+│   │   │   ├── TecnicoController.java
+│   │   │   └── EspecialidadController.java
+│   │   ├── api/
+│   │   │   ├── MantenimientoApiController.java
+│   │   │   ├── TipoMantenimientoApiController.java
+│   │   │   ├── TecnicoApiController.java
+│   │   │   └── EspecialidadApiController.java
+│   │   ├── service/
+│   │   │   ├── MantenimientoService.java
+│   │   │   ├── TipoMantenimientoService.java
+│   │   │   ├── TecnicoService.java
+│   │   │   └── EspecialidadService.java
+│   │   ├── domain/
+│   │   │   ├── TipoMantenimiento.java      # tipo_mantenimientos table
+│   │   │   ├── Mantenimiento.java          # mantenimientos table
+│   │   │   ├── Especialidad.java           # especialidades table
+│   │   │   └── Tecnico.java                # tecnicos table
+│   │   ├── repository/
+│   │   │   ├── TipoMantenimientoRepository.java
+│   │   │   ├── MantenimientoRepository.java
+│   │   │   ├── EspecialidadRepository.java
+│   │   │   └── TecnicoRepository.java
+│   │   └── dto/
+│   │       ├── TipoMantenimientoRequest.java
+│   │       ├── TipoMantenimientoResponse.java
+│   │       ├── MantenimientoRequest.java
+│   │       ├── MantenimientoResponse.java
+│   │       ├── EspecialidadRequest.java
+│   │       ├── EspecialidadResponse.java
+│   │       ├── TecnicoRequest.java
+│   │       └── TecnicoResponse.java
+│   │
+│   └── reportes/                    # ✅ Reportes
+│       ├── web/
+│       │   └── ReporteController.java
+│       ├── api/
+│       │   └── ReporteApiController.java
+│       ├── service/
+│       │   ├── ReporteService.java
+│       │   ├── ExcelReporteService.java
+│       │   └── PdfReporteService.java
+│       └── dto/
+│           ├── ReporteRequest.java
+│           └── ReporteResponse.java
+│
+└── audit/                           # ✅ Auditoría
+    ├── domain/
+    │   └── AuditoriaLog.java               # auditoria_logs table
+    ├── repository/
+    │   └── AuditoriaLogRepository.java
+    └── service/
+        └── AuditService.java
+
+
+
+
+**************************************************************************************
+**************************************************************************************
+**************************************************************************************
+
+
+src/main/resources/templates/
+│
+├── layout/                          # Layouts base
+│   ├── base.html                   # Layout principal (navbar + sidebar)
+│   ├── base-auth.html              # Layout para login
+│   └── base-simple.html            # Layout simple (sin sidebar)
+│
+├── fragments/                       # Fragmentos reutilizables
+│   ├── head.html                   # Meta tags, CSS, Bootstrap
+│   ├── navbar.html                 # Barra de navegación superior
+│   ├── sidebar.html                # Menú lateral dinámico (basado en módulos DB)
+│   ├── scripts.html                # JavaScript base
+│   ├── pagination.html             # Componente de paginación
+│   ├── alerts.html                 # Alertas y mensajes
+│   ├── modals.html                 # Modales reutilizables
+│   └── breadcrumb.html             # Breadcrumb de navegación
+│
+├── auth/                           # 🔄 SOLO AUTENTICACIÓN
+│   ├── login.html                  # Página de login
+│   ├── logout.html                 # Confirmación de logout
+│   └── profile.html                # Perfil básico del usuario
+│
+├── sistema/                        # 🆕 GESTIÓN DEL SISTEMA
+│   ├── dashboard.html              # Dashboard de administración del sistema
+│   ├── roles/
+│   │   ├── list.html               # Lista de roles con niveles
+│   │   ├── form.html               # Formulario rol (con color picker)
+│   │   └── permisos.html           # Asignación de permisos CRUD por módulo
+│   ├── usuarios/
+│   │   ├── list.html               # Lista de usuarios del sistema
+│   │   ├── form.html               # Formulario usuario
+│   │   ├── sesiones.html           # Sesiones activas por usuario
+│   │   └── cambiar-password.html   # Cambio de contraseña
+│   ├── permisos/
+│   │   ├── list.html               # Lista de permisos por módulo
+│   │   ├── form.html               # Formulario permiso
+│   │   └── matriz.html             # Matriz roles vs permisos
+│   ├── modulos/
+│   │   ├── list.html               # Lista de módulos del sistema
+│   │   ├── form.html               # Formulario módulo (con selector de iconos)
+│   │   └── orden.html              # Reordenar módulos del menú
+│   └── configuracion/
+│       ├── list.html               # Lista de configuraciones por categoría
+│       ├── form.html               # Formulario configuración
+│       └── backup.html             # Backup y restauración
+│
+├── dashboard/                      # 🔄 DASHBOARD PRINCIPAL (no de sistema)
+│   └── index.html                  # Dashboard general con estadísticas
+│
+├── personas/                       # ✅ GESTIÓN DE PERSONAS
+│   ├── list.html                   # Lista de personas
+│   ├── form.html                   # Formulario persona
+│   ├── detail.html                 # Detalle de persona con historial
+│   ├── responsables/
+│   │   ├── list.html               # Lista de responsables por oficina
+│   │   ├── form.html               # Formulario responsable
+│   │   └── asignaciones.html       # Historial de asignaciones
+│   ├── cargos/
+│   │   ├── list.html               # Lista de cargos
+│   │   └── form.html               # Formulario cargo
+│   └── tipos-documento/
+│       ├── list.html               # Lista de tipos de documento
+│       └── form.html               # Formulario tipo documento
+│
+├── ubicaciones/                    # ✅ GESTIÓN DE UBICACIONES
+│   ├── departamentos/
+│   │   ├── list.html               # Lista de departamentos
+│   │   └── form.html               # Formulario departamento
+│   ├── oficinas/
+│   │   ├── list.html               # Lista de oficinas por departamento
+│   │   ├── form.html               # Formulario oficina
+│   │   └── mapa.html               # Vista de mapa de oficinas
+│   ├── tipos-oficina/
+│   │   ├── list.html               # Lista de tipos de oficina
+│   │   └── form.html               # Formulario tipo oficina
+│   └── origenes/
+│       ├── list.html               # Lista de orígenes
+│       └── form.html               # Formulario origen
+│
+├── proveedores/                    # ✅ GESTIÓN DE PROVEEDORES
+│   ├── list.html                   # Lista de proveedores
+│   ├── form.html                   # Formulario proveedor
+│   ├── detail.html                 # Detalle con historial de compras
+│   └── estadisticas.html           # Estadísticas por proveedor
+│
+├── activos/                        # ✅ GESTIÓN DE ACTIVOS
+│   ├── list.html                   # Lista de activos con filtros
+│   ├── form.html                   # Formulario activo
+│   ├── detail.html                 # Detalle del activo
+│   ├── import.html                 # Importar activos CSV/Excel
+│   └── garantias.html              # Control de garantías
+│
+├── equipos/                        # ✅ GESTIÓN DE EQUIPOS
+│   ├── list.html                   # Lista de equipos con filtros avanzados
+│   ├── form.html                   # Formulario equipo
+│   ├── detail.html                 # Detalle completo del equipo
+│   ├── especificaciones.html       # Gestión de especificaciones del equipo
+│   ├── import.html                 # Importar equipos
+│   ├── categorias/
+│   │   ├── list.html               # Lista de categorías de equipos
+│   │   └── form.html               # Formulario categoría
+│   ├── marcas/
+│   │   ├── list.html               # Lista de marcas
+│   │   └── form.html               # Formulario marca
+│   ├── modelos/
+│   │   ├── list.html               # Lista de modelos por marca
+│   │   └── form.html               # Formulario modelo
+│   ├── unidades/
+│   │   ├── list.html               # Lista de unidades de medida
+│   │   └── form.html               # Formulario unidad
+│   └── componentes/
+│       ├── list.html               # Lista de categorías de componentes
+│       └── form.html               # Formulario categoría componente
+│
+├── aplicativos/                    # ✅ GESTIÓN DE APLICATIVOS
+│   ├── list.html                   # Lista de aplicativos
+│   ├── form.html                   # Formulario aplicativo
+│   ├── detail.html                 # Detalle con instalaciones
+│   ├── tipos/
+│   │   ├── list.html               # Lista de tipos de aplicativos
+│   │   └── form.html               # Formulario tipo aplicativo
+│   ├── instalaciones/
+│   │   ├── list.html               # Lista de instalaciones por equipo
+│   │   ├── form.html               # Formulario instalación
+│   │   └── matriz.html             # Matriz equipos vs aplicativos
+│   └── versiones.html              # Control de versiones instaladas
+│
+├── servidores/                     # ✅ GESTIÓN DE SERVIDORES
+│   ├── list.html                   # Lista de servidores
+│   ├── form.html                   # Formulario servidor
+│   ├── detail.html                 # Detalle servidor con recursos
+│   ├── monitoring.html             # Monitoreo de servidores
+│   ├── roles/
+│   │   ├── list.html               # Lista de roles de servidor
+│   │   └── form.html               # Formulario rol servidor
+│   ├── recursos/
+│   │   ├── list.html               # Lista de recursos
+│   │   ├── form.html               # Formulario recurso
+│   │   └── asignacion.html         # Asignación de recursos a servidores
+│   └── aplicativos/
+│       ├── list.html               # Aplicativos instalados en servidores
+│       └── form.html               # Instalación de aplicativo en servidor
+│
+├── apis/                           # ✅ GESTIÓN DE APIs
+│   ├── list.html                   # Lista de APIs
+│   ├── form.html                   # Formulario API
+│   ├── detail.html                 # Detalle API con integraciones
+│   ├── integraciones/
+│   │   ├── list.html               # Lista de integraciones
+│   │   ├── form.html               # Formulario integración
+│   │   └── logs.html               # Logs de integración
+│   └── documentacion.html          # Documentación de APIs
+│
+├── licencias/                      # ✅ GESTIÓN DE LICENCIAS
+│   ├── list.html                   # Lista de licencias
+│   ├── form.html                   # Formulario licencia
+│   ├── detail.html                 # Detalle licencia con asignaciones
+│   ├── vencimientos.html           # Control de vencimientos
+│   ├── alertas.html                # Alertas de licencias
+│   ├── tipos/
+│   │   ├── list.html               # Lista de tipos de licencias
+│   │   └── form.html               # Formulario tipo licencia
+│   ├── asignaciones/
+│   │   ├── list.html               # Lista de asignaciones por oficina
+│   │   ├── form.html               # Formulario asignación
+│   │   └── disponibilidad.html     # Disponibilidad de licencias
+│   └── renovaciones.html           # Calendario de renovaciones
+│
+├── mantenimientos/                 # ✅ GESTIÓN DE MANTENIMIENTOS
+│   ├── list.html                   # Lista de mantenimientos
+│   ├── form.html                   # Formulario mantenimiento
+│   ├── detail.html                 # Detalle del mantenimiento
+│   ├── calendario.html             # Vista de calendario
+│   ├── vencidos.html               # Mantenimientos vencidos
+│   ├── tipos/
+│   │   ├── list.html               # Lista de tipos de mantenimiento
+│   │   └── form.html               # Formulario tipo
+│   ├── tecnicos/
+│   │   ├── list.html               # Lista de técnicos
+│   │   ├── form.html               # Formulario técnico
+│   │   └── asignaciones.html       # Mantenimientos por técnico
+│   └── especialidades/
+│       ├── list.html               # Lista de especialidades
+│       └── form.html               # Formulario especialidad
+│
+├── reportes/                       # ✅ REPORTES
+│   ├── index.html                  # Página principal de reportes
+│   ├── equipos/
+│   │   ├── inventario.html         # Reporte de inventario
+│   │   ├── por-categoria.html      # Equipos por categoría
+│   │   ├── por-ubicacion.html      # Equipos por oficina
+│   │   └── especificaciones.html   # Reporte de especificaciones
+│   ├── activos/
+│   │   ├── general.html            # Reporte general de activos
+│   │   ├── costos.html             # Reporte de costos
+│   │   └── garantias.html          # Reporte de garantías
+│   ├── mantenimientos/
+│   │   ├── programados.html        # Mantenimientos programados
+│   │   ├── realizados.html         # Mantenimientos realizados
+│   │   └── costos.html             # Costos de mantenimiento
+│   ├── licencias/
+│   │   ├── inventario.html         # Inventario de licencias
+│   │   ├── vencimientos.html       # Próximos vencimientos
+│   │   └── costos.html             # Inversión en licencias
+│   ├── aplicativos/
+│   │   ├── instalaciones.html      # Aplicativos instalados
+│   │   └── versiones.html          # Control de versiones
+│   ├── servidores/
+│   │   ├── inventario.html         # Inventario de servidores
+│   │   └── recursos.html           # Uso de recursos
+│   └── dashboard/
+│       ├── ejecutivo.html          # Reporte ejecutivo
+│       └── operativo.html          # Reporte operativo
+│
+└── error/                          # Páginas de error
+    ├── 404.html                    # Not Found
+    ├── 403.html                    # Forbidden
+    ├── 500.html                    # Internal Server Error
+    └── error.html                  # Error genérico
