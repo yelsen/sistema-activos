@@ -43,7 +43,7 @@ public class AuthService {
     private final ConfiguracionSistemaRepository configuracionSistemaRepository;
 
     @Transactional
-    public TokenResponse login(LoginRequest request) {
+    public TokenResponse login(LoginRequest request, String userAgent) {
 
         // Buscar usuario
         Usuario usuario = usuarioRepository.findByUsuarioWithRelations(request.getUsername())
@@ -65,7 +65,7 @@ public class AuthService {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getUsername(), request.getPassword()));
-            return handleSuccessfulAuthentication(usuario, authentication, null);
+            return handleSuccessfulAuthentication(usuario, authentication, userAgent);
 
         } catch (BadCredentialsException e) {
             registrarIntentoFallido(usuario);

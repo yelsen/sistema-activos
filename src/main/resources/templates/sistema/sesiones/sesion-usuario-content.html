@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body th:fragment="content">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-12">
+            <!-- Page header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="mb-3 h2">Sesiones de Usuario</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#">Sistema</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Sesiones</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div sec:authorize="hasAuthority('SESIONES_ELIMINAR')">
+                    <button id="btnCerrarMasivo" class="btn btn-danger" disabled>Cerrar Sesiones Seleccionadas</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title mb-0">Historial de Sesiones</h5>
+                            <p class="mb-0 text-secondary">Registro de todas las sesiones iniciadas en el sistema.</p>
+                        </div>
+                    </div>
+                    <!-- Search and filter form -->
+                    <form id="filterForm" th:action="@{/sistema/sesiones}" method="get" class="row g-3 mt-2">
+                        <div class="col-md-8">
+                            <input type="text" id="queryInput" name="q" class="form-control"
+                                placeholder="Buscar por nombre de usuario o dispositivo..." th:value="${query}">
+                        </div>
+                        <div class="col-md-4">
+                            <select name="estado" class="form-select" data-choices onchange="this.form.submit()">
+                                <option value="">Todos los estados</option>
+                                <option th:each="e : ${estados}" th:value="${e}"
+                                    th:text="${#strings.capitalize(e.name().toLowerCase())}" th:selected="${estado != null && e.name() == estado}">
+                                </option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-body">
+                    <form id="formCerrarMasivo" th:action="@{/sistema/sesiones/cerrar-masivo}" method="post">
+                        <div class="table-responsive">
+                            <table class="table table-centered text-nowrap">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 5%;">
+                                            <input class="form-check-input" type="checkbox" id="checkAll">
+                                        </th>
+                                        <th>Usuario</th>
+                                        <th>Dispositivo / Navegador</th>
+                                        <th>Inicio de Sesión</th>
+                                        <th>Último Acceso</th>
+                                        <th>Estado</th>
+                                        <th class="text-end">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="sesion : ${page.content}">
+                                        <td>
+                                            <input class="form-check-input check-item" type="checkbox" th:name="ids"
+                                                th:value="${sesion.idSesionUsuario}"
+                                                th:disabled="${sesion.estadoSesion.name() != 'ACTIVA'}">
+                                        </td>
+                                        <td th:text="${sesion.nombreCompleto}"></td>
+                                        <td th:text="${sesion.userAgent}" class="text-truncate"
+                                            style="max-width: 250px;" data-bs-toggle="tooltip"
+                                            th:title="${sesion.userAgent}"></td>
+                                        <td th:text="${sesion.fechaInicio}"></td>
+                                        <td th:text="${sesion.fechaUltimoAcceso}"></td>
+                                        <td>
+                                            <span
+                                                th:classappend="${sesion.estadoSesion.name() == 'ACTIVA' ? 'bg-success-subtle text-success-emphasis' : (sesion.estadoSesion.name() == 'CERRADA' ? 'bg-warning-subtle text-warning-emphasis' : 'bg-danger-subtle text-danger-emphasis')}"
+                                                class="badge"
+                                                th:text="${#strings.capitalize(sesion.estadoSesion.name().toLowerCase())}"></span>
+                                        </td>
+                                        <td class="text-end">
+                                            <div th:if="${sesion.estadoSesion.name() == 'ACTIVA'}"
+                                                sec:authorize="hasAuthority('SESIONES_ELIMINAR')">
+                                                <form
+                                                    th:action="@{/sistema/sesiones/cerrar/{id}(id=${sesion.idSesionUsuario})}"
+                                                    method="post" class="d-inline">
+                                                    <button type="submit"
+                                                        class="btn btn-ghost btn-icon btn-sm rounded-circle"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Cerrar Sesión">
+                                                        <i class="ti ti-logout fs-5 text-danger"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${page.empty}">
+                                        <td colspan="7" class="text-center">No se encontraron sesiones con los criterios
+                                            seleccionados.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+                <!-- Pagination -->
+                <div class="card-footer" th:if="${!page.empty}">
+                    <div th:replace="~{fragments/pagination :: pagination(${page}, '/sistema/sesiones', ${query}, ${estado})}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkAll = document.getElementById('checkAll');
+            const checkItems = document.querySelectorAll('.check-item');
+            const btnCerrarMasivo = document.getElementById('btnCerrarMasivo');
+            const formCerrarMasivo = document.getElementById('formCerrarMasivo');
+
+            const queryInput = document.getElementById('queryInput');
+            const filterForm = document.getElementById('filterForm');
+            let debounceTimer;
+
+            if (queryInput) {
+                queryInput.addEventListener('input', function () {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(function () {
+                        filterForm.submit();
+                    }, 500); // Espera 500ms después de dejar de escribir para buscar
+                });
+            }
+            function toggleBotonMasivo() {
+                const seleccionados = document.querySelectorAll('.check-item:checked').length;
+                btnCerrarMasivo.disabled = seleccionados === 0;
+            }
+
+            if (checkAll) {
+                checkAll.addEventListener('change', function () {
+                    checkItems.forEach(item => {
+                        if (!item.disabled) {
+                            item.checked = checkAll.checked;
+                        }
+                    });
+                    toggleBotonMasivo();
+                });
+            }
+
+            checkItems.forEach(item => {
+                item.addEventListener('change', toggleBotonMasivo);
+            });
+
+            if (btnCerrarMasivo) {
+                btnCerrarMasivo.addEventListener('click', function () {
+                    if (confirm('¿Estás seguro de que deseas cerrar las sesiones seleccionadas?')) {
+                        formCerrarMasivo.submit();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

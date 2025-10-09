@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <nav th:fragment="pagination(page, url, query, estado)"
+        class="d-flex flex-wrap justify-content-between align-items-center" aria-label="Navegación de página">
+        <!-- Información de resultados -->
+        <div class="text-secondary small mb-2 mb-md-0">
+            Mostrando
+            <span class="fw-semibold" th:text="${page.number * page.size + 1}"></span>
+            a
+            <span class="fw-semibold" th:text="${page.number * page.size + page.numberOfElements}"></span>
+            de
+            <span class="fw-semibold" th:text="${page.totalElements}"></span>
+            resultados
+        </div>
+
+        <div class="d-flex align-items-center">
+            <!-- Selector de tamaño de página -->
+            <form th:action="@{${url}}" method="get" class="d-flex align-items-center me-3">
+                <input type="hidden" name="q" th:value="${query}" />
+                <input type="hidden" name="estado" th:value="${estado}" />
+                <label for="pageSize" class="form-label text-nowrap me-2 mb-0 small">Mostrar:</label>
+                <select id="pageSize" name="size" class="form-select" data-choices
+                    onchange="this.form.submit()">
+                    <option th:each="s : ${ {10, 25, 50} }" th:value="${s}" th:text="${s}"
+                        th:selected="${s == page.size}"></option>
+                </select>
+            </form>
+
+            <!-- Controles de paginación -->
+            <ul class="pagination pagination-sm mb-0">
+                <!-- Página Anterior -->
+                <li class="page-item" th:classappend="${page.first ? 'disabled' : ''}">
+                    <a class="page-link"
+                        th:href="@{${url}(page=${page.number - 1}, size=${page.size}, q=${query}, estado=${estado})}">
+                        Anterior
+                    </a>
+                </li>
+
+                <!-- Números de Página -->
+                <th:block th:with="
+                    totalPages=${page.totalPages},
+                    currentPage=${page.number},
+                    startPage=${T(java.lang.Math).max(0, currentPage - 1)},
+                    endPage=${T(java.lang.Math).min(totalPages - 1, currentPage + 1)}">
+
+                    <li class="page-item" th:if="${startPage > 0}">
+                        <a class="page-link"
+                            th:href="@{${url}(page=0, size=${page.size}, q=${query}, estado=${estado})}">1</a>
+                    </li>
+                    <li class="page-item disabled" th:if="${startPage > 1}"><span class="page-link">...</span></li>
+
+                    <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                        th:classappend="${i == currentPage ? 'active' : ''}">
+                        <a class="page-link"
+                            th:href="@{${url}(page=${i}, size=${page.size}, q=${query}, estado=${estado})}"
+                            th:text="${i + 1}"></a>
+                    </li>
+
+                    <li class="page-item disabled" th:if="${endPage < totalPages - 2}"><span
+                            class="page-link">...</span></li>
+                    <li class="page-item" th:if="${endPage < totalPages - 1}">
+                        <a class="page-link"
+                            th:href="@{${url}(page=${totalPages - 1}, size=${page.size}, q=${query}, estado=${estado})}"
+                            th:text="${totalPages}"></a>
+                    </li>
+                </th:block>
+
+                <!-- Página Siguiente -->
+                <li class="page-item" th:classappend="${page.last ? 'disabled' : ''}">
+                    <a class="page-link"
+                        th:href="@{${url}(page=${page.number + 1}, size=${page.size}, q=${query}, estado=${estado})}">
+                        Siguiente
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</body>
+
+</html>

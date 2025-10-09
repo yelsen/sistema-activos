@@ -3,7 +3,7 @@ package pe.edu.unasam.activos.modules.sistema.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import pe.edu.unasam.activos.common.enums.EstadoSesion;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "sesion_usuarios")
@@ -26,13 +26,13 @@ public class SesionUsuario {
     private String userAgent;
     
     @Column(name = "fecha_inicio")
-    private LocalDate fechaInicio;
+    private LocalDateTime fechaInicio;
     
     @Column(name = "fecha_ultimo_acceso")
-    private LocalDate fechaUltimoAcceso;
+    private LocalDateTime fechaUltimoAcceso;
     
     @Column(name = "fecha_expiracion")
-    private LocalDate fechaExpiracion;
+    private LocalDateTime fechaExpiracion;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "estado_sesion")

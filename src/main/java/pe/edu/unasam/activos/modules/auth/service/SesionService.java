@@ -2,6 +2,7 @@ package pe.edu.unasam.activos.modules.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.unasam.activos.common.enums.EstadoSesion;
@@ -10,7 +11,7 @@ import pe.edu.unasam.activos.modules.sistema.domain.Usuario;
 import pe.edu.unasam.activos.modules.sistema.repository.UsuarioRepository;
 import pe.edu.unasam.activos.modules.sistema.repository.SesionUsuarioRepository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,6 +26,11 @@ public class SesionService {
     @Transactional
     public void crearSesion(Usuario usuario, String token, String userAgent) {
         log.info("Creando sesión para usuario: {}", usuario.getUsuario());
+
+        // Tu "seguro": si no hay userAgent, no se puede crear la sesión.
+        if (!StringUtils.hasText(userAgent)) {
+            throw new IllegalArgumentException("No se puede crear una sesión sin un User-Agent válido.");
+        }
         
         // Cerrar sesiones activas anteriores del mismo usuario
         List<SesionUsuario> sesionesActivas = sesionUsuarioRepository
@@ -45,10 +51,10 @@ public class SesionService {
                 // Para sesiones web, el token es el ID de sesión. Para API, es el JWT.
                 // La longitud de la columna debe ser suficiente para ambos.
                 .tokenSesion(token) 
-                .userAgent(userAgent != null ? userAgent : "Unknown")
-                .fechaInicio(LocalDate.now())
-                .fechaUltimoAcceso(LocalDate.now())
-                .fechaExpiracion(LocalDate.now().plusDays(1))
+                .userAgent(userAgent) // Ya hemos validado que no es nulo/vacío
+                .fechaInicio(LocalDateTime.now())
+                .fechaUltimoAcceso(LocalDateTime.now()) 
+                .fechaExpiracion(LocalDateTime.now().plusDays(1))
                 .estadoSesion(EstadoSesion.ACTIVA)
                 .build();
         
@@ -70,7 +76,7 @@ public class SesionService {
     @Transactional
     public void actualizarUltimoAcceso(String token) {
         sesionUsuarioRepository.findByTokenSesion(token).ifPresent(sesion -> {
-            sesion.setFechaUltimoAcceso(LocalDate.now());
+            sesion.setFechaUltimoAcceso(LocalDateTime.now());
             sesionUsuarioRepository.save(sesion);
         });
     }
@@ -83,7 +89,7 @@ public class SesionService {
                 .findByEstadoSesion(EstadoSesion.ACTIVA);
         
         sesionesActivas.forEach(sesion -> {
-            if (sesion.getFechaExpiracion().isBefore(LocalDate.now())) {
+            if (sesion.getFechaExpiracion().isBefore(LocalDateTime.now())) {
                 sesion.setEstadoSesion(EstadoSesion.EXPIRADA);
                 sesionUsuarioRepository.save(sesion);
             }

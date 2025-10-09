@@ -25,7 +25,8 @@ public class ApiAuthController {
             @Valid @RequestBody LoginRequest request,
             HttpServletRequest httpRequest) {
         
-        TokenResponse tokenResponse = authService.login(request);
+        String userAgent = httpRequest.getHeader("User-Agent");
+        TokenResponse tokenResponse = authService.login(request, userAgent);
         
         ApiResponse<TokenResponse> response = ApiResponse.<TokenResponse>builder()
                 .success(true)
