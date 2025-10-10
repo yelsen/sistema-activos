@@ -19,4 +19,10 @@ public interface RolPermisoRepository extends JpaRepository<RolPermiso, RolPermi
     List<RolPermiso> findByRolIdWithPermisos(@Param("idRol") Integer idRol);
 
     void deleteByRol_IdRol(Integer idRol);
+
+    @Query("SELECT COUNT(rp) FROM RolPermiso rp WHERE rp.rol.idRol = :idRol")
+    long countByRol(@Param("idRol") Integer idRol);
+
+    @Query("SELECT rp.rol.idRol, COUNT(rp.permiso.idPermiso) FROM RolPermiso rp WHERE rp.rol.idRol IN :rolIds GROUP BY rp.rol.idRol")
+    List<Object[]> countPermissionsByRolIds(@Param("rolIds") List<Integer> rolIds);
 }

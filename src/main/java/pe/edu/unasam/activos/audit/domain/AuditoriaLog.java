@@ -3,6 +3,9 @@ package pe.edu.unasam.activos.audit.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import pe.edu.unasam.activos.common.enums.AccionAuditoria;
+import pe.edu.unasam.activos.modules.sistema.domain.Usuario;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "auditoria_logs")
@@ -30,4 +33,17 @@ public class AuditoriaLog {
     
     @Column(name = "valores_nuevos", columnDefinition = "JSON")
     private String valoresNuevos;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_idusuario", referencedColumnName = "idusuario")
+    private Usuario usuario;
+
+    @Column(name = "fecha_hora")
+    private LocalDateTime fechaHora;
+
+    @Column(name = "ip_address", length = 45)
+    private String ipAddress;
+
+    @Column(name = "detalles", columnDefinition = "TEXT")
+    private String detalles;
 }

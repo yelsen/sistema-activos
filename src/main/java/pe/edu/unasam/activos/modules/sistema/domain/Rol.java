@@ -20,6 +20,9 @@ public class Rol {
     
     @Column(name = "nombre_rol", length = 100, nullable = false, unique = true)
     private String nombreRol;
+
+    @Column(name = "descripcion_rol", columnDefinition = "TEXT")
+    private String descripcionRol;
     
     @Column(name = "nivel_acceso")
     private Integer nivelAcceso;

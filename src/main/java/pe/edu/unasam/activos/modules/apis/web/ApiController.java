@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +20,7 @@ import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/apis")
+@PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
 @Slf4j
 public class ApiController {
@@ -26,6 +28,7 @@ public class ApiController {
     private final ApiService apiService;
     
     @GetMapping
+    @PreAuthorize("hasAuthority('APIS_LEER')")
     public String list(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -46,6 +49,7 @@ public class ApiController {
     }
     
     @GetMapping("/nuevo")
+    @PreAuthorize("hasAuthority('APIS_CREAR')")
     public String showCreateForm(Model model) {
         model.addAttribute("apiRequest", new ApiRequest());
         model.addAttribute("titulo", "Registrar Nueva API");
@@ -53,6 +57,7 @@ public class ApiController {
     }
     
     @PostMapping
+    @PreAuthorize("hasAuthority('APIS_CREAR')")
     public String create(
             @Valid @ModelAttribute("apiRequest") ApiRequest request,
             BindingResult result,
@@ -78,6 +83,7 @@ public class ApiController {
     }
     
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('APIS_VER')")
     public String detail(@PathVariable Integer id, Model model) {
         try {
             ApiDto api = apiService.findById(id);
@@ -94,6 +100,7 @@ public class ApiController {
     }
     
     @GetMapping("/{id}/editar")
+    @PreAuthorize("hasAuthority('APIS_EDITAR')")
     public String showEditForm(@PathVariable Integer id, Model model) {
         try {
             ApiDto api = apiService.findById(id);
@@ -118,6 +125,7 @@ public class ApiController {
     }
     
     @PostMapping("/{id}")
+    @PreAuthorize("hasAuthority('APIS_EDITAR')")
     public String update(
             @PathVariable Integer id,
             @Valid @ModelAttribute("apiRequest") ApiRequest request,
@@ -146,6 +154,7 @@ public class ApiController {
     }
     
     @PostMapping("/{id}/eliminar")
+    @PreAuthorize("hasAuthority('APIS_ELIMINAR')")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         try {
             apiService.delete(id);
@@ -159,6 +168,7 @@ public class ApiController {
     
     // Gestión de integraciones
     @GetMapping("/{id}/integraciones")
+    @PreAuthorize("hasAuthority('APIS_LEER')")
     public String listIntegraciones(@PathVariable Integer id, Model model) {
         try {
             ApiDto api = apiService.findById(id);

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body th:fragment="content">
+    <!-- Header de la página -->
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-12">
+            <!-- Page header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="mb-3 h2">Auditoría y Monitoreo</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#">Sistema</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Auditoría y Monitoreo</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div>
+                    <span class="badge bg-success-subtle text-success-emphasis">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"
+                            fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-circle me-1">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z">
+                            </path>
+                        </svg>
+                        Sistema Activo
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-lg-6 col-md-6 mb-3">
+            <div class="card card-stat border-start border-primary border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Total Activos</h6>
+                            <h3 class="mb-0">1,247</h3>
+                            <small class="text-success">
+                                <i class="ti ti-arrow-up"></i> 12% este mes
+                            </small>
+                        </div>
+                        <div class="bg-primary-subtle p-3 rounded">
+                            <i class="ti ti-device-laptop fs-2 text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6 col-md-6 mb-3">
+            <div class="card card-stat border-start border-success border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">En Operación</h6>
+                            <h3 class="mb-0">1,089</h3>
+                            <small class="text-success">87% del total</small>
+                        </div>
+                        <div class="bg-success-subtle p-3 rounded">
+                            <i class="ti ti-circle-check fs-2 text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6 col-md-6 mb-3">
+            <div class="card card-stat border-start border-warning border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">En Mantenimiento</h6>
+                            <h3 class="mb-0">98</h3>
+                            <small class="text-warning">8% del total</small>
+                        </div>
+                        <div class="bg-warning-subtle p-3 rounded">
+                            <i class="ti ti-tool fs-2 text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6 col-md-6 mb-3">
+            <div class="card card-stat border-start border-danger border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Inoperativos</h6>
+                            <h3 class="mb-0">60</h3>
+                            <small class="text-danger">5% del total</small>
+                        </div>
+                        <div class="bg-danger-subtle p-3 rounded">
+                            <i class="ti ti-circle-x fs-2 text-danger"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity & Logs -->
+    <div class="row mb-4">
+        <div class="col-lg-7 mb-4 mb-lg-0">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="ti ti-activity text-primary"></i> Actividad Reciente</h5>
+                </div>
+                <div class="card-body" style="max-height: 350px; overflow-y: auto;" data-simplebar>
+                    <div class="activity-timeline">
+                        <div class="activity-item success">
+                            <div class="d-flex justify-content-between">
+                                <strong>Nuevo activo registrado</strong>
+                                <span class="badge badge-activity bg-success-subtle text-success-emphasis">Éxito</span>
+                            </div>
+                            <small class="text-muted">Laptop HP ProBook 450 - Usuario: jperez</small>
+                            <div class="text-muted small mt-1">
+                                <i class="ti ti-clock"></i> Hace 5 minutos
+                            </div>
+                        </div>
+                        <div class="activity-item success">
+                            <div class="d-flex justify-content-between">
+                                <strong>Asignación de activo</strong>
+                                <span class="badge badge-activity bg-success-subtle text-success-emphasis">Éxito</span>
+                            </div>
+                            <small class="text-muted">Monitor Dell 24" asignado a Dpto. Sistemas</small>
+                            <div class="text-muted small mt-1">
+                                <i class="ti ti-clock"></i> Hace 15 minutos
+                            </div>
+                        </div>
+                        <div class="activity-item warning">
+                            <div class="d-flex justify-content-between">
+                                <strong>Mantenimiento programado</strong>
+                                <span
+                                    class="badge badge-activity bg-warning-subtle text-warning-emphasis">Pendiente</span>
+                            </div>
+                            <small class="text-muted">5 equipos requieren mantenimiento preventivo</small>
+                            <div class="text-muted small mt-1">
+                                <i class="ti ti-clock"></i> Hace 1 hora
+                            </div>
+                        </div>
+                        <div class="activity-item danger">
+                            <div class="d-flex justify-content-between">
+                                <strong>Intento de acceso no autorizado</strong>
+                                <span class="badge badge-activity bg-danger-subtle text-danger-emphasis">Alerta</span>
+                            </div>
+                            <small class="text-muted">IP: 192.168.1.45 - Bloqueado automáticamente</small>
+                            <div class="text-muted small mt-1">
+                                <i class="ti ti-clock"></i> Hace 2 horas
+                            </div>
+                        </div>
+                        <div class="activity-item info">
+                            <div class="d-flex justify-content-between">
+                                <strong>Backup completado</strong>
+                                <span class="badge badge-activity bg-info-subtle text-info-emphasis">Info</span>
+                            </div>
+                            <small class="text-muted">Base de datos respaldada correctamente</small>
+                            <div class="text-muted small mt-1">
+                                <i class="ti ti-clock"></i> Hace 3 horas
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5 mb-4 mb-lg-0">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="ti ti-users text-primary"></i> Usuarios Más Activos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-column gap-4">
+                        <!-- User Item 1 -->
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center gap-3">
+                                <img th:src="@{/images/avatar/avatar-1.jpg}" alt="avatar"
+                                    class="avatar avatar-sm rounded-circle" />
+                                <div>
+                                    <h6 class="mb-0">Yelsen Gonzales</h6>
+                                    <small class="text-muted">admin@unasam.edu.pe</small>
+                                </div>
+                            </div>
+                            <span class="badge bg-primary-subtle text-primary-emphasis">120 acciones</span>
+                        </div>
+                        <!-- User Item 2 -->
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center gap-3">
+                                <img th:src="@{/images/avatar/avatar-2.jpg}" alt="avatar"
+                                    class="avatar avatar-sm rounded-circle" />
+                                <div>
+                                    <h6 class="mb-0">Juan Perez</h6>
+                                    <small class="text-muted">jperez@unasam.edu.pe</small>
+                                </div>
+                            </div>
+                            <span class="badge bg-primary-subtle text-primary-emphasis">98 acciones</span>
+                        </div>
+                        <!-- User Item 3 -->
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center gap-3">
+                                <img th:src="@{/images/avatar/avatar-3.jpg}" alt="avatar"
+                                    class="avatar avatar-sm rounded-circle" />
+                                <div>
+                                    <h6 class="mb-0">Maria Rodriguez</h6>
+                                    <small class="text-muted">mrodriguez@unasam.edu.pe</small>
+                                </div>
+                            </div>
+                            <span class="badge bg-primary-subtle text-primary-emphasis">75 acciones</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audit Log Table -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="ti ti-file-text text-primary"></i> Registro de Auditoría</h5>
+            <p class="mb-0 text-secondary small">Seguimiento detallado de todas las acciones en el sistema.</p>
+            <hr>
+            <!-- Filtros de Búsqueda -->
+            <form id="filterForm" th:action="@{/sistema/auditoria}" method="get">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6 col-lg-3">
+                        <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                        <input type="date" id="fechaInicio" name="fechaInicio" class="form-control"
+                            th:value="${#temporals.format(fechaInicio, 'yyyy-MM-dd')}" onchange="this.form.submit()">
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <label for="fechaFin" class="form-label">Fecha Fin</label>
+                        <input type="date" id="fechaFin" name="fechaFin" class="form-control" 
+                            th:value="${#temporals.format(fechaFin, 'yyyy-MM-dd')}" onchange="this.form.submit()">
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <label for="filtroModulo" class="form-label">Módulo</label>
+                        <select id="filtroModulo" name="modulo" class="form-select" data-choices
+                            onchange="this.form.submit()">
+                            <option value="">Todos</option>
+                            <option th:each="m : ${modulos}" th:value="${m}" th:text="${m}" th:selected="${m == modulo}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <label for="filtroAccion" class="form-label">Acción</label>
+                        <select id="filtroAccion" name="accion" class="form-select" data-choices
+                            onchange="this.form.submit()">
+                            <option value="">Todas</option>
+                            <option th:each="a : ${acciones}" th:value="${a.name()}"
+                                th:text="${#strings.capitalize(a.name().toLowerCase())}" th:selected="${a == accion}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <label for="queryInput" class="form-label">Búsqueda General</label>
+                        <input type="text" id="queryInput" name="q" class="form-control"
+                            placeholder="Buscar por usuario, IP, detalles de activos..." th:value="${query}">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end justify-content-end">
+                        <a th:href="@{/sistema/auditoria}" class="btn btn-outline-secondary">
+                            <i class="ti ti-refresh me-1"></i>Limpiar Filtros
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Fecha/Hora</th>
+                            <th>Usuario</th>
+                            <th>Acción</th>
+                            <th>Módulo</th>
+                            <th>Detalles</th>
+                            <th>IP / Dispositivo</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Bloque de datos dinámicos (comentado) -->
+                        <th:block th:if="${!page.empty}">
+                            <tr th:each="log : ${page.content}">
+                                <td><small th:text="${#temporals.format(log.fechaHora, 'dd/MM/yyyy HH:mm:ss')}"></small>
+                                </td>
+                                <td th:text="${log.usuario.persona.nombres + ' ' + log.usuario.persona.apellidos}"></td>
+                                <td>
+                                    <span class="badge" th:classappend="${log.accion.name() == 'CREAR' ? 'bg-success-subtle text-success-emphasis' : 
+                                                                        log.accion.name() == 'EDITAR' ? 'bg-info-subtle text-info-emphasis' :
+                                                                        log.accion.name() == 'ELIMINAR' ? 'bg-danger-subtle text-danger-emphasis' :
+                                                                        'bg-secondary-subtle text-secondary-emphasis'}"
+                                        th:text="${#strings.capitalize(log.accion.name().toLowerCase())}">
+                                    </span>
+                                </td>
+                                <td th:text="${log.tablaAfectada}"></td>
+                                <td th:text="${log.detalles}" class="text-truncate" style="max-width: 300px;"></td>
+                                <td th:text="${log.ipAddress}"></td>
+                                <!-- Placeholder, se llenará con JS si hay user agent -->
+                                <td class="text-end">
+                                    <button type="button"
+                                        class="btn btn-ghost btn-icon btn-sm rounded-circle btn-view-log"
+                                        data-bs-toggle="modal" data-bs-target="#detalleLogModal" th:attr="data-log='{' +
+                                                '&quot;fecha&quot;: &quot;' + ${#temporals.format(log.fechaHora, 'dd/MM/yyyy HH:mm:ss')} + '&quot;,' +
+                                                '&quot;usuario&quot;: &quot;' + ${log.usuario.persona.nombres + ' ' + log.usuario.persona.apellidos} + '&quot;,' +
+                                                '&quot;rol&quot;: &quot;' + ${log.usuario.rol.nombreRol} + '&quot;,' +
+                                                '&quot;accion&quot;: &quot;' + ${log.accion.name()} + '&quot;,' +
+                                                '&quot;modulo&quot;: &quot;' + ${log.tablaAfectada} + '&quot;,' +
+                                                '&quot;ip&quot;: &quot;' + ${log.ipAddress} + '&quot;,' +
+                                                '&quot;valoresAnteriores&quot;: &quot;' + ${#strings.escapeJavaScript(log.valoresAnteriores)} + '&quot;,' +
+                                                '&quot;valoresNuevos&quot;: &quot;' + ${#strings.escapeJavaScript(log.valoresNuevos)} + '&quot;,' +
+                                                '&quot;detalles&quot;: &quot;' + ${#strings.escapeJavaScript(log.detalles)} + '&quot;' +
+                                            '}'">
+                                        <i class="ti ti-eye fs-5 text-primary"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </th:block>
+
+                        <!-- Bloque de datos ficticios (visible si la página está vacía) -->
+                        <th:block th:if="${page.empty}">
+                            <tr>
+                                <td><small>09/10/2025 15:30:10</small></td>
+                                <td>Yelsen Gonzales Huaromo</td>
+                                <td><span class="badge bg-success-subtle text-success-emphasis">Crear</span></td>
+                                <td>usuarios</td>
+                                <td class="text-truncate" style="max-width: 300px;">Se creó el nuevo usuario 'jperez'
+                                </td>
+                                <td>200.48.225.10 / Chrome 120, Windows</td>
+                                <td class="text-end"><button type="button" class="btn btn-ghost btn-icon btn-sm rounded-circle" data-bs-toggle="modal" data-bs-target="#detalleLogModal">
+                                    <i class="ti ti-eye fs-5 text-primary"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><small>09/10/2025 15:25:45</small></td>
+                                <td>Juan Carlos García</td>
+                                <td><span class="badge bg-info-subtle text-info-emphasis">Editar</span></td>
+                                <td>activos</td>
+                                <td class="text-truncate" style="max-width: 300px;">Se modificó el activo con código
+                                    'LAP-00123'</td>
+                                <td>192.168.1.34 / Firefox 118, Linux</td>
+                                <td class="text-end"><button type="button" class="btn btn-ghost btn-icon btn-sm rounded-circle" data-bs-toggle="modal" data-bs-target="#detalleLogModal">
+                                    <i class="ti ti-eye fs-5 text-primary"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><small>09/10/2025 15:20:05</small></td>
+                                <td>Maria Elena Rodríguez</td>
+                                <td><span class="badge bg-danger-subtle text-danger-emphasis">Eliminar</span></td>
+                                <td>licencias</td>
+                                <td class="text-truncate" style="max-width: 300px;">Se eliminó la licencia de 'Adobe
+                                    Photoshop'</td>
+                                <td>190.112.50.8 / Safari, MacOS</td>
+                                <td class="text-end"><button type="button" class="btn btn-ghost btn-icon btn-sm rounded-circle" data-bs-toggle="modal" data-bs-target="#detalleLogModal">
+                                    <i class="ti ti-eye fs-5 text-primary"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><small>09/10/2025 14:55:12</small></td>
+                                <td>Yelsen Gonzales Huaromo</td>
+                                <td><span class="badge bg-secondary-subtle text-secondary-emphasis">Acceder</span></td>
+                                <td>dashboard</td>
+                                <td class="text-truncate" style="max-width: 300px;">Acceso al panel principal del
+                                    sistema</td>
+                                <td>200.48.225.10 / Chrome 120, Windows</td>
+                                <td class="text-end"><button type="button" class="btn btn-ghost btn-icon btn-sm rounded-circle" data-bs-toggle="modal" data-bs-target="#detalleLogModal">
+                                    <i class="ti ti-eye fs-5 text-primary"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><small>09/10/2025 14:10:30</small></td>
+                                <td>Carlos Alberto Solis</td>
+                                <td><span class="badge bg-success-subtle text-success-emphasis">Crear</span></td>
+                                <td>mantenimientos</td>
+                                <td class="text-truncate" style="max-width: 300px;">Nuevo mantenimiento programado para
+                                    'SRV-DB-01'</td>
+                                <td>192.168.1.50 / Edge, Windows</td>
+                                <td class="text-end"><button type="button" class="btn btn-ghost btn-icon btn-sm rounded-circle" data-bs-toggle="modal" data-bs-target="#detalleLogModal">
+                                    <i class="ti ti-eye fs-5 text-primary"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><small>09/10/2025 13:45:00</small></td>
+                                <td>Ana Torres Vega</td>
+                                <td><span class="badge bg-info-subtle text-info-emphasis">Editar</span></td>
+                                <td>roles</td>
+                                <td class="text-truncate" style="max-width: 300px;">Se actualizaron los permisos del rol
+                                    'EDITOR'</td>
+                                <td>190.112.50.22 / Chrome, Android</td>
+                                <td class="text-end"><button type="button" class="btn btn-ghost btn-icon btn-sm rounded-circle" data-bs-toggle="modal" data-bs-target="#detalleLogModal">
+                                    <i class="ti ti-eye fs-5 text-primary"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><small>09/10/2025 12:30:15</small></td>
+                                <td>Yelsen Gonzales Huaromo</td>
+                                <td><span class="badge bg-danger-subtle text-danger-emphasis">Eliminar</span></td>
+                                <td>equipos</td>
+                                <td class="text-truncate" style="max-width: 300px;">Se dio de baja el equipo 'MON-0045'
+                                </td>
+                                <td>200.48.225.10 / Chrome 120, Windows</td>
+                                <td class="text-end"><button type="button" class="btn btn-ghost btn-icon btn-sm rounded-circle" data-bs-toggle="modal" data-bs-target="#detalleLogModal">
+                                    <i class="ti ti-eye fs-5 text-primary"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><small>09/10/2025 11:05:55</small></td>
+                                <td>Juan Carlos García</td>
+                                <td><span class="badge bg-secondary-subtle text-secondary-emphasis">Generar</span></td>
+                                <td>reportes</td>
+                                <td class="text-truncate" style="max-width: 300px;">Generó el reporte de inventario de
+                                    activos</td>
+                                <td>192.168.1.34 / Firefox 118, Linux</td>
+                                <td class="text-end"><button type="button" class="btn btn-ghost btn-icon btn-sm rounded-circle" data-bs-toggle="modal" data-bs-target="#detalleLogModal">
+                                    <i class="ti ti-eye fs-5 text-primary"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><small>09/10/2025 10:40:21</small></td>
+                                <td>Maria Elena Rodríguez</td>
+                                <td><span class="badge bg-success-subtle text-success-emphasis">Crear</span></td>
+                                <td>proveedores</td>
+                                <td class="text-truncate" style="max-width: 300px;">Se registró el nuevo proveedor
+                                    'TecnoImport S.A.C.'</td>
+                                <td>190.112.50.8 / Safari, MacOS</td>
+                                <td class="text-end"><button type="button" class="btn btn-ghost btn-icon btn-sm rounded-circle" data-bs-toggle="modal" data-bs-target="#detalleLogModal">
+                                    <i class="ti ti-eye fs-5 text-primary"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><small>09/10/2025 10:15:00</small></td>
+                                <td>Yelsen Gonzales Huaromo</td>
+                                <td><span class="badge bg-info-subtle text-info-emphasis">Editar</span></td>
+                                <td>configuracion</td>
+                                <td class="text-truncate" style="max-width: 300px;">Se cambió el tiempo de expiración de
+                                    sesión</td>
+                                <td>200.48.225.10 / Chrome 120, Windows</td>
+                                <td class="text-end"><button type="button" class="btn btn-ghost btn-icon btn-sm rounded-circle" data-bs-toggle="modal" data-bs-target="#detalleLogModal">
+                                    <i class="ti ti-eye fs-5 text-primary"></i></button>
+                                </td>
+                            </tr>
+                        </th:block>
+                        <tr th:if="${page.empty and false}"> <!-- Ocultar mensaje de "no encontrados" temporalmente -->
+                            <td colspan="7" class="text-center py-4">No se encontraron registros de auditoría.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="card-footer" th:if="${!page.empty}">
+            <div th:replace="~{fragments/pagination :: pagination(${page}, '/sistema/auditoria', ${params})}"></div>
+        </div>
+    </div>
+
+    <div th:replace="~{sistema/auditoria/DetalleModal :: modal}"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const queryInput = document.getElementById('queryInput');
+            const filterForm = document.getElementById('filterForm');
+            let debounceTimer;
+
+            if (queryInput) {
+                queryInput.addEventListener('input', function () {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => filterForm.submit(), 500); // Espera 500ms para buscar
+                });
+            }
+
+            // Lógica para el modal de detalles
+            const detalleLogModal = document.getElementById('detalleLogModal');
+            if (detalleLogModal) {
+                detalleLogModal.addEventListener('show.bs.modal', event => {
+                    const button = event.relatedTarget;
+                    const logData = JSON.parse(button.getAttribute('data-log'));
+
+                    // Poblar el modal con los datos
+                    document.getElementById('modalUsuario').textContent = logData.usuario;
+                    document.getElementById('modalRol').textContent = logData.rol;
+                    document.getElementById('modalAccion').textContent = logData.accion;
+                    document.getElementById('modalModulo').textContent = logData.modulo;
+                    document.getElementById('modalIp').textContent = logData.ip;
+                    document.getElementById('modalFecha').textContent = logData.fecha;
+                    document.getElementById('modalDetalles').textContent = logData.detalles;
+
+                    // Para los valores JSON, si no existen, mostrar un mensaje
+                    const valoresAnteriores = logData.valoresAnteriores ? JSON.stringify(JSON.parse(logData.valoresAnteriores), null, 2) : 'No disponible';
+                    const valoresNuevos = logData.valoresNuevos ? JSON.stringify(JSON.parse(logData.valoresNuevos), null, 2) : 'No disponible';
+
+                    document.getElementById('modalValoresAnteriores').textContent = valoresAnteriores;
+                    document.getElementById('modalValoresNuevos').textContent = valoresNuevos;
+                });
+            }
+
+        });
+    </script>
+</body>
+
+</html>

@@ -234,13 +234,13 @@
                         <a class='nav-link' th:href="@{/sistema/usuarios}">Usuarios del sistema</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('ROLES_LEER')">
-                        <a class='nav-link' th:href="@{/sistema/roles}">Roles</a>
+                        <a class='nav-link' th:href="@{/seguridad/roles}">Roles</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('PERMISOS_LEER')">
-                        <a class='nav-link' th:href="@{/sistema/permisos}">Permisos</a>
+                        <a class='nav-link' th:href="@{/seguridad/permisos}">Permisos</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('POLITICAS_LEER')">
-                        <a class='nav-link' th:href="@{/sistema/politicas}">Politicas</a>
+                        <a class='nav-link' th:href="@{/seguridad/politicas}">Politicas</a>
                     </li>
                 </ul>
             </li>

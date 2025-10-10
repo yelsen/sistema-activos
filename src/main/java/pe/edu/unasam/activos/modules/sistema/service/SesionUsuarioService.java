@@ -12,7 +12,7 @@ import pe.edu.unasam.activos.common.enums.EstadoSesion;
 import pe.edu.unasam.activos.common.exception.NotFoundException;
 import pe.edu.unasam.activos.modules.sistema.domain.SesionUsuario;
 import pe.edu.unasam.activos.modules.sistema.domain.Usuario;
-import pe.edu.unasam.activos.modules.sistema.dto.SesionUsuarioResponse;
+import pe.edu.unasam.activos.modules.sistema.dto.SesionUsuarioDTO;
 import pe.edu.unasam.activos.modules.personas.domain.Persona;
 import pe.edu.unasam.activos.modules.sistema.repository.SesionUsuarioRepository;
 import jakarta.persistence.criteria.Expression;
@@ -32,7 +32,7 @@ public class SesionUsuarioService {
     private final SesionUsuarioRepository sesionUsuarioRepository;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-    public Page<SesionUsuarioResponse> getSesiones(String query, EstadoSesion estado, Pageable pageable) {
+    public Page<SesionUsuarioDTO.Response> getSesiones(String query, EstadoSesion estado, Pageable pageable) {
         log.info("Buscando sesiones con query: '{}', estado: '{}'", query, estado);
 
         Specification<SesionUsuario> spec = (root, criteriaQuery, criteriaBuilder) -> {
@@ -92,12 +92,12 @@ public class SesionUsuarioService {
         log.info("Cierre masivo completado.");
     }
 
-    private SesionUsuarioResponse convertToDto(SesionUsuario sesion) {
+    private SesionUsuarioDTO.Response convertToDto(SesionUsuario sesion) {
         String nombreCompleto = (sesion.getUsuario() != null && sesion.getUsuario().getPersona() != null)
                 ? sesion.getUsuario().getPersona().getNombres() + " " + sesion.getUsuario().getPersona().getApellidos()
                 : "Usuario Desconocido";
 
-        return SesionUsuarioResponse.builder()
+        return SesionUsuarioDTO.Response.builder()
                 .idSesionUsuario(sesion.getIdSesionUsuario())
                 .nombreCompleto(nombreCompleto)
                 .userAgent(sesion.getUserAgent())

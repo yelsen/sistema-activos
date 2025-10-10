@@ -1,12 +1,95 @@
 package pe.edu.unasam.activos.modules.sistema.service;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import pe.edu.unasam.activos.common.exception.NotFoundException;
 import pe.edu.unasam.activos.modules.sistema.domain.Usuario;
+import pe.edu.unasam.activos.modules.sistema.dto.UsuarioDTO;
+import pe.edu.unasam.activos.modules.personas.repository.PersonaRepository;
+import pe.edu.unasam.activos.modules.sistema.repository.RolRepository;
+import pe.edu.unasam.activos.modules.sistema.repository.UsuarioRepository;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-public interface UsuarioService {
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class UsuarioService {
 
-    Optional<Usuario> findByUsername(String username);
+    private final UsuarioRepository usuarioRepository;
+    private final PersonaRepository personaRepository;
+    private final RolRepository rolRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    Usuario save(Usuario usuario);
+    @Transactional(readOnly = true)
+    public Page<UsuarioDTO.Response> getAllUsuarios(Pageable pageable) {
+        return usuarioRepository.findAll(pageable).map(this::convertToDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<UsuarioDTO.Response> getUsuarioById(Integer id) {
+        return usuarioRepository.findById(id).map(this::convertToDto);
+    }
+
+    public UsuarioDTO.Response createUsuario(UsuarioDTO.Request request) {
+        var persona = personaRepository.findById(request.getDocumentoPersona())
+                .orElseThrow(() -> new NotFoundException("Persona no encontrada"));
+        var rol = rolRepository.findById(request.getIdRol())
+                .orElseThrow(() -> new NotFoundException("Rol no encontrado"));
+
+        Usuario usuario = new Usuario();
+        usuario.setUsuario(request.getUsuario());
+        usuario.setContrasena(passwordEncoder.encode(request.getContrasena()));
+        usuario.setDebeCambiarPassword(request.getDebeCambiarPassword());
+        usuario.setEstadoUsuarios(request.getEstadoUsuarios());
+        usuario.setPersona(persona);
+        usuario.setRol(rol);
+
+        return convertToDto(usuarioRepository.save(usuario));
+    }
+
+    public UsuarioDTO.Response updateUsuario(Integer id, UsuarioDTO.Request request) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
+        var persona = personaRepository.findById(request.getDocumentoPersona())
+                .orElseThrow(() -> new NotFoundException("Persona no encontrada"));
+        var rol = rolRepository.findById(request.getIdRol())
+                .orElseThrow(() -> new NotFoundException("Rol no encontrado"));
+
+        usuario.setUsuario(request.getUsuario());
+        if (request.getContrasena() != null && !request.getContrasena().isEmpty()) {
+            usuario.setContrasena(passwordEncoder.encode(request.getContrasena()));
+        }
+        usuario.setDebeCambiarPassword(request.getDebeCambiarPassword());
+        usuario.setEstadoUsuarios(request.getEstadoUsuarios());
+        usuario.setPersona(persona);
+        usuario.setRol(rol);
+
+        return convertToDto(usuarioRepository.save(usuario));
+    }
+
+    public void deleteUsuario(Integer id) {
+        usuarioRepository.deleteById(id);
+    }
+
+    private UsuarioDTO.Response convertToDto(Usuario usuario) {
+        var dto = new UsuarioDTO.Response();
+        dto.setIdUsuario(usuario.getIdUsuario());
+        dto.setUsuario(usuario.getUsuario());
+        dto.setUltimoAcceso(usuario.getUltimoAcceso() != null ? usuario.getUltimoAcceso().format(DateTimeFormatter.ofPattern("HH:mm:ss")) : "-");
+        dto.setIntentosFallidos(usuario.getIntentosFallidos());
+        dto.setBloqueadoHasta(usuario.getBloqueadoHasta());
+        dto.setDebeCambiarPassword(usuario.getDebeCambiarPassword());
+        dto.setEstadoUsuarios(usuario.getEstadoUsuarios());
+        dto.setNombrePersona(usuario.getPersona() != null ? usuario.getPersona().getNombres() + " " + usuario.getPersona().getApellidos() : "N/A");
+        dto.setDocumentoPersona(usuario.getPersona() != null ? usuario.getPersona().getDocumento() : "N/A");
+        dto.setNombreRol(usuario.getRol() != null ? usuario.getRol().getNombreRol() : "N/A");
+        dto.setIdRol(usuario.getRol() != null ? usuario.getRol().getIdRol() : null);
+        return dto;
+    }
 }

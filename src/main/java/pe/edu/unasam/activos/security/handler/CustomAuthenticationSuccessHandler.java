@@ -27,7 +27,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Usuario usuario = usuarioRepository.findByUsuarioWithRelations(userDetails.getUsername())
                 .orElseThrow(() -> new IllegalStateException("Usuario autenticado no encontrado."));
         sesionService.crearSesion(usuario, request.getSession().getId(), request.getHeader("User-Agent"));
-        setDefaultTargetUrl("/dashboard");
+        setDefaultTargetUrl("/home");
         super.onAuthenticationSuccess(request, response, authentication);
     }
 }

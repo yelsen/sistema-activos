@@ -28,7 +28,7 @@ public class ApiManagementController {
     private final ApiService apiService;
     
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR', 'USUARIO')")
+    @PreAuthorize("hasAuthority('APIS_LEER')")
     public ResponseEntity<ApiResponse<List<ApiDto>>> getAll() {
         log.info("API REST: Obteniendo todas las APIs");
         List<ApiDto> apis = apiService.findAll();
@@ -43,7 +43,7 @@ public class ApiManagementController {
     }
     
     @GetMapping("/paginated")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR', 'USUARIO')")
+    @PreAuthorize("hasAuthority('APIS_LEER')")
     public ResponseEntity<ApiResponse<Page<ApiDto>>> getAllPaginated(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -68,7 +68,7 @@ public class ApiManagementController {
     }
     
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR', 'USUARIO')")
+    @PreAuthorize("hasAuthority('APIS_VER')")
     public ResponseEntity<ApiResponse<ApiDto>> getById(@PathVariable Integer id) {
         log.info("API REST: Obteniendo API por ID: {}", id);
         ApiDto api = apiService.findById(id);
@@ -83,7 +83,7 @@ public class ApiManagementController {
     }
     
     @GetMapping("/search")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR', 'USUARIO')")
+    @PreAuthorize("hasAuthority('APIS_LEER')")
     public ResponseEntity<ApiResponse<List<ApiDto>>> search(@RequestParam String nombre) {
         
         log.info("API REST: Buscando APIs por nombre: {}", nombre);
@@ -99,7 +99,7 @@ public class ApiManagementController {
     }
     
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAuthority('APIS_CREAR')")
     public ResponseEntity<ApiResponse<ApiDto>> create(@Valid @RequestBody ApiRequest request) {
         
         log.info("API REST: Creando nueva API");
@@ -115,7 +115,7 @@ public class ApiManagementController {
     }
     
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAuthority('APIS_EDITAR')")
     public ResponseEntity<ApiResponse<ApiDto>> update(
             @PathVariable Integer id,
             @Valid @RequestBody ApiRequest request) {
@@ -133,7 +133,7 @@ public class ApiManagementController {
     }
     
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('APIS_ELIMINAR')")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Integer id) {
         log.info("API REST: Eliminando API ID: {}", id);
         apiService.delete(id);
@@ -149,7 +149,7 @@ public class ApiManagementController {
     // ==================== ENDPOINTS DE INTEGRACIONES ====================
     
     @GetMapping("/{id}/integraciones")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR', 'USUARIO')")
+    @PreAuthorize("hasAuthority('APIS_LEER')")
     public ResponseEntity<ApiResponse<List<ApiIntegracionDto>>> getIntegracionesByApi(@PathVariable Integer id) {
         log.info("API REST: Obteniendo integraciones de la API ID: {}", id);
         List<ApiIntegracionDto> integraciones = apiService.findIntegracionesByApi(id);
@@ -164,7 +164,7 @@ public class ApiManagementController {
     }
     
     @GetMapping("/aplicativo/{idAplicativo}/integraciones")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR', 'USUARIO')")
+    @PreAuthorize("hasAuthority('APIS_LEER')")
     public ResponseEntity<ApiResponse<List<ApiIntegracionDto>>> getIntegracionesByAplicativo(
             @PathVariable Integer idAplicativo) {
         
@@ -181,7 +181,7 @@ public class ApiManagementController {
     }
     
     @PostMapping("/integraciones")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAuthority('APIS_CREAR')")
     public ResponseEntity<ApiResponse<ApiIntegracionDto>> createIntegracion(
             @Valid @RequestBody ApiIntegracionDto dto) {
         
@@ -198,7 +198,7 @@ public class ApiManagementController {
     }
     
     @DeleteMapping("/integraciones/{idApi}/{idAplicativo}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAuthority('APIS_ELIMINAR')")
     public ResponseEntity<ApiResponse<Void>> deleteIntegracion(
             @PathVariable Integer idApi,
             @PathVariable Integer idAplicativo) {

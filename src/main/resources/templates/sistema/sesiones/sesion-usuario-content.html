@@ -112,7 +112,7 @@
                 </div>
                 <!-- Pagination -->
                 <div class="card-footer" th:if="${!page.empty}">
-                    <div th:replace="~{fragments/pagination :: pagination(${page}, '/sistema/sesiones', ${query}, ${estado})}"></div>
+                    <div th:replace="~{fragments/pagination :: pagination(${page}, '/sistema/sesiones', ${params})}"></div>
                 </div>
             </div>
         </div>

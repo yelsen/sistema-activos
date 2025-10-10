@@ -7,7 +7,7 @@ import pe.edu.unasam.activos.initialization.AbstractDataLoader;
 import pe.edu.unasam.activos.modules.sistema.domain.Accion;
 import pe.edu.unasam.activos.modules.sistema.domain.ModuloSistema;
 import pe.edu.unasam.activos.modules.sistema.domain.Permiso;
-import pe.edu.unasam.activos.modules.sistema.repository.AccionRepository;
+import pe.edu.unasam.activos.modules.sistema.repository.AccionRepository; 
 import pe.edu.unasam.activos.modules.sistema.repository.ModuloSistemaRepository;
 import pe.edu.unasam.activos.modules.sistema.repository.PermisoRepository;
 
@@ -35,7 +35,7 @@ public class PermisoDataLoader extends AbstractDataLoader {
 
         @Override
         protected void loadData() {
-                List<ModuloSistema> modulos = moduloSistemaRepository.findAll();
+                List<ModuloSistema> modulos = moduloSistemaRepository.findAllByOrderByOrdenModuloAsc();
                 // Usar un Map para búsqueda rápida O(1) en lugar de O(n) con stream().filter()
                 Map<String, Accion> accionesMap = accionRepository.findAll().stream()
                                 .collect(Collectors.toMap(Accion::getCodigoAccion, accion -> accion));

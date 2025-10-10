@@ -59,7 +59,8 @@ public class SecurityConfig {
         @Bean
         @Order(2)
         public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
-                http.headers(headers -> headers
+                http.securityMatcher("/**")
+                                .headers(headers -> headers
                                 .frameOptions(frameOptions -> frameOptions.sameOrigin())
                                 .contentSecurityPolicy(csp -> csp.policyDirectives(
                                                 "script-src 'self' 'unsafe-inline'; object-src 'none';"))
@@ -77,7 +78,7 @@ public class SecurityConfig {
                                                 .permitAll()
                                                 .requestMatchers(
                                                                 "/",
-                                                                "/login",
+                                                                "/login**",
                                                                 "/logout",
                                                                 "/error/**",
                                                                 "/uploads/**",
@@ -93,13 +94,13 @@ public class SecurityConfig {
                                                 .permitAll())
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")
-                                                .logoutSuccessUrl("/?logout=true")
+                                                .logoutSuccessUrl("/login?logout=true")
                                                 .invalidateHttpSession(true)
                                                 .deleteCookies("JSESSIONID")
                                                 .permitAll())
                                 .sessionManagement(session -> session
-                                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                                                .maximumSessions(1));
+                                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                                .authenticationProvider(authenticationProvider()); // ¡Esta es la línea clave!
 
                 return http.build();
         }
@@ -114,6 +115,7 @@ public class SecurityConfig {
                 DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
                 provider.setUserDetailsService(userDetailsService);
                 provider.setPasswordEncoder(passwordEncoder());
+                provider.setHideUserNotFoundExceptions(false);
                 return provider;
         }
 

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- Modal Detalle Log -->
+    <div th:fragment="modal" class="modal fade" id="detalleLogModal" tabindex="-1" aria-labelledby="detalleLogModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detalleLogModalLabel"><i class="ti ti-file-text me-2"></i> Detalle
+                        Completo del Registro</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="fw-bold">Usuario:</label>
+                            <p class="mb-0" id="modalUsuario"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold">Rol:</label>
+                            <p class="mb-0" id="modalRol"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="fw-bold">Acción Realizada:</label>
+                            <p class="mb-0" id="modalAccion"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold">Módulo:</label>
+                            <p class="mb-0" id="modalModulo"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="fw-bold">Dirección IP:</label>
+                            <p class="mb-0" id="modalIp"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold">Fecha y Hora:</label>
+                            <p class="mb-0" id="modalFecha"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="fw-bold">Detalles:</label>
+                            <p class="mb-0" id="modalDetalles"></p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="fw-bold">Datos Anteriores (JSON):</label>
+                            <pre class="bg-light p-2 rounded small"><code id="modalValoresAnteriores"></code></pre>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="fw-bold">Datos Nuevos (JSON):</label>
+                            <pre class="bg-light p-2 rounded small"><code id="modalValoresNuevos"></code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-outline-primary">
+                        <i class="ti ti-printer me-1"></i> Imprimir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

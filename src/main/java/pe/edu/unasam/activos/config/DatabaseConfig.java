@@ -5,7 +5,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = "pe.edu.unasam.activos.modules.*.repository")
+@EnableJpaRepositories(basePackages = {
+    "pe.edu.unasam.activos.modules", 
+    "pe.edu.unasam.activos.audit.repository"
+})
 public class DatabaseConfig {
 
 }

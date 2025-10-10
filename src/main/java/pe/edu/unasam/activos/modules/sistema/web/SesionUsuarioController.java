@@ -11,10 +11,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pe.edu.unasam.activos.common.enums.EstadoSesion;
 import pe.edu.unasam.activos.modules.sistema.service.SesionUsuarioService;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Controller
 @RequestMapping("/sistema/sesiones")
+@PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
 public class SesionUsuarioController {
 
@@ -26,9 +28,15 @@ public class SesionUsuarioController {
                                @RequestParam(required = false) String q,
                                @RequestParam(required = false) EstadoSesion estado,
                                @PageableDefault(size = 10, sort = "fechaInicio") Pageable pageable) {
+        
+        java.util.Map<String, Object> params = new HashMap<>();
+        params.put("q", q);
+        if (estado != null) {
+            params.put("estado", estado.name());
+        }
+
         model.addAttribute("page", sesionUsuarioService.getSesiones(q, estado, pageable));
-        model.addAttribute("query", q);
-        model.addAttribute("estado", estado != null ? estado.name() : null);
+        model.addAttribute("params", params);
         model.addAttribute("estados", EstadoSesion.values());
         return "sistema/sesiones/list";
     } 
@@ -46,6 +54,6 @@ public class SesionUsuarioController {
     public String closeMultipleSessions(@RequestParam("ids") List<Integer> ids, RedirectAttributes redirectAttributes) {
         sesionUsuarioService.closeMultipleSessions(ids);
         redirectAttributes.addFlashAttribute("message", "Las sesiones seleccionadas han sido cerradas.");
-        return "redirect:/sistema/sesiones";
+        return "redirect:/sistema/sesiones?success=true";
     }
 }

@@ -18,7 +18,7 @@ public class PermissionEvaluator {
     private final PermisoService permisoService;
     private final UsuarioRepository usuarioRepository;
 
-    public boolean hasPermission(Authentication authentication, String codigoPermiso, String tipoAcceso) {
+    public boolean hasPermission(Authentication authentication, String codigoPermiso) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
         }
@@ -37,18 +37,14 @@ public class PermissionEvaluator {
 
         Usuario usuario = usuarioOpt.get();
 
-        boolean esAdminGeneral = userDetails.getAuthorities().stream().anyMatch(
-                auth -> auth.getAuthority()
-                        .equals("ADMIN_GENERAL"));
-
-        if (esAdminGeneral) {
+        // Si el rol del usuario tiene nivel de acceso 1 (el más alto), tiene todos los permisos.
+        if (usuario.getRol() != null && usuario.getRol().getNivelAcceso() != null && usuario.getRol().getNivelAcceso() == 1) {
             return true;
         }
 
         return permisoService.usuarioTienePermiso(
                 usuario.getIdUsuario(),
-                codigoPermiso,
-                tipoAcceso);
+                codigoPermiso);
     }
 
     public boolean hasAnyRole(Authentication authentication, String... roles) {
@@ -73,27 +69,26 @@ public class PermissionEvaluator {
         return false;
     }
 
-    @SuppressWarnings("unlikely-arg-type")
     public boolean isOwnerOrAdmin(Authentication authentication, Long usuarioId) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
         }
 
-        if (!(authentication.getPrincipal() instanceof UserDetails)) {
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof UserDetails)) {
             return false;
         }
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        UserDetails userDetails = (UserDetails) principal;
         String username = userDetails.getUsername();
 
-        boolean esAdmin = userDetails.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ADMIN_GENERAL"));
-
-        if (esAdmin) {
-            return true;
-        }
-        
         Optional<Usuario> usuarioOpt = usuarioRepository.findByUsuario(username);
-        return usuarioOpt.isPresent() && usuarioOpt.get().getIdUsuario().equals(usuarioId);
+        return usuarioOpt.map(usuario -> {
+            // Es admin? (nivel 1)
+            boolean isAdmin = usuario.getRol() != null && usuario.getRol().getNivelAcceso() != null && usuario.getRol().getNivelAcceso() == 1;
+            // Es el dueño del recurso? (Comparando los valores numéricos)
+            boolean isOwner = usuario.getIdUsuario().longValue() == usuarioId;
+            return isAdmin || isOwner;
+        }).orElse(false);
     }
 }

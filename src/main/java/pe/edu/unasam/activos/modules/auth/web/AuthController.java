@@ -37,6 +37,11 @@ public class AuthController {
         return "auth/login";
     }
     
+    @GetMapping("/home")
+    public String home() {
+        return "index";
+    }
+
     @GetMapping("/auth/logout")
     public String logout(HttpSession session, RedirectAttributes redirectAttributes) {
         String token = (String) session.getAttribute("token");
@@ -52,7 +57,7 @@ public class AuthController {
         session.invalidate();
         redirectAttributes.addFlashAttribute("success", "Sesión cerrada exitosamente");
         
-        return "redirect:/?logout=true";
+        return "redirect:/login?logout=true";
     }
     
     @GetMapping("/auth/profile")
@@ -63,7 +68,7 @@ public class AuthController {
             model.addAttribute("userInfo", userInfo);
             return "auth/profile";
         }
-        return "redirect:/";
+        return "redirect:/home";
     }
     
     @GetMapping("/auth/cambiar-password")
@@ -91,7 +96,7 @@ public class AuthController {
             
             redirectAttributes.addFlashAttribute("success", 
                     "Contraseña cambiada exitosamente");
-            return "redirect:/dashboard";
+            return "redirect:/home";
             
         } catch (Exception e) {
             log.error("Error al cambiar contraseña", e);

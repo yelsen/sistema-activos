@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import pe.edu.unasam.activos.modules.sistema.domain.Rol;
 import org.springframework.stereotype.Repository;
 import pe.edu.unasam.activos.modules.sistema.domain.Usuario;
 import pe.edu.unasam.activos.common.enums.EstadoUsuario;
@@ -28,4 +29,10 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer>, JpaS
 
     @Query("SELECT u FROM Usuario u LEFT JOIN FETCH u.persona WHERE u.estadoUsuarios = :estado")
     List<Usuario> findAllByEstadoWithPersona(@Param("estado") EstadoUsuario estado);
+
+    long countByRol(Rol rol);
+
+    @Query("SELECT r.idRol, COUNT(u.idUsuario) FROM Usuario u JOIN u.rol r WHERE r.idRol IN :rolIds GROUP BY r.idRol")
+    List<Object[]> countUsersByRolIds(@Param("rolIds") List<Integer> rolIds);
+
 }

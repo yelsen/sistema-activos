@@ -2,7 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <body>
-    <nav th:fragment="pagination(page, url, query, estado)"
+    <nav th:fragment="pagination(page, url, params)"
         class="d-flex flex-wrap justify-content-between align-items-center" aria-label="Navegación de página">
         <!-- Información de resultados -->
         <div class="text-secondary small mb-2 mb-md-0">
@@ -18,8 +18,7 @@
         <div class="d-flex align-items-center">
             <!-- Selector de tamaño de página -->
             <form th:action="@{${url}}" method="get" class="d-flex align-items-center me-3">
-                <input type="hidden" name="q" th:value="${query}" />
-                <input type="hidden" name="estado" th:value="${estado}" />
+                <input type="hidden" th:each="param : ${params}" th:name="${param.key}" th:value="${param.value}">
                 <label for="pageSize" class="form-label text-nowrap me-2 mb-0 small">Mostrar:</label>
                 <select id="pageSize" name="size" class="form-select" data-choices
                     onchange="this.form.submit()">
@@ -33,7 +32,7 @@
                 <!-- Página Anterior -->
                 <li class="page-item" th:classappend="${page.first ? 'disabled' : ''}">
                     <a class="page-link"
-                        th:href="@{${url}(page=${page.number - 1}, size=${page.size}, q=${query}, estado=${estado})}">
+                        th:href="@{${url}(page=${page.number - 1}, size=${page.size}, ${params})}">
                         Anterior
                     </a>
                 </li>
@@ -47,14 +46,14 @@
 
                     <li class="page-item" th:if="${startPage > 0}">
                         <a class="page-link"
-                            th:href="@{${url}(page=0, size=${page.size}, q=${query}, estado=${estado})}">1</a>
+                            th:href="@{${url}(page=0, size=${page.size}, ${params})}">1</a>
                     </li>
                     <li class="page-item disabled" th:if="${startPage > 1}"><span class="page-link">...</span></li>
 
                     <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}"
                         th:classappend="${i == currentPage ? 'active' : ''}">
                         <a class="page-link"
-                            th:href="@{${url}(page=${i}, size=${page.size}, q=${query}, estado=${estado})}"
+                            th:href="@{${url}(page=${i}, size=${page.size}, ${params})}"
                             th:text="${i + 1}"></a>
                     </li>
 
@@ -62,7 +61,7 @@
                             class="page-link">...</span></li>
                     <li class="page-item" th:if="${endPage < totalPages - 1}">
                         <a class="page-link"
-                            th:href="@{${url}(page=${totalPages - 1}, size=${page.size}, q=${query}, estado=${estado})}"
+                            th:href="@{${url}(page=${totalPages - 1}, size=${page.size}, ${params})}"
                             th:text="${totalPages}"></a>
                     </li>
                 </th:block>
@@ -70,7 +69,7 @@
                 <!-- Página Siguiente -->
                 <li class="page-item" th:classappend="${page.last ? 'disabled' : ''}">
                     <a class="page-link"
-                        th:href="@{${url}(page=${page.number + 1}, size=${page.size}, q=${query}, estado=${estado})}">
+                        th:href="@{${url}(page=${page.number + 1}, size=${page.size}, ${params})}">
                         Siguiente
                     </a>
                 </li>

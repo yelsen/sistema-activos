@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Bienvenido')}"></head>
+
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <div id="content" class="position-relative h-100 d-flex flex-column">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <div class="custom-container flex-grow-1 d-flex flex-column">
+            <div class="flex-grow-1">
+                <h1 class="text-center mt-5">Hola Mundo</h1>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/search-modal :: searchModal}"></div>
+    <div th:replace="~{fragments/notification-panel :: notificationPanel}"></div>
+
+    <th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
+</body>
+
+</html>
