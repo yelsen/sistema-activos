@@ -65,16 +65,9 @@ public class SecurityConfig {
                                 .contentSecurityPolicy(csp -> csp.policyDirectives(
                                                 "script-src 'self' 'unsafe-inline'; object-src 'none';"))
                                 .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true)
-                                                .maxAgeInSeconds(31536000)))
+                                                .maxAgeInSeconds(31536000))) // Fin de la configuración de headers
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                                                .permitAll()
-                                                .requestMatchers(
-                                                                "/libs/**",
-                                                                "/fonts/**",
-                                                                "/images/**",
-                                                                "/css/**",
-                                                                "/js/**")
                                                 .permitAll()
                                                 .requestMatchers(
                                                                 "/",
@@ -82,7 +75,14 @@ public class SecurityConfig {
                                                                 "/logout",
                                                                 "/error/**",
                                                                 "/uploads/**",
-                                                                "/forgot-password")
+                                                                "/forgot-password",
+                                                                // Rutas de recursos estáticos
+                                                                "/css/**", 
+                                                                "/js/**",
+                                                                "/images/**", 
+                                                                "/fonts/**", 
+                                                                "/libs/**"
+                                                                )
                                                 .permitAll()
                                                 .anyRequest()
                                                 .authenticated())

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ModuloService {
+public class ModuloSistemaService {
 
     private final ModuloSistemaRepository moduloRepository;
 

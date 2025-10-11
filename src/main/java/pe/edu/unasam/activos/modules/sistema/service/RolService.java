@@ -62,7 +62,7 @@ public class RolService {
         Map<Integer, Long> permissionCounts = rolPermisoRepository.countPermissionsByRolIds(rolIds).stream()
                 .collect(Collectors.toMap(result -> (Integer) result[0], result -> (Long) result[1]));
 
-        return rolesPage.map(rol -> convertToDto(rol,
+        return rolesPage.map(rol -> convertToDtoSimple(rol,
                 userCounts.getOrDefault(rol.getIdRol(), 0L),
                 permissionCounts.getOrDefault(rol.getIdRol(), 0L)));
     }
@@ -111,8 +111,18 @@ public class RolService {
         if (!rolRepository.existsById(id)) {
             throw new NotFoundException("Rol no encontrado con ID: " + id);
         }
-        rolPermisoRepository.deleteByRol_IdRol(id); // Delete associated permissions first
+        rolPermisoRepository.deleteByRol_IdRol(id);
         rolRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PermisoDTO.Response> getPermisosPorRol(Integer idRol) {
+        List<RolPermiso> rolPermisos = rolPermisoRepository.findByRolIdWithPermisos(idRol);
+        return rolPermisos.stream()
+                .filter(RolPermiso::isPermitido)
+                .map(RolPermiso::getPermiso)
+                .map(this::convertToFullPermisoResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -143,7 +153,7 @@ public class RolService {
         }
     }
 
-    private RolDTO.Response convertToDto(Rol rol, long userCount, long permissionCount) {
+    private RolDTO.Response convertToDtoSimple(Rol rol, long userCount, long permissionCount) {
         return RolDTO.Response.builder()
                 .idRol(rol.getIdRol())
                 .nombreRol(rol.getNombreRol())
@@ -157,14 +167,16 @@ public class RolService {
     }
 
     private RolDTO.Response convertToDtoWithPermissions(Rol rol) {
-        RolDTO.Response dto = convertToDto(rol, usuarioRepository.countByRol(rol), rolPermisoRepository.countByRol(rol.getIdRol()));
-        List<RolPermiso> rolPermisos = rolPermisoRepository.findByRolIdWithPermisos(rol.getIdRol());
-        dto.setPermisos(rolPermisos.stream()
-                .map(rp -> RolDTO.Response.RolPermisoResponse.builder()
-                        .permiso(convertToPermisoResponse(rp.getPermiso()))
-                        .permitido(rp.isPermitido())
-                        .build())
-                .collect(Collectors.toList()));
+        RolDTO.Response dto = convertToDtoSimple(rol, usuarioRepository.countByRol(rol), rolPermisoRepository.countByRol(rol.getIdRol()));
+        List<RolPermiso> rolPermisos = rolPermisoRepository.findByRol_IdRol(rol.getIdRol());
+        if (rolPermisos != null) {
+            dto.setPermisos(rolPermisos.stream()
+                    .map(rp -> RolDTO.Response.RolPermisoResponse.builder()
+                            .permiso(convertToPermisoResponse(rp.getPermiso()))
+                            .permitido(rp.isPermitido())
+                            .build())
+                    .collect(Collectors.toList()));
+        }
         return dto;
     }
 
@@ -174,8 +186,31 @@ public class RolService {
                 .codigoPermiso(permiso.getCodigoPermiso())
                 .nombrePermiso(permiso.getNombrePermiso())
                 .descripcionPermiso(permiso.getDescripcionPermiso())
-                .moduloSistema(null) // Simplificado, se puede agregar si es necesario
-                .accion(null) // Simplificado
+                .moduloSistema(null)
+                .accion(null)
+                .build();
+    }
+
+    private PermisoDTO.Response convertToFullPermisoResponse(Permiso permiso) {
+        if (permiso == null) return null;
+
+        var moduloDto = new ModuloSistemaDTO.Response();
+        if (permiso.getModuloSistema() != null) {
+            moduloDto.setIdModuloSistemas(permiso.getModuloSistema().getIdModuloSistemas());
+            moduloDto.setNombreModulo(permiso.getModuloSistema().getNombreModulo());
+        }
+
+        var accionDto = new AccionDTO.Response();
+        if (permiso.getAccion() != null) {
+            accionDto.setNombreAccion(permiso.getAccion().getNombreAccion());
+        }
+
+        return PermisoDTO.Response.builder()
+                .idPermiso(permiso.getIdPermiso())
+                .codigoPermiso(permiso.getCodigoPermiso())
+                .nombrePermiso(permiso.getNombrePermiso())
+                .moduloSistema(moduloDto)
+                .accion(accionDto)
                 .build();
     }
 }

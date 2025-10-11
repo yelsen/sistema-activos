@@ -32762,3 +32762,240 @@ html.collapsed .brand-logo .logo-collapsed {
     --ds-table-bg: #28323d;
     --ds-table-border-color: #28323d
 }
+
+/* Estilos para la Matriz de Permisos Mejorada */
+.stats-bar {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.4rem;
+    background: var(--ds-gray-100);
+    border-radius: var(--ds-border-radius-lg);
+    flex: 1;
+    border: 1px solid var(--ds-border-color);
+}
+
+.stat-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-size: 0.60rem;
+    color: var(--ds-gray-600);
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.stat-value {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--ds-gray-800);
+}
+
+.icon-blue { background: var(--ds-primary-bg-subtle); color: var(--ds-primary-text-emphasis); }
+.icon-green { background: var(--ds-success-bg-subtle); color: var(--ds-success-text-emphasis); }
+.icon-purple { background-color: #e9d5ff; color: #6b21a8; }
+
+.search-filter-bar {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+}
+
+.search-box .ti {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ds-gray-500);
+    font-size: 1rem;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.6rem 0.75rem 0.6rem 2.75rem;
+    border: 1px solid var(--ds-border-color);
+    border-radius: var(--ds-border-radius);
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--ds-primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--ds-primary-rgb), 0.1);
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--ds-border-color);
+    background: var(--ds-white);
+    border-radius: var(--ds-border-radius);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.filter-btn:hover {
+    border-color: var(--ds-primary);
+    color: var(--ds-primary);
+}
+
+.filter-btn.active {
+    background: var(--ds-primary);
+    border-color: var(--ds-primary);
+    color: var(--ds-white);
+}
+
+.permissions-table-container {
+    border: 1px solid var(--ds-border-color);
+    border-radius: var(--ds-border-radius-lg);
+    overflow: hidden;
+    background: var(--ds-white);
+}
+
+.permissions-header {
+    background: var(--ds-gray-100);
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--ds-border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.select-all-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.permissions-table {
+    width: 100%;
+    margin: 0;
+}
+
+.permissions-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--ds-white);
+}
+
+.permissions-table thead tr {
+    background: var(--ds-gray-100);
+}
+
+.permissions-table th {
+    padding: 0.875rem 1rem;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    color: var(--ds-gray-700);
+    border-bottom: 1px solid var(--ds-border-color);
+    white-space: nowrap;
+}
+
+.permissions-table th:first-child {
+    padding-left: 1.5rem;
+    width: 30%;
+}
+
+.permissions-table tbody tr {
+    transition: all 0.2s ease;
+    border-bottom: 1px solid var(--ds-gray-200);
+}
+
+.permissions-table tbody tr:hover {
+    background: var(--ds-gray-100);
+}
+
+.permissions-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.module-name {
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    color: var(--ds-gray-800);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.module-description {
+    font-size: 0.75rem;
+    color: var(--ds-gray-600);
+    margin-top: 2px;
+    font-weight: 400;
+}
+
+.permission-cell {
+    text-align: center;
+    padding: 1rem 0.5rem;
+    position: relative;
+}
+
+.permission-checkbox {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    accent-color: var(--ds-primary);
+    transition: transform 0.2s ease;
+}
+
+.permission-checkbox:hover {
+    transform: scale(1.1);
+}
+
+.permission-checkbox:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.table-scroll {
+    max-height: 450px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+.master-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--ds-primary);
+}

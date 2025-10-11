@@ -10,30 +10,33 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalDetallePermisosLabel">
                         <i class="ti ti-key me-2"></i> Permisos del Rol:
-                        <span th:text="${rol.nombreRol}">Nombre del Rol</span>
+                        <span class="rol-nombre-placeholder">Cargando...</span>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" data-simplebar style="max-height: 450px;">
-                    <div th:if="${#maps.isEmpty(permisosPorModulo)}">
-                        <p class="text-muted text-center">Este rol no tiene permisos asignados.</p>
-                    </div>
-                    <div class="accordion" id="accordionDetallePermisos" th:unless="${#maps.isEmpty(permisosPorModulo)}">
-                        <!-- Iteración de Módulos -->
-                        <div class="accordion-item" th:each="modulo, iterStat : ${permisosPorModulo}">
-                            <h2 class="accordion-header" th:id="'heading-detalle-' + ${iterStat.index}">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    th:data-bs-target="'#collapse-detalle-' + ${iterStat.index}" aria-expanded="false"
-                                    th:aria-controls="'collapse-detalle-' + ${iterStat.index}">
-                                    <span th:text="${modulo.key}">Nombre del Módulo</span>
-                                </button>
-                            </h2>
-                            <div th:id="'collapse-detalle-' + ${iterStat.index}" class="accordion-collapse collapse"
-                                th:aria-labelledby="'heading-detalle-' + ${iterStat.index}" data-bs-parent="#accordionDetallePermisos">
-                                <div class="accordion-body">
-                                    <ul class="list-unstyled mb-0">
-                                        <li th:each="permiso : ${modulo.value}" class="mb-1"><i class="ti ti-check text-success me-2"></i><span th:text="${permiso.nombrePermiso}"></span></li>
-                                    </ul>
+                    <!-- El contenido se cargará aquí vía fetch -->
+                    <div th:fragment="detalle-content" th:if="${rol}">
+                        <div th:if="${#maps.isEmpty(permisosPorModulo)}">
+                            <p class="text-muted text-center">Este rol no tiene permisos asignados.</p>
+                        </div>
+                        <div class="accordion" id="accordionDetallePermisos" th:unless="${#maps.isEmpty(permisosPorModulo)}">
+                            <!-- Iteración de Módulos -->
+                            <div class="accordion-item" th:each="modulo, iterStat : ${permisosPorModulo}">
+                                <h2 class="accordion-header" th:id="'heading-detalle-' + ${iterStat.index}">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        th:data-bs-target="'#collapse-detalle-' + ${iterStat.index}" aria-expanded="false"
+                                        th:aria-controls="'collapse-detalle-' + ${iterStat.index}">
+                                        <span th:text="${modulo.key}">Nombre del Módulo</span>
+                                    </button>
+                                </h2>
+                                <div th:id="'collapse-detalle-' + ${iterStat.index}" class="accordion-collapse collapse"
+                                    th:aria-labelledby="'heading-detalle-' + ${iterStat.index}" data-bs-parent="#accordionDetallePermisos">
+                                    <div class="accordion-body">
+                                        <ul class="list-unstyled mb-0">
+                                            <li th:each="permiso : ${modulo.value}" class="mb-1"><i class="ti ti-check text-success me-2"></i><span th:text="${permiso.nombrePermiso}"></span></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>

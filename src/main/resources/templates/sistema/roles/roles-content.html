@@ -97,11 +97,57 @@
 
     <!-- Inclusión de Modales -->
     <div th:replace="~{sistema/roles/modal/CrearModal :: modal}"></div>
-    <div th:replace="~{sistema/roles/modal/EditarModal :: modal}"></div>
-    <div th:replace="~{sistema/roles/modal/DetalleModal :: modal}"></div>
+    <!--<div th:replace="~{sistema/roles/modal/EditarModal :: modal}"></div>
+    <div th:replace="~{sistema/roles/modal/DetalleModal :: modal}"></div>-->
 
 
     <script th:inline="javascript">
+        // Función genérica para inicializar la lógica de la matriz de permisos en un modal
+        function inicializarMatrizPermisos(modalEl) {
+            if (!modalEl) return;
+
+            const permissionsTable = modalEl.querySelector('.permissions-table');
+            if (!permissionsTable) return;
+
+            const allPermissionCheckboxes = permissionsTable.querySelectorAll('.permission-checkbox');
+            const searchInput = modalEl.querySelector('.search-permissions');
+            const filterButtons = modalEl.querySelector('.filter-buttons');
+
+            // Búsqueda
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    const query = this.value.toLowerCase().trim();
+                    permissionsTable.querySelectorAll('tbody .module-row').forEach(row => {
+                        const moduleName = row.dataset.moduleName.toLowerCase();
+                        row.style.display = moduleName.includes(query) ? '' : 'none';
+                    });
+                });
+            }
+
+            // Filtros
+            if (filterButtons) {
+                filterButtons.querySelectorAll('button').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        filterButtons.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        const filter = this.dataset.filter;
+
+                        if (searchInput) {
+                            searchInput.value = '';
+                            searchInput.dispatchEvent(new Event('input'));
+                        }
+
+                        permissionsTable.querySelectorAll('tbody .module-row').forEach(row => {
+                            const hasChecked = row.querySelector('.permission-checkbox:checked');
+                            if (filter === 'all') row.style.display = '';
+                            else if (filter === 'selected') row.style.display = hasChecked ? '' : 'none';
+                            else if (filter === 'unselected') row.style.display = !hasChecked ? '' : 'none';
+                        });
+                    });
+                });
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             // Cargar contenido del modal de Edición
             const modalEditarRol = document.getElementById('modalEditarRol');
@@ -114,7 +160,11 @@
 
                     fetch(url)
                         .then(response => response.text())
-                        .then(html => modalBody.innerHTML = html)
+                        .then(html => {
+                            modalBody.innerHTML = html;
+                            // Inicializar la lógica de la matriz para el modal de edición
+                            inicializarMatrizPermisos(modalEditarRol);
+                        })
                         .catch(error => console.error('Error al cargar el modal de edición:', error));
                 });
             }
@@ -126,7 +176,7 @@
                     const button = event.relatedTarget;
                     const rolId = button.getAttribute('data-rol-id');
                     const modalBody = modalDetallePermisos.querySelector('.modal-body');
-                    const url = '/seguridad/roles/detalles/' + rolId;
+                    const url = /*[[@{/seguridad/roles/detalles/}]]*/'/seguridad/roles/detalles/' + rolId;
 
                     fetch(url)
                         .then(response => response.text())
@@ -134,75 +184,14 @@
                         .catch(error => console.error('Error al cargar el modal de detalles:', error));
                 });
             }
-        });
 
-        // Lógica para el modal de creación de roles
-        const modalCrearRol = document.getElementById('modalCrearRol');
-        if (modalCrearRol) {
-            const permissionsTable = modalCrearRol.querySelector('#permissionsTable');
-            const allCheckboxes = permissionsTable.querySelectorAll('.permission-checkbox');
-            const selectAllSwitch = modalCrearRol.querySelector('#selectAllPermissions');
-            const masterCheckboxes = permissionsTable.querySelectorAll('.master-checkbox');
-            const searchInput = modalCrearRol.querySelector('#searchPermissions');
-            const filterButtons = modalCrearRol.querySelectorAll('.filter-btn');
-            const selectedCountSpan = modalCrearRol.querySelector('#selected-permissions-count');
-            const totalCountSpan = modalCrearRol.querySelector('#total-permissions-count');
-
-            function updateStats() {
-                const visibleCheckboxes = Array.from(permissionsTable.querySelectorAll('tbody tr:not([style*="display: none"]) .permission-checkbox'));
-                const checkedCount = visibleCheckboxes.filter(cb => cb.checked).length;
-                selectedCountSpan.textContent = checkedCount;
-                totalCountSpan.textContent = visibleCheckboxes.length;
+            // Inicializar la lógica de la matriz para el modal de creación
+            const modalCrearRol = document.getElementById('modalCrearRol');
+            if (modalCrearRol) {
+                // Se inicializa cada vez que se muestra para resetear los filtros y contadores
+                modalCrearRol.addEventListener('show.bs.modal', () => inicializarMatrizPermisos(modalCrearRol, 'crear'));
             }
-
-            // Seleccionar/deseleccionar todos
-            selectAllSwitch.addEventListener('change', function () {
-                allCheckboxes.forEach(cb => cb.checked = this.checked);
-                masterCheckboxes.forEach(mcb => mcb.checked = this.checked);
-                updateStats();
-            });
-
-            // Checkboxes maestros por columna (acción)
-            masterCheckboxes.forEach(master => {
-                master.addEventListener('change', function () {
-                    const action = this.dataset.action;
-                    permissionsTable.querySelectorAll(`.permission-checkbox[data-action="${action}"]`).forEach(cb => {
-                        cb.checked = this.checked;
-                    });
-                    updateStats();
-                });
-            });
-
-            allCheckboxes.forEach(cb => cb.addEventListener('change', updateStats));
-
-            // Búsqueda
-            searchInput.addEventListener('input', function () {
-                const query = this.value.toLowerCase();
-                permissionsTable.querySelectorAll('tbody .module-row').forEach(row => {
-                    const moduleName = row.dataset.moduleName.toLowerCase();
-                    row.style.display = moduleName.includes(query) ? '' : 'none';
-                });
-                updateStats();
-            });
-
-            // Filtros
-            filterButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    filterButtons.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    const filter = this.dataset.filter;
-                    permissionsTable.querySelectorAll('tbody .module-row').forEach(row => {
-                        const hasChecked = row.querySelector('.permission-checkbox:checked');
-                        if (filter === 'all') row.style.display = '';
-                        else if (filter === 'selected') row.style.display = hasChecked ? '' : 'none';
-                        else if (filter === 'unselected') row.style.display = !hasChecked ? '' : 'none';
-                    });
-                    updateStats();
-                });
-            });
-
-            modalCrearRol.addEventListener('show.bs.modal', updateStats);
-        }
+        });
     </script>
 </div>
 

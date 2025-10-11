@@ -2,15 +2,15 @@ package pe.edu.unasam.activos.modules.sistema.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.unasam.activos.modules.sistema.domain.Permiso;
 import pe.edu.unasam.activos.modules.sistema.domain.RolPermiso;
-import pe.edu.unasam.activos.modules.sistema.dto.PermisoDTO;
-import pe.edu.unasam.activos.modules.sistema.dto.ModuloSistemaDTO;
+import pe.edu.unasam.activos.modules.sistema.dto.*;
+import pe.edu.unasam.activos.modules.sistema.repository.AccionRepository;
 import pe.edu.unasam.activos.modules.sistema.repository.PermisoRepository;
 import pe.edu.unasam.activos.modules.sistema.repository.RolPermisoRepository;
 import pe.edu.unasam.activos.modules.sistema.repository.UsuarioRepository;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +25,7 @@ public class PermisoService {
     private final UsuarioRepository usuarioRepository;
     private final RolPermisoRepository rolPermisoRepository;
     private final PermisoRepository permisoRepository;
+    private final AccionRepository accionRepository;
 
     public List<PermisoDTO.Response> getAllPermisos() {
         return permisoRepository.findAllWithModuloAndAccion().stream()
@@ -35,6 +36,26 @@ public class PermisoService {
     public Map<String, List<PermisoDTO.Response>> getAllPermisosGroupedByModulo() {
         return getAllPermisos().stream()
                 .collect(Collectors.groupingBy(p -> p.getModuloSistema().getNombreModulo()));
+    }
+
+    public Map<ModuloSistemaDTO.Response, Map<String, PermisoDTO.Response>> getPermisosAsTabla() {
+        Map<ModuloSistemaDTO.Response, Map<String, PermisoDTO.Response>> tabla = new java.util.LinkedHashMap<>(); // LinkedHashMap para mantener el orden
+        List<PermisoDTO.Response> todosLosPermisos = this.getAllPermisos();
+
+        for (PermisoDTO.Response permiso : todosLosPermisos) {
+            ModuloSistemaDTO.Response modulo = permiso.getModuloSistema();
+            String codigoAccion = permiso.getAccion().getCodigoAccion().toLowerCase();
+            tabla.computeIfAbsent(modulo, k -> new java.util.HashMap<>()).put(codigoAccion, permiso);
+        }
+
+        return tabla;
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
+    public List<AccionDTO.Response> getAllAcciones() {
+        return accionRepository.findAll().stream()
+                .map(accion -> new AccionDTO.Response(accion.getIdAccion(), accion.getNombreAccion(), accion.getCodigoAccion(), accion.getDescripcionAccion()))
+                .collect(Collectors.toList());
     }
 
     public boolean usuarioTienePermiso(Integer usuarioId, String codigoPermiso) {
@@ -56,18 +77,24 @@ public class PermisoService {
     }
 
     private PermisoDTO.Response convertToDto(Permiso permiso) {
-        var moduloDto = new ModuloSistemaDTO.Response(
-                permiso.getModuloSistema().getIdModuloSistemas(),
-                permiso.getModuloSistema().getNombreModulo(),
-                permiso.getModuloSistema().getDescripcionModulo(),
-                permiso.getModuloSistema().getIconoModulo(),
-                permiso.getModuloSistema().getEstadoModulo());
+        ModuloSistemaDTO.Response moduloDto = null;
+        if (permiso.getModuloSistema() != null) {
+            moduloDto = new ModuloSistemaDTO.Response(
+                    permiso.getModuloSistema().getIdModuloSistemas(),
+                    permiso.getModuloSistema().getNombreModulo(),
+                    permiso.getModuloSistema().getDescripcionModulo(),
+                    permiso.getModuloSistema().getIconoModulo(),
+                    permiso.getModuloSistema().getEstadoModulo());
+        }
 
-        var accionDto = new AccionDTO.Response(
-                permiso.getAccion().getIdAccion(),
-                permiso.getAccion().getNombreAccion(),
-                permiso.getAccion().getCodigoAccion(),
-                permiso.getAccion().getDescripcionAccion());
+        AccionDTO.Response accionDto = null;
+        if (permiso.getAccion() != null) {
+            accionDto = new AccionDTO.Response(
+                    permiso.getAccion().getIdAccion(),
+                    permiso.getAccion().getNombreAccion(),
+                    permiso.getAccion().getCodigoAccion(),
+                    permiso.getAccion().getDescripcionAccion());
+        }
 
         return PermisoDTO.Response.builder()
                 .idPermiso(permiso.getIdPermiso())

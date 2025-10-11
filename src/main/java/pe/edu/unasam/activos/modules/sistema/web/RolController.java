@@ -11,8 +11,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.unasam.activos.common.enums.EstadoRol;
+import pe.edu.unasam.activos.modules.sistema.dto.PermisoDTO;
 import pe.edu.unasam.activos.modules.sistema.dto.RolDTO;
+import pe.edu.unasam.activos.modules.sistema.service.PermisoService;
 import pe.edu.unasam.activos.modules.sistema.service.RolService;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,6 +28,7 @@ import pe.edu.unasam.activos.modules.sistema.service.RolService;
 public class RolController {
 
     private final RolService rolService;
+    private final PermisoService permisoService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('ROLES_LEER')")
@@ -41,6 +49,8 @@ public class RolController {
         model.addAttribute("rolesPage", rolesPage);
         model.addAttribute("searchQuery", query);
         model.addAttribute("estado", estado);
+        model.addAttribute("permisosTabla", permisoService.getPermisosAsTabla());
+        model.addAttribute("acciones", permisoService.getAllAcciones());
 
         return "sistema/roles/index";
     }
@@ -52,6 +62,37 @@ public class RolController {
         return rolService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/editar/{id}")
+    @PreAuthorize("hasAuthority('ROLES_EDITAR')")
+    public String showEditForm(@PathVariable Integer id, Model model) {
+        RolDTO.Response rol = rolService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+
+        model.addAttribute("rol", rol);
+        model.addAttribute("permisosTabla", permisoService.getPermisosAsTabla());
+        model.addAttribute("acciones", permisoService.getAllAcciones());
+        model.addAttribute("rolPermisoIds", rol.getPermisos() != null ?
+                rol.getPermisos().stream().map(p -> p.getPermiso().getIdPermiso()).collect(Collectors.toSet()) :
+                Collections.emptySet());
+
+        return "sistema/roles/modal/EditarForm";
+    }
+
+    @GetMapping("/detalles/{id}")
+    @PreAuthorize("hasAuthority('ROLES_LEER')")
+    public String showDetails(@PathVariable Integer id, Model model) {
+        RolDTO.Response rol = rolService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                
+        List<PermisoDTO.Response> permisosDelRol = rolService.getPermisosPorRol(id);
+        Map<String, List<PermisoDTO.Response>> permisosPorModulo = permisosDelRol.stream()
+                .collect(Collectors.groupingBy(p -> p.getModuloSistema().getNombreModulo()));
+ 
+        model.addAttribute("rol", rol);
+        model.addAttribute("permisosPorModulo", permisosPorModulo);
+        return "sistema/roles/modal/DetalleModal";
     }
 
     @PostMapping
