@@ -120,7 +120,6 @@ public class RolService {
         if (!rolRepository.existsById(id)) {
             throw new NotFoundException("Rol no encontrado con ID: " + id);
         }
-        rolPermisoRepository.deleteByRol_IdRol(id);
         rolRepository.deleteById(id);
     }
 
@@ -153,9 +152,8 @@ public class RolService {
                         Integer idModulo = Integer.parseInt(ids[0]);
                         Integer idAccion = Integer.parseInt(ids[1]);
 
-                        // Busca el permiso. Si no existe, lo crea.
                         Permiso permiso = permisoRepository.findByModuloAndAccion(idModulo, idAccion)
-                                .orElseThrow(() -> new NotFoundException("Combinación Módulo-Acción no válida"));
+                                .orElseThrow(() -> new NotFoundException("Permiso no encontrado para Módulo ID: " + idModulo + " y Acción ID: " + idAccion));
 
                         return RolPermiso.builder()
                                 .rol(rol)

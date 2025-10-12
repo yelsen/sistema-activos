@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor 
 @AllArgsConstructor
 public class ServidorRecursoId implements Serializable {
-    private Integer servidor;
-    private Integer recurso;
+    private Servidor servidor;
+    private Recurso recurso;
 }

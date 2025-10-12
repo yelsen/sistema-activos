@@ -2,17 +2,26 @@ package pe.edu.unasam.activos.modules.personas.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pe.edu.unasam.activos.common.enums.EstadoResponsable;
 import pe.edu.unasam.activos.modules.ubicaciones.domain.Oficina;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "responsables")
+@EntityListeners(AuditingEntityListener.class)
 @Getter 
 @Setter 
 @NoArgsConstructor 
 @AllArgsConstructor 
 @Builder
+@SQLDelete(sql = "UPDATE responsables SET deleted_at = NOW(), estado_responsable = 'INACTIVO' WHERE idresponsable = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class Responsable {
 
     @Id
@@ -44,4 +53,15 @@ public class Responsable {
     @Enumerated(EnumType.STRING)
     @Column(name = "estado_responsable")
     private EstadoResponsable estadoResponsable;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }

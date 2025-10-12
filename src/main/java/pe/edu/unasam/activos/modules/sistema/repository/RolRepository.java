@@ -2,6 +2,8 @@ package pe.edu.unasam.activos.modules.sistema.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pe.edu.unasam.activos.modules.sistema.domain.Rol;
 import pe.edu.unasam.activos.common.enums.EstadoRol;
@@ -19,4 +21,8 @@ public interface RolRepository extends JpaRepository<Rol, Integer>, JpaSpecifica
     boolean existsByNombreRol(String nombreRol);
 
     List<Rol> findByNivelAccesoLessThanEqual(Integer nivelAcceso);
+
+    
+    @Query("SELECT r FROM Rol r WHERE r.nombreRol = :nombreRol")
+    Optional<Rol> findByNombreRolUnrestricted(@Param("nombreRol") String nombreRol);
 }

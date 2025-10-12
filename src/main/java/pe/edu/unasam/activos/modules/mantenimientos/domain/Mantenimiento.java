@@ -2,18 +2,28 @@ package pe.edu.unasam.activos.modules.mantenimientos.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pe.edu.unasam.activos.common.enums.EstadoMantenimiento;
 import pe.edu.unasam.activos.modules.activos.domain.Activo;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "mantenimientos")
+@EntityListeners(AuditingEntityListener.class)
 @Getter 
 @Setter 
 @NoArgsConstructor 
 @AllArgsConstructor 
 @Builder
+@SQLDelete(sql = "UPDATE mantenimientos SET deleted_at = NOW(), estado_mantenimiento = 'CANCELADO' WHERE idmantenimiento = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class Mantenimiento {
 
     @Id
@@ -57,4 +67,15 @@ public class Mantenimiento {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_idtecnico", referencedColumnName = "idtecnico")
     private Tecnico tecnico;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }

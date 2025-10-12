@@ -2,10 +2,16 @@ package pe.edu.unasam.activos.modules.sistema.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pe.edu.unasam.activos.common.enums.TipoDato;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "configuracion_sistemas")
+@EntityListeners(AuditingEntityListener.class)
 @Getter 
 @Setter 
 @NoArgsConstructor 
@@ -36,4 +42,15 @@ public class ConfiguracionSistema {
     
     @Column(name = "usuario_modificacion", length = 100)
     private String usuarioModificacion;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    
+    @Column(name = "deleted_at", insertable = false, updatable = false)
+    private LocalDateTime deletedAt;
 }

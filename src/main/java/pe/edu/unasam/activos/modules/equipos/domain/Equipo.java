@@ -2,16 +2,26 @@ package pe.edu.unasam.activos.modules.equipos.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pe.edu.unasam.activos.common.enums.EstadoEquipo;
 import pe.edu.unasam.activos.modules.activos.domain.Activo;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "equipos")
+@EntityListeners(AuditingEntityListener.class)
 @Getter 
 @Setter 
 @NoArgsConstructor 
 @AllArgsConstructor 
 @Builder
+@SQLDelete(sql = "UPDATE equipos SET deleted_at = NOW(), estado_equipo = 'INACTIVO' WHERE idequipo = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class Equipo {
     
     @Id
@@ -47,4 +57,15 @@ public class Equipo {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_idmarca", referencedColumnName = "idmarca")
     private Marca marca;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }

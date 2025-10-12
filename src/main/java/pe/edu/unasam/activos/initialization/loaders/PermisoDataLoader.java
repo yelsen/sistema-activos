@@ -84,7 +84,7 @@ public class PermisoDataLoader extends AbstractDataLoader {
                         }
                 }
 
-                permisoRepository.saveAll(permisos);
+                permisoRepository.saveAllAndFlush(permisos);
         }
 
         private void crearPermisosCRUD(List<Permiso> permisos, ModuloSistema modulo, Map<String, Accion> accionesMap, String nombreEntidad, List<String> acciones) {

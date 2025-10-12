@@ -2,6 +2,11 @@ package pe.edu.unasam.activos.modules.sistema.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pe.edu.unasam.activos.common.enums.EstadoUsuario;
 import pe.edu.unasam.activos.modules.personas.domain.Persona;
 import java.time.LocalTime;
@@ -9,11 +14,14 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "usuarios")
+@EntityListeners(AuditingEntityListener.class)
 @Getter 
 @Setter 
 @NoArgsConstructor 
 @AllArgsConstructor 
 @Builder
+@SQLDelete(sql = "UPDATE usuarios SET deleted_at = NOW(), estado_usuarios = 'INACTIVO' WHERE idusuario = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class Usuario {
     
     @Id
@@ -53,4 +61,15 @@ public class Usuario {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_idrol", referencedColumnName = "idrol")
     private Rol rol;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    
+    @Column(name = "deleted_at", insertable = false, updatable = false)
+    private LocalDateTime deletedAt;
 }

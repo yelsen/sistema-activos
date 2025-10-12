@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor 
 @AllArgsConstructor
 public class EquipoEspecificacionId implements Serializable {
-    private Integer equipo;
-    private Integer especificacion;
+    private Equipo equipo;
+    private Especificacion especificacion;
 }

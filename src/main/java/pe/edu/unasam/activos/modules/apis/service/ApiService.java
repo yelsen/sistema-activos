@@ -186,9 +186,6 @@ public class ApiService {
         log.info("Eliminando integración: API {} - Aplicativo {}", idApi, idAplicativo);
         
         ApiAplicativoId id = new ApiAplicativoId();
-        id.setAplicativo(idAplicativo);
-        id.setApi(idApi);
-        
         ApiAplicativo integracion = apiAplicativoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Integración no encontrada"));
         

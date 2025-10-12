@@ -11,13 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.unasam.activos.common.enums.EstadoRol;
-import pe.edu.unasam.activos.modules.sistema.dto.PermisoDTO;
 import pe.edu.unasam.activos.modules.sistema.dto.RolDTO;
 import pe.edu.unasam.activos.modules.sistema.service.PermisoService;
 import pe.edu.unasam.activos.modules.sistema.service.RolService;
 
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -109,13 +106,17 @@ public class RolController {
     public String showDetails(@PathVariable Integer id, Model model) {
         RolDTO.Response rol = rolService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
-
-        List<PermisoDTO.Response> permisosDelRol = rolService.getPermisosPorRol(id);
-        Map<String, List<PermisoDTO.Response>> permisosPorModulo = permisosDelRol.stream()
-                .collect(Collectors.groupingBy(p -> p.getModuloSistema().getNombreModulo()));
-
+ 
+        // Obtenemos la estructura completa de permisos y los IDs de los permisos del rol
+        model.addAttribute("permisosTabla", permisoService.getPermisosAsTabla());
+        model.addAttribute("acciones", permisoService.getAllAcciones());
         model.addAttribute("rol", rol);
-        model.addAttribute("permisosPorModulo", permisosPorModulo);
+        model.addAttribute("rolPermisoIds",
+                rol.getPermisos() != null ? rol.getPermisos().stream()
+                        .filter(p -> p != null && p.getPermiso() != null)
+                        .map(p -> p.getPermiso().getIdPermiso())
+                        .collect(Collectors.toSet())
+                        : java.util.Collections.emptySet());
         return "sistema/roles/modal/DetalleModal :: detalle-content";
     }
 

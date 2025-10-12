@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- Modal para confirmar eliminación -->
+    <div class="modal fade" id="modalEliminarRol" tabindex="-1" aria-labelledby="modalEliminarRolLabel"
+        aria-hidden="true" th:fragment="modalEliminar">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="modalEliminarRolLabel">
+                        <i class="ti ti-alert-triangle me-2"></i>Confirmar Eliminación
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que deseas eliminar el rol <strong id="nombreRolEliminar"></strong>?</p>
+                    <p class="small text-warning">
+                        <i class="ti ti-info-circle me-1"></i>
+                        Esta acción marcará el rol como <strong>inactivo</strong> y no podrá ser utilizado por los usuarios. Es una operación de borrado lógico y se puede revertir.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <form id="formEliminarRol" th:action="@{/seguridad/roles/delete/0}" method="post">
+                        <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

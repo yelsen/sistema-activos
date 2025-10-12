@@ -1,10 +1,12 @@
 package pe.edu.unasam.activos.modules.sistema.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.transaction.annotation.Transactional;
 import pe.edu.unasam.activos.modules.sistema.domain.RolPermiso;
 import pe.edu.unasam.activos.modules.sistema.domain.RolPermisoId;
 
@@ -25,4 +27,9 @@ public interface RolPermisoRepository extends JpaRepository<RolPermiso, RolPermi
 
     @Query("SELECT rp.rol.idRol, COUNT(rp.permiso.idPermiso) FROM RolPermiso rp WHERE rp.rol.idRol IN :rolIds GROUP BY rp.rol.idRol")
     List<Object[]> countPermissionsByRolIds(@Param("rolIds") List<Integer> rolIds);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO rol_permisos (fk_idrol, fk_idpermiso, permitido) VALUES (:idRol, :idPermiso, :permitido)", nativeQuery = true)
+    void insertRolPermiso(@Param("idRol") Integer idRol, @Param("idPermiso") Integer idPermiso, @Param("permitido") boolean permitido);
 }

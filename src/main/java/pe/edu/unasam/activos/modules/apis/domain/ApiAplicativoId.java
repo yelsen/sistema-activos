@@ -1,5 +1,6 @@
 package pe.edu.unasam.activos.modules.apis.domain;
 import lombok.*;
+import pe.edu.unasam.activos.modules.aplicativos.domain.Aplicativo;
 import java.io.Serializable;
 
 @Getter 
@@ -7,7 +8,7 @@ import java.io.Serializable;
 @NoArgsConstructor 
 @AllArgsConstructor
 public class ApiAplicativoId implements Serializable {
-    
-    private Integer aplicativo;
-    private Integer api;
+
+    private Aplicativo aplicativo;
+    private Api api;
 }

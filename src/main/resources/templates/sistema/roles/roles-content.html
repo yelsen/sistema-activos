@@ -77,17 +77,26 @@
                                         th:text="${rol.estadoRol.name() == 'ACTIVO' ? 'Activo' : 'Inactivo'}"></span>
                                 </div>
                             </div>
-                            <div class="card-footer d-flex gap-2">
-                                <button class="btn btn-sm btn-outline-secondary" th:attr="data-rol-id=${rol.idRol}"
-                                    data-bs-toggle="modal" data-bs-target="#modalDetalleRol"
-                                    sec:authorize="hasAuthority('ROLES_LEER')">
-                                    <i class="ti ti-key me-1"></i> Permisos (<span
-                                        th:text="${rol.permisosCount}"></span>)
-                                </button>
-                                <button class="btn btn-sm btn-primary" th:attr="data-rol-id=${rol.idRol}"
-                                    data-bs-toggle="modal" data-bs-target="#modalEditarRol"
-                                    sec:authorize="hasAuthority('ROLES_EDITAR')">
-                                    <i class="ti ti-pencil me-1"></i> Editar
+                            <div class="card-footer d-flex justify-content-between align-items-center">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-outline-secondary" th:attr="data-rol-id=${rol.idRol}"
+                                        data-bs-toggle="modal" data-bs-target="#modalDetalleRol"
+                                        sec:authorize="hasAuthority('ROLES_LEER')">
+                                        <i class="ti ti-key me-1"></i> Permisos (<span
+                                            th:text="${rol.permisosCount}"></span>)
+                                    </button>
+                                    <button class="btn btn-sm btn-primary" th:attr="data-rol-id=${rol.idRol}"
+                                        data-bs-toggle="modal" data-bs-target="#modalEditarRol"
+                                        sec:authorize="hasAuthority('ROLES_EDITAR')">
+                                        <i class="ti ti-pencil me-1"></i> Editar
+                                    </button>
+                                </div>
+                                <button class="btn btn-sm btn-ghost-danger btn-icon"
+                                    th:attr="data-rol-id=${rol.idRol}, data-rol-nombre=${rol.nombreRol}"
+                                    data-bs-toggle="modal" data-bs-target="#modalEliminarRol"
+                                    sec:authorize="hasAuthority('ROLES_ELIMINAR')"
+                                    title="Eliminar Rol">
+                                    <i class="ti ti-trash fs-5"></i>
                                 </button>
                             </div>
                         </div>
@@ -106,6 +115,7 @@
     <div th:replace="~{sistema/roles/modal/CrearModal :: modalCrear}"></div>
     <div th:replace="~{sistema/roles/modal/EditarModal :: modalEditar}"></div>
     <div th:replace="~{sistema/roles/modal/DetalleModal :: modalDetalle}"></div>
+    <div th:replace="~{sistema/roles/modal/EliminarModal :: modalEliminar}"></div>
 
     <script th:inline="javascript">
         function inicializarComponentesRoles() {
@@ -267,6 +277,29 @@
                             console.error('Error:', error);
                             detalleRolContenido.innerHTML = `<div class="alert alert-danger m-3"><i class="ti ti-alert-circle me-2"></i>No se pudo cargar la información del rol.</div>`;
                         });
+                });
+            }
+
+            // --- Inicialización del Modal Eliminar ---
+            const modalEliminarEl = document.getElementById('modalEliminarRol');
+            if (modalEliminarEl) {
+                modalEliminarEl.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const rolId = button?.getAttribute('data-rol-id');
+                    const rolNombre = button?.getAttribute('data-rol-nombre');
+
+                    if (!rolId || !rolNombre) { return; }
+
+                    const nombreRolEl = document.getElementById('nombreRolEliminar');
+                    if (nombreRolEl) {
+                        nombreRolEl.textContent = rolNombre;
+                    }
+
+                    const formEliminar = document.getElementById('formEliminarRol');
+                    if (formEliminar) {
+                        const action = `/seguridad/roles/delete/${rolId}`;
+                        formEliminar.setAttribute('action', action);
+                    }
                 });
             }
         }

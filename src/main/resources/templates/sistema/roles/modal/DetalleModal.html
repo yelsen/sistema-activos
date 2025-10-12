@@ -5,16 +5,19 @@
     <!-- Modal para ver permisos (SHELL) -->
     <div class="modal fade" id="modalDetalleRol" tabindex="-1" aria-labelledby="modalDetalleRolLabel" aria-hidden="true"
         th:fragment="modalDetalle">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="ti ti-key me-2"></i> Detalle del Rol: 
-                        <span class="rol-nombre-placeholder"></span>
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
+                    <div class="d-flex align-items-center gap-3 position-relative">
+                        <i class="ti ti-key fs-2"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Permisos del Rol: <span class="rol-nombre-placeholder fw-bold"></span></h5>
+                            <p class="fs-10 mb-0 text-white-50">Listado de permisos asignados a este rol.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="detalle-rol-contenido" data-simplebar style="max-height: 450px;">
+                <div class="modal-body " id="detalle-rol-contenido" data-simplebar>
                     <!-- El contenido se cargará aquí vía fetch, se muestra un spinner mientras tanto -->
                     <div class="d-flex justify-content-center p-5">
                         <div class="spinner-border" role="status">
@@ -23,37 +26,42 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Fragmento de contenido que se carga dinámicamente -->
-    <div th:fragment="detalle-content">
-        <div th:if="${#maps.isEmpty(permisosPorModulo)}">
-            <p class="text-muted text-center">Este rol no tiene permisos asignados.</p>
+    <div class="p-2 " th:fragment="detalle-content">
+        <div th:if="${#maps.isEmpty(permisosTabla)}" class="text-center p-4">
+            <i class="ti ti-alert-circle fs-1 text-warning mb-2"></i>
+            <h6 class="mb-1">Sin Permisos</h6>
+            <p class="text-muted">No hay permisos configurados en el sistema.</p>
         </div>
-        <div class="accordion" id="accordionDetallePermisos" th:unless="${#maps.isEmpty(permisosPorModulo)}">
-            <!-- Iteración de Módulos -->
-            <div class="accordion-item" th:each="modulo, iterStat : ${permisosPorModulo}">
-                <h2 class="accordion-header" th:id="'heading-detalle-' + ${iterStat.index}">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        th:data-bs-target="'#collapse-detalle-' + ${iterStat.index}" aria-expanded="false"
-                        th:aria-controls="'collapse-detalle-' + ${iterStat.index}">
-                        <span th:text="${modulo.key}">Nombre del Módulo</span>
-                    </button>
-                </h2>
-                <div th:id="'collapse-detalle-' + ${iterStat.index}" class="accordion-collapse collapse"
-                    th:aria-labelledby="'heading-detalle-' + ${iterStat.index}" data-bs-parent="#accordionDetallePermisos">
-                    <div class="accordion-body">
-                        <ul class="list-unstyled mb-0">
-                            <li th:each="permiso : ${modulo.value}" class="mb-1">
-                                <i class="ti ti-check text-success me-2"></i>
-                                <span th:text="${permiso.nombrePermiso}"></span>
-                            </li>
-                        </ul>
+        <div class="list-group list-group-flush" th:unless="${#maps.isEmpty(permisosTabla)}">
+            <!-- Iterar sobre los módulos -->
+            <div class="list-group-item" th:each="entry, iterStat : ${permisosTabla}">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-3">
+                        <div th:class="'stat-icon icon-' + ${ {'blue','green','purple','orange','red','cyan','pink'}[iterStat.index % 7] }">
+                            <i th:class="${entry.key.iconoModulo ?: 'ti ti-puzzle'}"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-semibold" th:text="${entry.key.nombreModulo}">Módulo</h6>
+                            <small class="text-muted" th:text="${entry.key.descripcionModulo}">Descripción del módulo</small>
+                        </div>
                     </div>
+                </div>
+                <!-- Lista de acciones como badges -->
+                <div class="mt-3 d-flex flex-wrap gap-2">
+                    <th:block th:each="accion : ${acciones}" th:with="permiso=${entry.value[accion.codigoAccion.toLowerCase()]}">
+                        <span th:if="${permiso != null and rolPermisoIds.contains(permiso.idPermiso)}"
+                              class="badge bg-primary-subtle text-primary-emphasis rounded-pill">
+                            <i class="ti ti-check me-1"></i>
+                            <span th:text="${accion.nombreAccion}">Acción</span>
+                        </span>
+                    </th:block>
                 </div>
             </div>
         </div>

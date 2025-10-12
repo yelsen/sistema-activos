@@ -9,6 +9,6 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RolPermisoId implements Serializable {
-    private Integer rol;
-    private Integer permiso;
+    private Rol rol;
+    private Permiso permiso;
 }

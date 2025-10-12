@@ -2,16 +2,26 @@ package pe.edu.unasam.activos.modules.personas.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pe.edu.unasam.activos.common.enums.Genero;
 import pe.edu.unasam.activos.common.enums.EstadoPersona;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "personas")
+@EntityListeners(AuditingEntityListener.class)
 @Getter 
 @Setter 
 @NoArgsConstructor 
 @AllArgsConstructor 
 @Builder
+@SQLDelete(sql = "UPDATE personas SET deleted_at = NOW(), estado = 'INACTIVO' WHERE documento = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class Persona {
     
     @Id
@@ -44,4 +54,15 @@ public class Persona {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_idtipo_documento", referencedColumnName = "idtipo_documento")
     private TipoDocumento tipoDocumento;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }

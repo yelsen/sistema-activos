@@ -1,5 +1,5 @@
 package pe.edu.unasam.activos.modules.aplicativos.domain;
-
+import pe.edu.unasam.activos.modules.servidores.domain.Servidor;
 import java.io.Serializable;
 import lombok.*;
 
@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor 
 @AllArgsConstructor
 public class ServidorAplicativoId implements Serializable {
-    private Integer servidor;
-    private Integer aplicativo;
+    private Servidor servidor;
+    private Aplicativo aplicativo;
 }

@@ -2,11 +2,15 @@ package pe.edu.unasam.activos.modules.sistema.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pe.edu.unasam.activos.common.enums.EstadoSesion;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "sesion_usuarios")
+@EntityListeners(AuditingEntityListener.class)
 @Getter 
 @Setter 
 @NoArgsConstructor 
@@ -41,4 +45,15 @@ public class SesionUsuario {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_idusuario", referencedColumnName = "idusuario")
     private Usuario usuario;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    
+    @Column(name = "deleted_at", insertable = false, updatable = false)
+    private LocalDateTime deletedAt;
 }
