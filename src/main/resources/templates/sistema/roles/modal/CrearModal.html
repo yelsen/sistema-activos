@@ -4,16 +4,24 @@
 <body>
     <!-- Modal crear rol -->
     <div class="modal fade" id="modalCrearRol" tabindex="-1" aria-labelledby="modalCrearRolLabel" aria-hidden="true"
-        th:fragment="modal">
+        th:fragment="modalCrear">
         <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalCrearRolLabel">
-                        <i class="ti ti-shield-plus me-2"></i> Crear Nuevo Rol
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content shadow-lg">
+                <!-- Cabecera del Modal -->
+                <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
+                    <div class="d-flex align-items-center gap-3 position-relative">
+                        <i class="ti ti-shield-plus fs-2"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Crear Nuevo Rol</h5>
+                            <p class="fs-10 mb-0 text-white-50">Complete los datos requeridos para registrar un nuevo
+                                rol en el sistema.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
-                <form th:action="@{/seguridad/roles}" method="post" id="formCrearRol" novalidate="novalidate">
+
+                <form th:action="@{/seguridad/roles}" method="post" id="formCrearRol" novalidate>
                     <div class="modal-body">
                         <!-- Información básica del rol -->
                         <div class="row">
@@ -22,26 +30,30 @@
                                     Nombre del Rol <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" class="form-control" id="nombreRol" name="nombreRol"
-                                    placeholder="Ej: Administrador de Contenido" required>
+                                    placeholder="Nombre del rol" required>
                             </div>
                             <div class="col-md-2 mb-3">
                                 <label for="nivelAcceso" class="form-label">
                                     Nivel <span class="text-danger">*</span>
                                 </label>
-                                <input type="number" class="form-control" id="nivelAcceso" name="nivelAcceso" min="1"
-                                    max="10" required>
+                                <select id="nivelAcceso" name="nivelAcceso" class="form-select" required>
+                                    <option th:each="s : ${ {1, 2, 3, 4, 5} }" th:value="${s}" th:text="${s}"></option>
+                                </select>
                             </div>
                             <div class="col-md-2 mb-3">
-                                <label for="colorRol" class="form-label">Color</label>
+                                <label for="colorRol" class="form-label">
+                                    Color <span class="text-danger">*</span>
+                                </label>
                                 <input type="color" class="form-control form-control-color w-100" id="colorRol"
-                                    name="colorRol" value="#5e72e4">
+                                    name="colorRol" value="#198754" required>
                             </div>
-
                         </div>
                         <div class="mb-4">
-                            <label for="descripcionRol" class="form-label">Descripción </label>
+                            <label for="descripcionRol" class="form-label">
+                                Descripción <span class="text-danger">*</span>
+                            </label>
                             <textarea class="form-control" id="descripcionRol" name="descripcionRol" rows="2"
-                                placeholder="Describe brevemente el propósito de este rol"></textarea>
+                                placeholder="Describe brevemente el propósito de este rol" required></textarea>
                         </div>
 
                         <!-- Barra de búsqueda y filtros -->
@@ -71,102 +83,108 @@
                                     <small class="text-muted">Selecciona los permisos para este rol</small>
                                 </div>
                                 <div class="d-flex align-items-center gap-3">
-
                                     <div class="select-all-container">
-                                        <label class="form-label mb-0 fw-semibold me-2">Seleccionar todos</label>
-                                        <input type="checkbox" class="master-checkbox">
+                                        <label class="form-label mb-0 fw-semibold me-2"
+                                            for="master-checkbox">Seleccionar todos</label>
+                                        <input class="form-check-input master-checkbox-row" type="checkbox"
+                                            id="master-checkbox">
                                     </div>
                                 </div>
-
-                                <div class="table-scroll">
-                                    <table class="table permissions-table">
-                                        <thead>
-                                            <tr>
-                                                <th class="w-40">Módulo</th>
-                                                <th th:each="accion : ${acciones}" class="text-center"
-                                                    style="width: 12%;" th:text="${accion.nombreAccion}"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="permissions-table-body">
-                                            <tr th:each="entry, iterStat : ${permisosTabla}" class="module-row"
-                                                th:with="modulo=${entry.key}, permisosPorAccion=${entry.value}"
-                                                th:attr="data-module-name=${modulo.nombreModulo}">
-                                                <td class="module-name">
-                                                    <div
-                                                        th:class="'stat-icon icon-' + ${ {'blue','green','purple','orange','red','cyan','pink'}[iterStat.index % 7] }">
-                                                        <i th:class="${modulo.iconoModulo ?: 'ti ti-puzzle'}"></i>
-                                                    </div>
+                            </div>
+                            <!-- Tabla -->
+                            <div class="table-scroll">
+                                <table class="table permissions-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="w-40">Módulo</th>
+                                            <th th:each="accion : ${acciones}" class="text-center" style="width: 12%;"
+                                                th:text="${accion.nombreAccion}"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="permissions-table-body">
+                                        <tr th:each="entry, iterStat : ${permisosTabla}" class="module-row"
+                                            th:with="modulo=${entry.key}, permisosPorAccion=${entry.value}"
+                                            th:attr="data-module-name=${modulo.nombreModulo}">
+                                            <td class="module-name">
+                                                <div
+                                                    th:class="'stat-icon icon-' + ${ {'blue','green','purple','orange','red','cyan','pink'}[iterStat.index % 7] }">
+                                                    <i th:class="${modulo.iconoModulo ?: 'ti ti-puzzle'}"></i>
+                                                </div>
+                                                <div>
+                                                    <div th:text="${modulo.nombreModulo}"></div>
+                                                    <div class="module-description"
+                                                        th:text="${modulo.descripcionModulo}"></div>
+                                                </div>
+                                            </td>
+                                            <td class="permission-cell" th:each="accion : ${acciones}">
+                                                <input class="form-check-input permission-checkbox" type="checkbox"
+                                                    th:value="${modulo.idModuloSistemas + '-' + accion.idAccion}"
+                                                    name="permisosSeleccionados">
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${#maps.isEmpty(permisosTabla)}">
+                                            <td th:colspan="${#lists.size(acciones) + 1}" class="text-center p-4">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <i class="ti ti-alert-triangle fs-1 text-warning mb-2"></i>
                                                     <div>
-                                                        <div th:text="${modulo.nombreModulo}"></div>
-                                                        <div class="module-description"
-                                                            th:text="${modulo.descripcionModulo}"></div>
+                                                        <h6 class="mb-1">No se encontraron permisos</h6>
+                                                        <p class="text-muted mb-0">
+                                                            No hay permisos registrados en el sistema.
+                                                            Por favor, contacte al administrador.
+                                                        </p>
                                                     </div>
-                                                </td>
-                                                <td class="permission-cell" th:each="accion : ${acciones}">
-                                                    <div class="form-check me-2">
-                                                        <input class="form-check-input master-checkbox-row"
-                                                            type="checkbox">
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr th:if="${#maps.isEmpty(permisosTabla)}">
-                                                <td th:colspan="${#lists.size(acciones) + 1}" class="text-center p-4">
-                                                    <div class="d-flex flex-column align-items-center">
-                                                        <i class="ti ti-alert-triangle fs-1 text-warning mb-2"></i>
-                                                        <div>
-                                                            <h6 class="mb-1">No se encontraron permisos</h6>
-                                                            <p class="text-muted mb-0">No hay permisos registrados en el
-                                                                sistema. Por favor, contacte al administrador.</p>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal Footer FUERA del modal-body -->
+                    <div class="modal-footer justify-content-between">
+                        <!-- Estadísticas -->
+                        <div class="stats-bar p-0 m-0 border-0">
+                            <div class="stat-item">
+                                <div class="stat-icon icon-blue">
+                                    <i class="ti ti-grid-dots"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-label">Módulos</span>
+                                    <span class="stat-value" id="totalModules">0</span>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon icon-green">
+                                    <i class="ti ti-circle-check-filled"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-label">Permisos</span>
+                                    <span class="stat-value" id="selectedPermissions">0</span>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon icon-purple">
+                                    <i class="ti ti-sum"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-label">Total</span>
+                                    <span class="stat-value" id="totalPermissions">0</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer justify-content-between">
-                            <!-- Estadísticas -->
-                            <div class="stats-bar p-0 m-0 border-0">
-                                <div class="stat-item">
-                                    <div class="stat-icon icon-blue">
-                                        <i class="ti ti-grid-dots"></i>
-                                    </div>
-                                    <div class="stat-info">
-                                        <span class="stat-label">Módulos</span>
-                                        <span class="stat-value" id="crear-totalModules">0</span>
-                                    </div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-icon icon-green">
-                                        <i class="ti ti-circle-check-filled"></i>
-                                    </div>
-                                    <div class="stat-info">
-                                        <span class="stat-label">Permisos</span>
-                                        <span class="stat-value" id="crear-selectedPermissions">0</span>
-                                    </div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-icon icon-purple">
-                                        <i class="ti ti-sum"></i>
-                                    </div>
-                                    <div class="stat-info">
-                                        <span class="stat-label">Total</span>
-                                        <span class="stat-value" id="crear-totalPermissions">0</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <button type="button" class="btn btn-ghost-secondary"
-                                    data-bs-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="ti ti-device-floppy me-1"></i> Guardar Rol</button>
-                            </div>
+                        <div>
+                            <button type="button" class="btn btn-ghost-secondary"
+                                data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="ti ti-device-floppy me-1"></i> Guardar Rol
+                            </button>
                         </div>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
+</body>
 
 </html>

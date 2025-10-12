@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<div th:fragment="content">
+<div th:fragment="content" id="roles-content-wrapper">
     <!-- Header de la página -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-3 h2">Gestión de Roles</h1>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="#">Seguridad</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Roles</li>
-            </ol>
-        </nav>
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="mb-2 h2">Gestión de Roles</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="#">Seguridad</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Roles</li>
+                </ol>
+            </nav>
+        </div>
     </div>
 
     <!-- Contenido principal -->
@@ -31,168 +33,294 @@
             <!-- Formulario de Búsqueda y Filtro -->
             <form id="filterForm" th:action="@{/seguridad/roles}" method="get" class="row g-3 py-2">
                 <div class="col-md-8">
-                    <input type="text" class="form-control" placeholder="Buscar rol por nombre..."
-                        th:value="${searchQuery}" name="query" onchange="this.form.submit()">
+                    <input type="text" class="form-control" placeholder="Buscar por nombre o nivel de acceso..."
+                        th:value="${searchQuery}" name="query">
                 </div>
                 <div class="col-md-4">
-                    <select class="form-select" name="estado" onchange="this.form.submit()" data-choices>
+                    <select class="form-select" id="estado" name="estado" data-choices>
                         <option value="">Todos los estados</option>
-                        <option value="ACTIVO" th:selected="${estado != null and estado.name() == 'ACTIVO'}">Activo
+                        <option value="ACTIVO" th:selected="${estado != null and estado.name() == 'ACTIVO'}">
+                            Activo
                         </option>
                         <option value="INACTIVO" th:selected="${estado != null and estado.name() == 'INACTIVO'}">
-                            Inactivo</option>
+                            Inactivo
+                        </option>
                     </select>
                 </div>
             </form>
-            <!-- lista de roles -->
-            <div class="row pt-4">
-                <!-- Card de Rol -->
-                <div class="col-xl-4 col-lg-4 col-md-4 mb-4" th:each="rol : ${rolesPage.content}">
-                    <div class="card h-100 card-hover-shadow"
-                        th:style="'background-color: ' + ${rol.colorRol} + '1A; border: 1px solid ' + ${rol.colorRol} + '40; backdrop-filter: blur(10px);'">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0" th:text="${rol.nombreRol}"></h5>
-                            <span class="badge text-white" th:style="'background-color: ' + ${rol.colorRol}"
-                                th:text="'Nivel ' + ${rol.nivelAcceso}"></span>
-                        </div>
+            <!-- Contenedor para la lista de roles que se actualizará dinámicamente -->
+            <div id="roles-list-container" class="pt-4" th:fragment="rolesList">
+                <!-- lista de roles -->
+                <div class="row">
+                    <!-- Card de Rol -->
+                    <div class="col-xl-4 col-lg-4 col-md-4 mb-4" th:each="rol : ${rolesPage.content}">
+                        <div class="card h-100 card-hover-shadow"
+                            th:style="'background-color: ' + ${rol.colorRol} + '1A; border: 1px solid ' + ${rol.colorRol} + '40; backdrop-filter: blur(10px);'">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0" th:text="${rol.nombreRol}"></h5>
+                                <span class="badge text-white" th:style="'background-color: ' + ${rol.colorRol}"
+                                    th:text="'Nivel ' + ${rol.nivelAcceso}"></span>
+                            </div>
 
-                        <div class="card-body d-flex flex-column">
-                            <p class="text-muted small mb-3 flex-grow-1" th:text="${rol.descripcionRol}"
-                                style="min-height: 40px;">
-                                Descripción del rol...
-                            </p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <span class="text-muted small">Usuarios:</span>
-                                    <strong th:text="${rol.usuariosCount}">0</strong>
+                            <div class="card-body d-flex flex-column">
+                                <p class="text-muted small mb-3 flex-grow-1" th:text="${rol.descripcionRol}"
+                                    style="min-height: 40px;">
+                                    Descripción del rol...
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="text-muted small">Usuarios:</span>
+                                        <strong th:text="${rol.usuariosCount}">0</strong>
+                                    </div>
+                                    <span class="badge"
+                                        th:classappend="${rol.estadoRol.name() == 'ACTIVO' ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis'}"
+                                        th:text="${rol.estadoRol.name() == 'ACTIVO' ? 'Activo' : 'Inactivo'}"></span>
                                 </div>
-                                <span class="badge"
-                                    th:classappend="${rol.estadoRol.name() == 'ACTIVO' ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis'}"
-                                    th:text="${rol.estadoRol.name() == 'ACTIVO' ? 'Activo' : 'Inactivo'}"></span>
+                            </div>
+                            <div class="card-footer d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-secondary" th:attr="data-rol-id=${rol.idRol}"
+                                    data-bs-toggle="modal" data-bs-target="#modalDetalleRol"
+                                    sec:authorize="hasAuthority('ROLES_LEER')">
+                                    <i class="ti ti-key me-1"></i> Permisos (<span
+                                        th:text="${rol.permisosCount}"></span>)
+                                </button>
+                                <button class="btn btn-sm btn-primary" th:attr="data-rol-id=${rol.idRol}"
+                                    data-bs-toggle="modal" data-bs-target="#modalEditarRol"
+                                    sec:authorize="hasAuthority('ROLES_EDITAR')">
+                                    <i class="ti ti-pencil me-1"></i> Editar
+                                </button>
                             </div>
                         </div>
-                        <div class="card-footer d-flex gap-2">
-                            <button class="btn btn-sm btn-outline-secondary" th:attr="data-rol-id=${rol.idRol}"
-                                data-bs-toggle="modal" data-bs-target="#modalDetallePermisos"
-                                sec:authorize="hasAuthority('ROLES_LEER')">
-                                <i class="ti ti-key me-1"></i> Permisos (<span
-                                    th:text="${rol.permisosCount}"></span>)
-                            </button>
-                            <button class="btn btn-sm btn-primary" th:attr="data-rol-id=${rol.idRol}"
-                                data-bs-toggle="modal" data-bs-target="#modalEditarRol"
-                                sec:authorize="hasAuthority('ROLES_EDITAR')">
-                                <i class="ti ti-pencil me-1"></i> Editar
-                            </button>
-                        </div>
                     </div>
-                </div>
 
-                <!-- Mensaje si no hay roles -->
-                <div class="col-12 text-center" th:if="${rolesPage.empty}">
-                    <p class="text-muted">No se encontraron roles con los criterios de búsqueda.</p>
+                    <!-- Mensaje si no hay roles -->
+                    <div class="col-12 text-center" th:if="${rolesPage.empty}">
+                        <p class="text-muted">No se encontraron roles con los criterios de búsqueda.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Inclusión de Modales -->
-    <div th:replace="~{sistema/roles/modal/CrearModal :: modal}"></div>
-    <!--<div th:replace="~{sistema/roles/modal/EditarModal :: modal}"></div>
-    <div th:replace="~{sistema/roles/modal/DetalleModal :: modal}"></div>-->
-
+    <!-- Inclusión de Modales de Roles -->
+    <div th:replace="~{sistema/roles/modal/CrearModal :: modalCrear}"></div>
+    <div th:replace="~{sistema/roles/modal/EditarModal :: modalEditar}"></div>
+    <div th:replace="~{sistema/roles/modal/DetalleModal :: modalDetalle}"></div>
 
     <script th:inline="javascript">
-        // Función genérica para inicializar la lógica de la matriz de permisos en un modal
-        function inicializarMatrizPermisos(modalEl) {
-            if (!modalEl) return;
+        function inicializarComponentesRoles() {
+            /**
+             * Inicializa la interactividad de la matriz de permisos en un modal.
+             * @param {HTMLElement} modalEl - El elemento del modal.
+             * @param {string} prefix - Un prefijo para los IDs de los elementos (ej. 'crear', 'editar').
+             */
+            function inicializarMatrizPermisos(modalEl, prefix) {
+                if (!modalEl) return;
 
-            const permissionsTable = modalEl.querySelector('.permissions-table');
-            if (!permissionsTable) return;
+                const permissionsTable = modalEl.querySelector('.permissions-table');
+                if (!permissionsTable) return;
 
-            const allPermissionCheckboxes = permissionsTable.querySelectorAll('.permission-checkbox');
-            const searchInput = modalEl.querySelector('.search-permissions');
-            const filterButtons = modalEl.querySelector('.filter-buttons');
+                // Elementos de la interfaz
+                const masterCheckbox = modalEl.querySelector(`#master-checkbox${prefix || ''}`);
+                const allPermissionCheckboxes = permissionsTable.querySelectorAll('.permission-checkbox');
+                const searchInput = modalEl.querySelector('.search-permissions');
+                const filterButtons = modalEl.querySelector('.filter-buttons');
+                const tableBody = permissionsTable.querySelector('tbody');
 
-            // Búsqueda
-            if (searchInput) {
-                searchInput.addEventListener('input', function () {
-                    const query = this.value.toLowerCase().trim();
-                    permissionsTable.querySelectorAll('tbody .module-row').forEach(row => {
-                        const moduleName = row.dataset.moduleName.toLowerCase();
-                        row.style.display = moduleName.includes(query) ? '' : 'none';
+                // Contadores
+                const totalModulesEl = modalEl.querySelector(`#totalModules${prefix || ''}`);
+                const selectedPermissionsEl = modalEl.querySelector(`#selectedPermissions${prefix || ''}`);
+                const totalPermissionsEl = modalEl.querySelector(`#totalPermissions${prefix || ''}`);
+
+                /** --- 1. Actualización de contadores --- */
+                const updateStats = () => {
+                    if (!totalModulesEl || !selectedPermissionsEl || !totalPermissionsEl) return;
+                    totalModulesEl.textContent = tableBody.querySelectorAll('.module-row').length;
+                    selectedPermissionsEl.textContent = tableBody.querySelectorAll('.permission-checkbox:checked').length;
+                    totalPermissionsEl.textContent = allPermissionCheckboxes.length;
+                };
+
+                /** --- 2. Funcionalidad "Seleccionar Todos" --- */
+                if (masterCheckbox) {
+                    masterCheckbox.addEventListener('change', (e) => {
+                        const isChecked = e.target.checked;
+                        const visibleCheckboxes = tableBody.querySelectorAll('.module-row:not([style*="display: none"]) .permission-checkbox');
+                        visibleCheckboxes.forEach(checkbox => {
+                            checkbox.checked = isChecked;
+                        });
+                        updateStats();
                     });
+                }
+
+                /** --- 3. Funcionalidad de Filtros (usando delegación de eventos) --- */
+                if (filterButtons) {
+                    filterButtons.addEventListener('click', (e) => {
+                        const targetBtn = e.target.closest('.filter-btn');
+                        if (!targetBtn) return;
+
+                        filterButtons.querySelector('.active')?.classList.remove('active');
+                        targetBtn.classList.add('active');
+
+                        const filter = targetBtn.dataset.filter;
+
+                        tableBody.querySelectorAll('.module-row').forEach(row => {
+                            const hasChecked = row.querySelector('.permission-checkbox:checked');
+                            let show = true;
+                            if (filter === 'selected') show = hasChecked;
+                            else if (filter === 'unselected') show = !hasChecked;
+                            row.style.display = show ? '' : 'none';
+                        });
+                    });
+                }
+
+                /** --- 4. Búsqueda de Módulos --- */
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        const query = e.target.value.toLowerCase().trim();
+                        tableBody.querySelectorAll('.module-row').forEach(row => {
+                            const moduleName = row.dataset.moduleName.toLowerCase();
+                            row.style.display = moduleName.includes(query) ? '' : 'none';
+                        });
+                    });
+                }
+
+                /** --- 5. Actualizar estado al cambiar un checkbox (usando delegación de eventos) --- */
+                tableBody.addEventListener('change', (e) => {
+                    if (e.target.classList.contains('permission-checkbox')) {
+                        updateStats();
+                    }
+                });
+
+                updateStats();
+            }
+
+            const modalCrearEl = document.getElementById('modalCrearRol');
+            if (modalCrearEl) {
+                modalCrearEl.addEventListener('shown.bs.modal', () => inicializarMatrizPermisos(modalCrearEl, ''));
+            }
+
+            // --- Inicialización del Modal Editar ---
+            const modalEditarEl = document.getElementById('modalEditarRol');
+            if (modalEditarEl) {
+                const editarRolContenido = document.getElementById('editar-rol-contenido');
+
+                modalEditarEl.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const rolId = button?.getAttribute('data-rol-id');
+
+                    if (!rolId) { return; }
+
+                    // Mostrar spinner de carga
+                    editarRolContenido.innerHTML = `<div class="d-flex justify-content-center align-items-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>`;
+
+                    // Cargar contenido del rol
+                    fetch(`/seguridad/roles/editar/${rolId}`)
+                        .then(response => {
+                            if (!response.ok) { throw new Error('Error al cargar los datos del rol.'); }
+                            return response.text();
+                        })
+                        .then(html => {
+                            editarRolContenido.innerHTML = html;
+                            // Inicializar la matriz de permisos después de cargar el contenido, usando el rolId como prefijo
+                            setTimeout(() => {
+                                inicializarMatrizPermisos(modalEditarEl, rolId); // Pasamos el rolId como prefijo
+                            }, 100); // Pequeño delay para asegurar que el DOM esté listo
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            editarRolContenido.innerHTML = `<div class="alert alert-danger m-3"><i class="ti ti-alert-circle me-2"></i>No se pudo cargar la información del rol.</div>`;
+                        });
                 });
             }
 
-            // Filtros
-            if (filterButtons) {
-                filterButtons.querySelectorAll('button').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        filterButtons.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-                        this.classList.add('active');
-                        const filter = this.dataset.filter;
+            // --- Inicialización del Modal Detalle ---
+            const modalDetalleEl = document.getElementById('modalDetalleRol');
+            if (modalDetalleEl) {
+                const detalleRolContenido = document.getElementById('detalle-rol-contenido');
 
-                        if (searchInput) {
-                            searchInput.value = '';
-                            searchInput.dispatchEvent(new Event('input'));
-                        }
+                modalDetalleEl.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const rolId = button?.getAttribute('data-rol-id');
+                    const rolNombre = button?.closest('.card')?.querySelector('.card-title')?.textContent;
 
-                        permissionsTable.querySelectorAll('tbody .module-row').forEach(row => {
-                            const hasChecked = row.querySelector('.permission-checkbox:checked');
-                            if (filter === 'all') row.style.display = '';
-                            else if (filter === 'selected') row.style.display = hasChecked ? '' : 'none';
-                            else if (filter === 'unselected') row.style.display = !hasChecked ? '' : 'none';
+                    if (!rolId) { return; }
+
+                    // Actualizar título del modal
+                    const nombrePlaceholder = modalDetalleEl.querySelector('.rol-nombre-placeholder');
+                    if (nombrePlaceholder && rolNombre) {
+                        nombrePlaceholder.textContent = rolNombre;
+                    }
+
+                    // Mostrar spinner de carga
+                    detalleRolContenido.innerHTML = `<div class="d-flex justify-content-center align-items-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>`;
+
+                    // Cargar detalles del rol
+                    fetch(`/seguridad/roles/detalles/${rolId}`)
+                        .then(response => {
+                            if (!response.ok) { throw new Error('Error al cargar los detalles del rol.'); }
+                            return response.text();
+                        })
+                        .then(html => {
+                            detalleRolContenido.innerHTML = html;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            detalleRolContenido.innerHTML = `<div class="alert alert-danger m-3"><i class="ti ti-alert-circle me-2"></i>No se pudo cargar la información del rol.</div>`;
                         });
-                    });
                 });
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // Cargar contenido del modal de Edición
-            const modalEditarRol = document.getElementById('modalEditarRol');
-            if (modalEditarRol) {
-                modalEditarRol.addEventListener('show.bs.modal', function (event) {
-                    const button = event.relatedTarget;
-                    const rolId = button.getAttribute('data-rol-id');
-                    const modalBody = modalEditarRol.querySelector('.modal-body');
-                    const url = '/seguridad/roles/editar/' + rolId;
+        // --- Lógica de Búsqueda Dinámica ---
+        const filterForm = document.getElementById('filterForm'); // Ya existe
+        const rolesListContainer = document.getElementById('roles-list-container');
+        let debounceTimer;
 
-                    fetch(url)
-                        .then(response => response.text())
-                        .then(html => {
-                            modalBody.innerHTML = html;
-                            // Inicializar la lógica de la matriz para el modal de edición
-                            inicializarMatrizPermisos(modalEditarRol);
-                        })
-                        .catch(error => console.error('Error al cargar el modal de edición:', error));
-                });
-            }
+        function fetchRoles() {
+            const formData = new FormData(filterForm);
+            const params = new URLSearchParams(formData);
+            // Apuntamos a la URL que devuelve solo el fragmento de la lista
+            const url = `/seguridad/roles/filtrar?${params.toString()}`;
 
-            // Cargar contenido del modal de Detalles
-            const modalDetallePermisos = document.getElementById('modalDetallePermisos');
-            if (modalDetallePermisos) {
-                modalDetallePermisos.addEventListener('show.bs.modal', function (event) {
-                    const button = event.relatedTarget;
-                    const rolId = button.getAttribute('data-rol-id');
-                    const modalBody = modalDetallePermisos.querySelector('.modal-body');
-                    const url = /*[[@{/seguridad/roles/detalles/}]]*/'/seguridad/roles/detalles/' + rolId;
+            // Actualizar la URL del navegador sin recargar
+            history.pushState(null, '', `/seguridad/roles?${params.toString()}`);
 
-                    fetch(url)
-                        .then(response => response.text())
-                        .then(html => modalBody.innerHTML = html)
-                        .catch(error => console.error('Error al cargar el modal de detalles:', error));
-                });
-            }
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    if (rolesListContainer) {
+                        rolesListContainer.innerHTML = html;
+                    }
+                })
+                .catch(error => console.error('Error al filtrar roles:', error));
+        }
 
-            // Inicializar la lógica de la matriz para el modal de creación
-            const modalCrearRol = document.getElementById('modalCrearRol');
-            if (modalCrearRol) {
-                // Se inicializa cada vez que se muestra para resetear los filtros y contadores
-                modalCrearRol.addEventListener('show.bs.modal', () => inicializarMatrizPermisos(modalCrearRol, 'crear'));
-            }
-        });
+        if (filterForm) {
+            // Búsqueda con debounce para el input de texto
+            filterForm.addEventListener('input', (e) => {
+                if (e.target.name === 'query') {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(fetchRoles, 300);
+                }
+            });
+
+            // Búsqueda inmediata para selects
+            filterForm.addEventListener('change', (e) => {
+                if (e.target.tagName === 'SELECT') {
+                    fetchRoles();
+                }
+            });
+        }
+
+        // Ejecutar el inicializador cuando el DOM esté listo
+        if (document.readyState === 'loading' && !window.rolesInitialized) {
+            document.addEventListener('DOMContentLoaded', inicializarComponentesRoles);
+        } else {
+            // El DOM ya está cargado
+            inicializarComponentesRoles();
+        }
     </script>
+
 </div>
 
 </html>

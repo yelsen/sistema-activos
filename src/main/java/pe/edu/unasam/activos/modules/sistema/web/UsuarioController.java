@@ -26,8 +26,7 @@ public class UsuarioController {
     public String listUsuarios(Model model, @PageableDefault(size = 10) Pageable pageable) {
         model.addAttribute("page", usuarioService.getAllUsuarios(pageable));
         model.addAttribute("roles", rolService.findAll(null, null, Pageable.unpaged()).getContent());
-        // También necesitarías un servicio para buscar personas
-        return "sistema/usuarios/index"; // Asumiendo que la vista se llamará index.html
+        return "sistema/usuarios/index";
     }
 
     @GetMapping("/{id}")

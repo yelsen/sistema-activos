@@ -2,6 +2,7 @@ package pe.edu.unasam.activos.modules.sistema.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.unasam.activos.modules.sistema.domain.Permiso;
@@ -27,23 +28,27 @@ public class PermisoService {
     private final PermisoRepository permisoRepository;
     private final AccionRepository accionRepository;
 
+    @Cacheable("permisos")
     public List<PermisoDTO.Response> getAllPermisos() {
         return permisoRepository.findAllWithModuloAndAccion().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
+    @Cacheable("permisosAgrupados")
     public Map<String, List<PermisoDTO.Response>> getAllPermisosGroupedByModulo() {
         return getAllPermisos().stream()
                 .collect(Collectors.groupingBy(p -> p.getModuloSistema().getNombreModulo()));
     }
 
+    @Cacheable("permisosTabla")
     public Map<ModuloSistemaDTO.Response, Map<String, PermisoDTO.Response>> getPermisosAsTabla() {
         Map<ModuloSistemaDTO.Response, Map<String, PermisoDTO.Response>> tabla = new java.util.LinkedHashMap<>(); // LinkedHashMap para mantener el orden
         List<PermisoDTO.Response> todosLosPermisos = this.getAllPermisos();
 
         for (PermisoDTO.Response permiso : todosLosPermisos) {
             ModuloSistemaDTO.Response modulo = permiso.getModuloSistema();
+            if (permiso.getAccion() == null || permiso.getAccion().getCodigoAccion() == null) continue; // Guarda contra datos nulos
             String codigoAccion = permiso.getAccion().getCodigoAccion().toLowerCase();
             tabla.computeIfAbsent(modulo, k -> new java.util.HashMap<>()).put(codigoAccion, permiso);
         }
@@ -51,6 +56,7 @@ public class PermisoService {
         return tabla;
     }
 
+    @Cacheable("acciones")
     @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
     public List<AccionDTO.Response> getAllAcciones() {
         return accionRepository.findAll().stream()

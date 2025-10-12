@@ -8837,7 +8837,7 @@ Estilos Personalizados para Choices.js
 }
 
 .text-bg-primary {
-    background-color: RGBA(var(--ds-primary-rgb), var(--ds-bg-opacity, 1)) !important;
+    background-color: RGBA(var(--ds-primary), var(--ds-bg-opacity, 1)) !important;
     color: #fff !important
 }
 
@@ -26634,6 +26634,11 @@ input::-webkit-outer-spin-button {
 .btn-check:checked+label .btn-star.icon-tabler-star {
     fill: var(--ds-warning);
     stroke: var(--ds-warning)
+}
+
+.bg-azulunasam {
+    --ds-bg-opacity: 1;
+    background-color: rgba(0, 74, 153, var(--ds-bg-opacity)) !important;
 }
 
 .customTooltip {

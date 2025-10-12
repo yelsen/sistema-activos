@@ -16,7 +16,6 @@ import pe.edu.unasam.activos.modules.sistema.dto.RolDTO;
 import pe.edu.unasam.activos.modules.sistema.service.PermisoService;
 import pe.edu.unasam.activos.modules.sistema.service.RolService;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,7 +40,8 @@ public class RolController {
             @RequestParam(required = false) EstadoRol estado,
             Model model) {
 
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<RolDTO.Response> rolesPage = rolService.findAll(query, estado, pageable);
@@ -55,29 +55,53 @@ public class RolController {
         return "sistema/roles/index";
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/filtrar")
+    @PreAuthorize("hasAuthority('ROLES_LEER')")
+    public String filterRoles(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "nombreRol") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) EstadoRol estado,
+            Model model) {
+
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<RolDTO.Response> rolesPage = rolService.findAll(query, estado, pageable);
+
+        model.addAttribute("rolesPage", rolesPage);
+
+        return "sistema/roles/roles-content :: rolesList";
+    }
+
+    @GetMapping("/{id}/json")
     @ResponseBody
     @PreAuthorize("hasAuthority('ROLES_LEER')")
-    public ResponseEntity<RolDTO.Response> getRolById(@PathVariable Integer id) {
+    public ResponseEntity<RolDTO.Response> getRolDetailsJson(@PathVariable Integer id) {
         return rolService.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/editar/{id}")
     @PreAuthorize("hasAuthority('ROLES_EDITAR')")
     public String showEditForm(@PathVariable Integer id, Model model) {
-        RolDTO.Response rol = rolService.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+        RolDTO.Response rol = rolService.findById(id).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
-        model.addAttribute("rol", rol);
         model.addAttribute("permisosTabla", permisoService.getPermisosAsTabla());
         model.addAttribute("acciones", permisoService.getAllAcciones());
-        model.addAttribute("rolPermisoIds", rol.getPermisos() != null ?
-                rol.getPermisos().stream().map(p -> p.getPermiso().getIdPermiso()).collect(Collectors.toSet()) :
-                Collections.emptySet());
+        model.addAttribute("rol", rol);
+        model.addAttribute("rolPermisoIds",
+                rol.getPermisos() != null ? rol.getPermisos().stream()
+                        .filter(p -> p != null && p.getPermiso() != null)
+                        .map(p -> p.getPermiso().getIdPermiso())
+                        .collect(Collectors.toSet())
+                        : java.util.Collections.emptySet());
 
-        return "sistema/roles/modal/EditarForm";
+        return "sistema/roles/modal/EditarModal :: contenido-editar";
     }
 
     @GetMapping("/detalles/{id}")
@@ -85,14 +109,14 @@ public class RolController {
     public String showDetails(@PathVariable Integer id, Model model) {
         RolDTO.Response rol = rolService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
-                
+
         List<PermisoDTO.Response> permisosDelRol = rolService.getPermisosPorRol(id);
         Map<String, List<PermisoDTO.Response>> permisosPorModulo = permisosDelRol.stream()
                 .collect(Collectors.groupingBy(p -> p.getModuloSistema().getNombreModulo()));
- 
+
         model.addAttribute("rol", rol);
         model.addAttribute("permisosPorModulo", permisosPorModulo);
-        return "sistema/roles/modal/DetalleModal";
+        return "sistema/roles/modal/DetalleModal :: detalle-content";
     }
 
     @PostMapping

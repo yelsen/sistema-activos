@@ -20,7 +20,7 @@ public class RolDTO {
         private Integer nivelAcceso;
         private String colorRol;
         private EstadoRol estadoRol;
-        private List<Integer> permisoIds;
+        private List<String> permisosSeleccionados;
     }
 
     @Data

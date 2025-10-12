@@ -1,46 +1,181 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
-<body>
-    <form th:action="@{/seguridad/roles/update/{id}(id=${rol.idRol})}" method="post" id="formEditarRol"
-        novalidate="novalidate" th:object="${rol}">
-        <!-- Información básica del rol -->
-        <div class="row">
-            <div class="col-md-5 mb-3">
-                <label for="editNombreRol" class="form-label">Nombre del Rol <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="editNombreRol" name="nombreRol" th:value="*{nombreRol}"
-                    required>
-            </div>
-            <div class="col-md-2 mb-3">
-                <label for="editNivelAcceso" class="form-label">Nivel <span class="text-danger">*</span></label>
-                <input type="number" class="form-control" id="editNivelAcceso" name="nivelAcceso" min="1" max="10"
-                    th:value="*{nivelAcceso}" required>
-            </div>
-            <div class="col-md-2 mb-3">
-                <label for="editColorRol" class="form-label">Color</label>
-                <input type="color" class="form-control form-control-color w-100" id="editColorRol" name="colorRol"
-                    th:value="*{colorRol}">
-            </div>
-            <div class="col-md-3 mb-3">
-                <label for="editEstadoRol" class="form-label">Estado <span class="text-danger">*</span></label>
-                <select class="form-select" id="editEstadoRol" name="estadoRol" required>
-                    <option value="ACTIVO" th:selected="*{estadoRol.name() == 'ACTIVO'}">Activo</option>
-                    <option value="INACTIVO" th:selected="*{estadoRol.name() == 'INACTIVO'}">Inactivo</option>
-                </select>
+<body th:remove="tag">
+    <!-- Modal editar rol -->
+    <div class="modal fade" id="modalEditarRol" tabindex="-1" aria-labelledby="modalEditarRolLabel" aria-hidden="true"
+        th:fragment="modalEditar">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <!-- Cabecera del Modal Mejorada -->
+                <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
+                    <!-- Contenedor para el ícono y el texto -->
+                    <div class="d-flex align-items-center gap-3 position-relative">
+                        <i class="ti ti-shield-plus fs-2"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Editar Rol</h5>
+                            <p class="fs-10 mb-0 text-white-50">Complete los datos requeridos para editar el rol en el
+                                sistema.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+
+                <!-- Contenedor para el contenido dinámico -->
+                <div id="editar-rol-contenido">
+                    <!-- El contenido se cargará aquí vía fetch -->
+                </div>
             </div>
         </div>
-        <div class="mb-4">
-            <label for="editDescripcionRol" class="form-label">Descripción (Opcional)</label>
-            <textarea class="form-control" id="editDescripcionRol" name="descripcionRol" rows="2"
-                th:text="*{descripcionRol}"></textarea>
-        </div>
+    </div>
 
-        <hr class="my-4">
+    <!-- El contenido del formulario se cargará aquí -->
+    <div th:fragment="contenido-editar">
+        <form th:action="@{/seguridad/roles/update/{id}(id=${rol.idRol})}" method="post" th:id="'formEditarRol' + ${rol.idRol}"
+            novalidate="novalidate">
+            <div class="modal-body">
+                <!-- Información básica del rol -->
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label th:for="'nombreRol' + ${rol.idRol}" class="form-label">Nombre del Rol <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" th:id="'nombreRol' + ${rol.idRol}" name="nombreRol"
+                            th:value="${rol.nombreRol}" required>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label th:for="'nivelAcceso' + ${rol.idRol}" class="form-label">Nivel <span
+                                class="text-danger">*</span></label>
+                        <select th:id="'nivelAcceso' + ${rol.idRol}" name="nivelAcceso" class="form-select" required>
+                            <option th:each="s : ${ {1, 2, 3, 4, 5} }" th:value="${s}" th:text="${s}"
+                                th:selected="${s == rol.nivelAcceso}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label th:for="'colorRol' + ${rol.idRol}" class="form-label">Color <span
+                                class="text-danger">*</span></label>
+                        <input type="color" class="form-control form-control-color w-100"
+                            th:id="'colorRol' + ${rol.idRol}" name="colorRol" th:value="${rol.colorRol}" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label th:for="'descripcionRol' + ${rol.idRol}" class="form-label">Descripción <span
+                            class="text-danger">*</span></label>
+                    <textarea class="form-control" th:id="'descripcionRol' + ${rol.idRol}" name="descripcionRol"
+                        rows="2" th:text="${rol.descripcionRol}" required></textarea>
+                </div>
 
-        <div
-            th:replace="~{sistema/roles/fragments/permisos-matriz :: matriz(${permisosTabla}, ${acciones}, ${rolPermisoIds})}">
-        </div>
-    </form>
-</body>
+                <!-- Barra de búsqueda y filtros -->
+                <div class="search-filter-bar">
+                    <div class="search-box">
+                        <i class="ti ti-search"></i>
+                        <input type="text" class="search-permissions" placeholder="Buscar módulos...">
+                    </div>
+                    <div class="filter-buttons">
+                        <button type="button" class="btn filter-btn active" data-filter="all">
+                            <i class="ti ti-grid-dots me-1"></i>Todos</button>
+                        <button type="button" class="btn filter-btn" data-filter="selected">
+                            <i class="ti ti-checkbox me-1"></i>Seleccionados</button>
+                        <button type="button" class="btn filter-btn" data-filter="unselected">
+                            <i class="ti ti-square me-1"></i>Sin seleccionar</button>
+                    </div>
+                </div>
 
+                <!-- Tabla de permisos -->
+                <div class="permissions-table-container">
+                    <div class="permissions-header">
+                        <div>
+                            <h6 class="mb-0 fw-semibold">Matriz de Permisos</h6>
+                            <small class="text-muted">Selecciona los permisos para este rol</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="select-all-container">
+                                <label class="form-label mb-0 fw-semibold me-2"
+                                    th:for="'master-checkbox' + ${rol.idRol}">Seleccionar todos</label>
+                                <input class="form-check-input master-checkbox-row" type="checkbox"
+                                    th:id="'master-checkbox' + ${rol.idRol}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-scroll">
+                        <table class="table permissions-table">
+                            <thead>
+                                <tr>
+                                    <th class="w-40">Módulo</th>
+                                    <th th:each="accion : ${acciones}" class="text-center" style="width: 12%;"
+                                        th:text="${accion.nombreAccion}"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="permissions-table-body">
+                                <tr th:each="entry, iterStat : ${permisosTabla}" class="module-row"
+                                    th:with="modulo=${entry.key}, permisosPorAccion=${entry.value}"
+                                    th:attr="data-module-name=${modulo.nombreModulo}">
+                                    <td class="module-name">
+                                        <div
+                                            th:class="'stat-icon icon-' + ${ {'blue','green','purple','orange','red','cyan','pink'}[iterStat.index % 7] }">
+                                            <i th:class="${modulo.iconoModulo ?: 'ti ti-puzzle'}"></i>
+                                        </div>
+                                        <div>
+                                            <div th:text="${modulo.nombreModulo}"></div>
+                                            <div class="module-description" th:text="${modulo.descripcionModulo}">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="permission-cell" th:each="accion : ${acciones}">
+                                        <input class="form-check-input permission-checkbox" type="checkbox"
+                                            th:value="${modulo.idModuloSistemas + '-' + accion.idAccion}"
+                                            name="permisosSeleccionados"
+                                            th:checked="${rolPermisoIds.contains(permisosPorAccion[accion.codigoAccion.toLowerCase()]?.idPermiso)}">
+                                    </td>
+                                </tr>
+                                <tr th:if="${#maps.isEmpty(permisosTabla)}">
+                                    <td th:colspan="${#lists.size(acciones) + 1}" class="text-center p-4">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <i class="ti ti-alert-triangle fs-1 text-warning mb-2"></i>
+                                            <div>
+                                                <h6 class="mb-1">No se encontraron permisos</h6>
+                                                <p class="text-muted mb-0">No hay permisos registrados
+                                                    en el sistema.</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <div class="stats-bar p-0 m-0 border-0">
+                    <div class="stat-item">
+                        <div class="stat-icon icon-blue"><i class="ti ti-grid-dots"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Módulos</span>
+                            <span class="stat-value" th:id="'totalModules' + ${rol.idRol}">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon icon-green"><i class="ti ti-circle-check-filled"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Permisos</span>
+                            <span class="stat-value" th:id="'selectedPermissions' + ${rol.idRol}">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon icon-purple"><i class="ti ti-sum"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total</span>
+                            <span class="stat-value" th:id="'totalPermissions' + ${rol.idRol}">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary"><i class="ti ti-device-floppy me-1"></i> Guardar
+                        Cambios</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </html>
