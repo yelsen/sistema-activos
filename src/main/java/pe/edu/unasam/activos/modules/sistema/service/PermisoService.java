@@ -6,12 +6,16 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.unasam.activos.modules.sistema.domain.Permiso;
+import pe.edu.unasam.activos.modules.sistema.domain.Accion;
+import pe.edu.unasam.activos.modules.sistema.domain.ModuloSistema;
 import pe.edu.unasam.activos.modules.sistema.domain.RolPermiso;
 import pe.edu.unasam.activos.modules.sistema.dto.*;
 import pe.edu.unasam.activos.modules.sistema.repository.AccionRepository;
+import pe.edu.unasam.activos.modules.sistema.repository.ModuloSistemaRepository;
 import pe.edu.unasam.activos.modules.sistema.repository.PermisoRepository;
 import pe.edu.unasam.activos.modules.sistema.repository.RolPermisoRepository;
 import pe.edu.unasam.activos.modules.sistema.repository.UsuarioRepository;
+import pe.edu.unasam.activos.common.exception.NotFoundException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +31,7 @@ public class PermisoService {
     private final RolPermisoRepository rolPermisoRepository;
     private final PermisoRepository permisoRepository;
     private final AccionRepository accionRepository;
+    private final ModuloSistemaRepository moduloSistemaRepository;
 
     @Cacheable("permisos")
     public List<PermisoDTO.Response> getAllPermisos() {
@@ -62,6 +67,33 @@ public class PermisoService {
         return accionRepository.findAll().stream()
                 .map(accion -> new AccionDTO.Response(accion.getIdAccion(), accion.getNombreAccion(), accion.getCodigoAccion(), accion.getDescripcionAccion()))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public Permiso findOrCreatePermiso(Integer idModulo, Integer idAccion) {
+        List<Permiso> permisosExistentes = permisoRepository.findByModuloAndAccion(idModulo, idAccion);
+
+        return permisosExistentes.stream().findFirst()
+                .orElseGet(() -> {
+                    ModuloSistema modulo = moduloSistemaRepository.findById(idModulo)
+                            .orElseThrow(() -> new NotFoundException("Módulo no encontrado con ID: " + idModulo));
+                    Accion accion = accionRepository.findById(idAccion)
+                            .orElseThrow(() -> new NotFoundException("Acción no encontrada con ID: " + idAccion));
+
+                    String codigoPermiso = modulo.getNombreModulo().toUpperCase().replace(" ", "_") + "_" + accion.getCodigoAccion().toUpperCase();
+                    String nombrePermiso = "Permiso para " + accion.getNombreAccion() + " en " + modulo.getNombreModulo();
+
+                    Permiso nuevoPermiso = Permiso.builder()
+                            .codigoPermiso(codigoPermiso)
+                            .nombrePermiso(nombrePermiso)
+                            .descripcionPermiso("Permiso autogenerado para la acción '" + accion.getNombreAccion() + "' en el módulo '" + modulo.getNombreModulo() + "'.")
+                            .moduloSistema(modulo)
+                            .accion(accion)
+                            .build();
+                    
+                    // Usar saveAndFlush para asegurar que el permiso se persista inmediatamente
+                    return permisoRepository.saveAndFlush(nuevoPermiso);
+                });
     }
 
     public boolean usuarioTienePermiso(Integer usuarioId, String codigoPermiso) {

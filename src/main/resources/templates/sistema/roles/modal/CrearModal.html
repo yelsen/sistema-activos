@@ -23,6 +23,8 @@
 
                 <form th:action="@{/seguridad/roles}" method="post" id="formCrearRol" novalidate>
                     <div class="modal-body">
+                        <!-- Campo oculto para el estado del rol -->
+                        <input type="hidden" name="estadoRol" value="ACTIVO">
                         <!-- Información básica del rol -->
                         <div class="row">
                             <div class="col-md-8 mb-3">

@@ -24,8 +24,8 @@ public interface PermisoRepository extends JpaRepository<Permiso, Integer> {
     List<Permiso> findByAccionId(@Param("idAccion") Integer idAccion);
 
     /* Busca permisos por módulo y acción */
-    @Query("SELECT p FROM Permiso p WHERE p.moduloSistema.idModuloSistemas = :idModulo AND p.accion.idAccion = :idAccion")
-    Optional<Permiso> findByModuloAndAccion(@Param("idModulo") Integer idModulo, @Param("idAccion") Integer idAccion);
+    @Query("SELECT p FROM Permiso p WHERE p.moduloSistema.idModuloSistemas = :idModulo AND p.accion.idAccion = :idAccion ORDER BY p.idPermiso ASC")
+    List<Permiso> findByModuloAndAccion(@Param("idModulo") Integer idModulo, @Param("idAccion") Integer idAccion);
 
     /* Busca todos los permisos con sus relaciones cargadas */
     @Query("SELECT p FROM Permiso p JOIN FETCH p.moduloSistema JOIN FETCH p.accion")

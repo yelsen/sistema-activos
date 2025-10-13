@@ -33,6 +33,7 @@ public class RolService {
     private final PermisoRepository permisoRepository;
     private final RolPermisoRepository rolPermisoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final PermisoService permisoService;
 
     @Transactional(readOnly = true)
     public Page<RolDTO.Response> findAll(String query, EstadoRol estado, Pageable pageable) {
@@ -40,7 +41,8 @@ public class RolService {
             List<Predicate> predicates = new ArrayList<>();
 
             if (StringUtils.hasText(query)) {
-                Predicate searchByName = criteriaBuilder.like(criteriaBuilder.lower(root.get("nombreRol")), "%" + query.toLowerCase() + "%");
+                Predicate searchByName = criteriaBuilder.like(criteriaBuilder.lower(root.get("nombreRol")),
+                        "%" + query.toLowerCase() + "%");
                 try {
                     Integer levelQuery = Integer.parseInt(query);
                     Predicate searchByLevel = criteriaBuilder.equal(root.get("nivelAcceso"), levelQuery);
@@ -88,12 +90,10 @@ public class RolService {
                 .descripcionRol(rolRequest.getDescripcionRol())
                 .nivelAcceso(rolRequest.getNivelAcceso())
                 .colorRol(rolRequest.getColorRol())
-                .estadoRol(rolRequest.getEstadoRol())
+                .estadoRol(EstadoRol.ACTIVO)
                 .build();
-        Rol savedRol = rolRepository.save(rol);
-
+        Rol savedRol = rolRepository.saveAndFlush(rol);
         updateRolPermissionsFromString(savedRol, rolRequest.getPermisosSeleccionados());
-
         return convertToDtoWithPermissions(savedRol);
     }
 
@@ -146,14 +146,14 @@ public class RolService {
 
         // Añadir nuevos permisos
         if (permisosSeleccionados != null && !permisosSeleccionados.isEmpty()) {
-            List<RolPermiso> rolPermisos = permisosSeleccionados.stream()
+            List<RolPermiso> nuevosPermisos = permisosSeleccionados.stream()
                     .map(permisoStr -> {
                         String[] ids = permisoStr.split("-");
                         Integer idModulo = Integer.parseInt(ids[0]);
                         Integer idAccion = Integer.parseInt(ids[1]);
 
-                        Permiso permiso = permisoRepository.findByModuloAndAccion(idModulo, idAccion)
-                                .orElseThrow(() -> new NotFoundException("Permiso no encontrado para Módulo ID: " + idModulo + " y Acción ID: " + idAccion));
+                        // Busca el permiso, y si no existe, lo crea.
+                        Permiso permiso = permisoService.findOrCreatePermiso(idModulo, idAccion);
 
                         return RolPermiso.builder()
                                 .rol(rol)
@@ -161,7 +161,9 @@ public class RolService {
                                 .permitido(true)
                                 .build();
                     }).collect(Collectors.toList());
-            rolPermisoRepository.saveAll(rolPermisos);
+            if (!nuevosPermisos.isEmpty()) {
+                rolPermisoRepository.saveAll(nuevosPermisos);
+            }
         }
     }
 
@@ -179,7 +181,8 @@ public class RolService {
     }
 
     private RolDTO.Response convertToDtoWithPermissions(Rol rol) {
-        RolDTO.Response dto = convertToDtoSimple(rol, usuarioRepository.countByRol(rol), rolPermisoRepository.countByRol(rol.getIdRol()));
+        RolDTO.Response dto = convertToDtoSimple(rol, usuarioRepository.countByRol(rol),
+                rolPermisoRepository.countByRol(rol.getIdRol()));
         List<RolPermiso> rolPermisos = rolPermisoRepository.findByRol_IdRol(rol.getIdRol());
         if (rolPermisos != null) {
             dto.setPermisos(rolPermisos.stream()
@@ -193,7 +196,8 @@ public class RolService {
     }
 
     private PermisoDTO.Response convertToFullPermisoResponse(Permiso permiso) {
-        if (permiso == null) return null;
+        if (permiso == null)
+            return null;
 
         var moduloDto = new ModuloSistemaDTO.Response();
         if (permiso.getModuloSistema() != null) {

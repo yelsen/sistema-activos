@@ -1,6 +1,7 @@
 package pe.edu.unasam.activos.modules.sistema.web;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 @PreAuthorize("isAuthenticated()")
 @RequestMapping("/seguridad/roles")
 public class RolController {
@@ -123,6 +125,7 @@ public class RolController {
     @PostMapping
     @PreAuthorize("hasAuthority('ROLES_CREAR')")
     public String createRol(RolDTO.Request rolRequest) {
+        log.info("Recibida solicitud para crear rol. Datos: {}", rolRequest);
         rolService.save(rolRequest);
         return "redirect:/seguridad/roles";
     }
