@@ -16,6 +16,7 @@
         </div>
     </div>
 
+
     <!-- Contenido principal -->
     <div class="card h-100">
         <div class="card-header d-flex justify-content-between align-items-center">
@@ -72,16 +73,28 @@
                                         <span class="text-muted small">Usuarios:</span>
                                         <strong th:text="${rol.usuariosCount}">0</strong>
                                     </div>
-                                    <span class="badge"
-                                        th:classappend="${rol.estadoRol.name() == 'ACTIVO' ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis'}"
-                                        th:text="${rol.estadoRol.name() == 'ACTIVO' ? 'Activo' : 'Inactivo'}"></span>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <form th:action="@{/seguridad/roles/{id}/cambiar-estado(id=${rol.idRol})}"
+                                            method="post" class="d-inline" sec:authorize="hasAuthority('ROLES_EDITAR')">
+                                            <button type="submit"
+                                                class="btn btn-sm btn-icon btn-ghost-secondary rounded-circle"
+                                                th:title="${rol.estadoRol.name() == 'ACTIVO' ? 'Desactivar Rol' : 'Activar Rol'}"
+                                                data-bs-toggle="tooltip" data-bs-placement="top">
+                                                <i
+                                                    th:classappend="${rol.estadoRol != null && rol.estadoRol.name() == 'ACTIVO' ? 'ti ti-toggle-left fs-5 text-danger' : 'ti ti-toggle-right fs-5 text-success'}"></i>
+                                            </button>
+                                        </form>
+                                        <span class="badge"
+                                            th:classappend="${rol.estadoRol != null && rol.estadoRol.name() == 'ACTIVO' ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis'}"
+                                            th:text="${rol.estadoRol != null && rol.estadoRol.name() == 'ACTIVO' ? 'Activo' : 'Inactivo'}"></span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-footer d-flex justify-content-between align-items-center">
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-sm btn-outline-secondary" th:attr="data-rol-id=${rol.idRol}"
                                         data-bs-toggle="modal" data-bs-target="#modalDetalleRol"
-                                        sec:authorize="hasAuthority('ROLES_LEER')">
+                                        sec:authorize="hasAuthority('ROLES_VER')">
                                         <i class="ti ti-key me-1"></i> Permisos (<span
                                             th:text="${rol.permisosCount}"></span>)
                                     </button>
@@ -91,13 +104,14 @@
                                         <i class="ti ti-pencil me-1"></i> Editar
                                     </button>
                                 </div>
-                                <button class="btn btn-sm btn-ghost-danger btn-icon"
-                                    th:attr="data-rol-id=${rol.idRol}, data-rol-nombre=${rol.nombreRol}"
-                                    data-bs-toggle="modal" data-bs-target="#modalEliminarRol"
-                                    sec:authorize="hasAuthority('ROLES_ELIMINAR')"
-                                    title="Eliminar Rol">
-                                    <i class="ti ti-trash fs-5"></i>
-                                </button>
+                                <span data-bs-toggle="tooltip" data-bs-placement="right" title="Eliminar Rol">
+                                    <button class="btn btn-sm btn-ghost-danger btn-icon"
+                                        th:attr="data-rol-id=${rol.idRol}, data-rol-nombre=${rol.nombreRol}"
+                                        data-bs-toggle="modal" data-bs-target="#modalEliminarRol"
+                                        sec:authorize="hasAuthority('ROLES_ELIMINAR')">
+                                        <i class="ti ti-trash fs-5 text-danger"></i>
+                                    </button>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -231,10 +245,9 @@
                         })
                         .then(html => {
                             editarRolContenido.innerHTML = html;
-                            // Inicializar la matriz de permisos después de cargar el contenido, usando el rolId como prefijo
                             setTimeout(() => {
-                                inicializarMatrizPermisos(modalEditarEl, rolId); // Pasamos el rolId como prefijo
-                            }, 100); // Pequeño delay para asegurar que el DOM esté listo
+                                inicializarMatrizPermisos(modalEditarEl, rolId);
+                            }, 100);
                         })
                         .catch(error => {
                             console.error('Error:', error);

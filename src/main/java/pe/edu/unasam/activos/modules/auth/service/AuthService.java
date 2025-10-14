@@ -9,8 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import pe.edu.unasam.activos.common.exception.BusinessException;
 import org.springframework.transaction.annotation.Transactional;
-import pe.edu.unasam.activos.common.exception.BadRequestException;
 import pe.edu.unasam.activos.common.exception.UnauthorizedException;
 import pe.edu.unasam.activos.modules.auth.dto.*;
 import pe.edu.unasam.activos.modules.sistema.domain.RolPermiso;
@@ -127,12 +127,17 @@ public class AuthService {
 
         // Verificar contraseña actual
         if (!passwordEncoder.matches(passwordActual, usuario.getContrasena())) {
-            throw new BadRequestException("La contraseña actual es incorrecta");
+            throw new BusinessException("La contraseña actual es incorrecta");
         }
 
         // Validar nueva contraseña
-        if (passwordNueva.length() < 8) {
-            throw new BadRequestException("La contraseña debe tener al menos 8 caracteres");
+        int minLength = configuracionSistemaRepository.findByClaveConfig("seguridad.longitud_minima_password")
+                .map(ConfiguracionSistema::getValorConfig)
+                .map(Integer::parseInt)
+                .orElse(8);
+
+        if (passwordNueva.length() < minLength) {
+            throw new BusinessException("La contraseña debe tener al menos " + minLength + " caracteres");
         }
 
         // Actualizar contraseña

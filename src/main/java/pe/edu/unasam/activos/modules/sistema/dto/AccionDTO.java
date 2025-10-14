@@ -1,12 +1,16 @@
 package pe.edu.unasam.activos.modules.sistema.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 public class AccionDTO {
 
     @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Request {
         private String nombreAccion;
         private String codigoAccion;
@@ -14,6 +18,7 @@ public class AccionDTO {
     }
 
     @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Response {

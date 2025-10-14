@@ -12,7 +12,7 @@ import pe.edu.unasam.activos.modules.personas.repository.PersonaRepository;
 import pe.edu.unasam.activos.modules.personas.repository.TipoDocumentoRepository;
 
 @Component
-@Order(2)
+@Order(7)
 @RequiredArgsConstructor
 public class PersonaDataLoader extends AbstractDataLoader {
 
@@ -72,9 +72,6 @@ public class PersonaDataLoader extends AbstractDataLoader {
                 .build()
         };
         
-        for (Persona persona : personas) {
-            personaRepository.save(persona);
-            //log.info("Persona creada: {} {}", persona.getApellidos(), persona.getNombres());
-        }
+        personaRepository.saveAll(java.util.Arrays.asList(personas));
     }
 }

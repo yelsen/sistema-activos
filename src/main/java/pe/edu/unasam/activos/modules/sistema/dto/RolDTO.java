@@ -37,6 +37,7 @@ public class RolDTO {
         private Long usuariosCount;
         private Long permisosCount;
         private List<RolPermisoResponse> permisos;
+        private List<PermisoAgrupadoResponse> permisosAgrupados;
 
         @Data
         @Builder
@@ -46,5 +47,15 @@ public class RolDTO {
             private PermisoDTO.Response permiso;
             private boolean permitido;
         }
+
+        @Data
+        @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class PermisoAgrupadoResponse {
+            private ModuloSistemaDTO.Response modulo;
+            private List<AccionDTO.Response> acciones;
+        }
     }
+
 }

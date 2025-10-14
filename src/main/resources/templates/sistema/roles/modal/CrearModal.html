@@ -23,8 +23,6 @@
 
                 <form th:action="@{/seguridad/roles}" method="post" id="formCrearRol" novalidate>
                     <div class="modal-body">
-                        <!-- Campo oculto para el estado del rol -->
-                        <input type="hidden" name="estadoRol" value="ACTIVO">
                         <!-- Información básica del rol -->
                         <div class="row">
                             <div class="col-md-8 mb-3">
@@ -110,7 +108,7 @@
                                             <td class="module-name">
                                                 <div
                                                     th:class="'stat-icon icon-' + ${ {'blue','green','purple','orange','red','cyan','pink'}[iterStat.index % 7] }">
-                                                    <i th:class="${modulo.iconoModulo ?: 'ti ti-puzzle'}"></i>
+                                                    <i th:class="'ti ' + (${modulo.iconoModulo} ?: 'ti-puzzle')"></i>
                                                 </div>
                                                 <div>
                                                     <div th:text="${modulo.nombreModulo}"></div>

@@ -9,7 +9,7 @@ import pe.edu.unasam.activos.modules.sistema.domain.Rol;
 import pe.edu.unasam.activos.modules.sistema.repository.RolRepository;
 
 @Component
-@Order(4)
+@Order(5)
 @RequiredArgsConstructor
 public class RolDataLoader extends AbstractDataLoader {
 
@@ -56,8 +56,6 @@ public class RolDataLoader extends AbstractDataLoader {
                         .build()
         };
 
-        for (Rol rol : roles) {
-            rolRepository.save(rol);
-        }
+        rolRepository.saveAll(java.util.Arrays.asList(roles));
     }
 }

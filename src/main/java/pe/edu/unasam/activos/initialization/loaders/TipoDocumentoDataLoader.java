@@ -56,9 +56,6 @@ public class TipoDocumentoDataLoader extends AbstractDataLoader {
                 .build()
         };
         
-        for (TipoDocumento tipo : tiposDocumento) {
-            tipoDocumentoRepository.save(tipo);
-            //log.info("Tipo documento creado: {}", tipo.getTipoDocumento());
-        }
+        tipoDocumentoRepository.saveAll(java.util.Arrays.asList(tiposDocumento));
     }
 }

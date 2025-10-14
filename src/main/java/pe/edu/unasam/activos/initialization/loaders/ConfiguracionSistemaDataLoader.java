@@ -8,7 +8,7 @@ import pe.edu.unasam.activos.modules.sistema.domain.ConfiguracionSistema;
 import pe.edu.unasam.activos.modules.sistema.repository.ConfiguracionSistemaRepository;
 
 @Component
-@Order(8)
+@Order(9)
 @RequiredArgsConstructor
 public class ConfiguracionSistemaDataLoader extends AbstractDataLoader {
 
@@ -92,8 +92,6 @@ public class ConfiguracionSistemaDataLoader extends AbstractDataLoader {
                         .build()
         };
 
-        for (ConfiguracionSistema config : configuraciones) {
-            configuracionSistemaRepository.save(config);
-        }
+        configuracionSistemaRepository.saveAll(java.util.Arrays.asList(configuraciones));
     }
 }

@@ -58,11 +58,11 @@ public class AccionService {
     }
 
     private AccionDTO.Response convertToDto(Accion accion) {
-        return new AccionDTO.Response(
-                accion.getIdAccion(),
-                accion.getNombreAccion(),
-                accion.getCodigoAccion(),
-                accion.getDescripcionAccion()
-        );
+        return AccionDTO.Response.builder()
+                .idAccion(accion.getIdAccion())
+                .nombreAccion(accion.getNombreAccion())
+                .codigoAccion(accion.getCodigoAccion())
+                .descripcionAccion(accion.getDescripcionAccion())
+                .build();
     }
 }

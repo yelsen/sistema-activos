@@ -78,18 +78,18 @@ public class UsuarioService {
     }
 
     private UsuarioDTO.Response convertToDto(Usuario usuario) {
-        var dto = new UsuarioDTO.Response();
-        dto.setIdUsuario(usuario.getIdUsuario());
-        dto.setUsuario(usuario.getUsuario());
-        dto.setUltimoAcceso(usuario.getUltimoAcceso() != null ? usuario.getUltimoAcceso().format(DateTimeFormatter.ofPattern("HH:mm:ss")) : "-");
-        dto.setIntentosFallidos(usuario.getIntentosFallidos());
-        dto.setBloqueadoHasta(usuario.getBloqueadoHasta());
-        dto.setDebeCambiarPassword(usuario.getDebeCambiarPassword());
-        dto.setEstadoUsuarios(usuario.getEstadoUsuarios());
-        dto.setNombrePersona(usuario.getPersona() != null ? usuario.getPersona().getNombres() + " " + usuario.getPersona().getApellidos() : "N/A");
-        dto.setDocumentoPersona(usuario.getPersona() != null ? usuario.getPersona().getDocumento() : "N/A");
-        dto.setNombreRol(usuario.getRol() != null ? usuario.getRol().getNombreRol() : "N/A");
-        dto.setIdRol(usuario.getRol() != null ? usuario.getRol().getIdRol() : null);
-        return dto;
+        return UsuarioDTO.Response.builder()
+                .idUsuario(usuario.getIdUsuario())
+                .usuario(usuario.getUsuario())
+                .ultimoAcceso(usuario.getUltimoAcceso() != null ? usuario.getUltimoAcceso().format(DateTimeFormatter.ofPattern("HH:mm:ss")) : "-")
+                .intentosFallidos(usuario.getIntentosFallidos())
+                .bloqueadoHasta(usuario.getBloqueadoHasta())
+                .debeCambiarPassword(usuario.getDebeCambiarPassword())
+                .estadoUsuarios(usuario.getEstadoUsuarios())
+                .nombrePersona(usuario.getPersona() != null ? usuario.getPersona().getNombres() + " " + usuario.getPersona().getApellidos() : "N/A")
+                .documentoPersona(usuario.getPersona() != null ? usuario.getPersona().getDocumento() : "N/A")
+                .nombreRol(usuario.getRol() != null ? usuario.getRol().getNombreRol() : "N/A")
+                .idRol(usuario.getRol() != null ? usuario.getRol().getIdRol() : null)
+                .build();
     }
 }

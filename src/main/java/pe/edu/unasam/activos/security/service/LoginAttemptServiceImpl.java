@@ -12,22 +12,13 @@ import java.time.LocalDateTime;
 @Service
 public class LoginAttemptServiceImpl implements LoginAttemptService {
 
-    private final int MAX_ATTEMPTS;
-    private final long BLOCK_DURATION_MINUTES;
     private final UsuarioRepository usuarioRepository;
+    private final ConfiguracionSistemaRepository configuracionRepo;
 
     @Autowired
-    public LoginAttemptServiceImpl(ConfiguracionSistemaRepository configuracionRepo,
-            UsuarioRepository usuarioRepository) {
+    public LoginAttemptServiceImpl(ConfiguracionSistemaRepository configuracionRepo, UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
-        this.MAX_ATTEMPTS = configuracionRepo.findByClaveConfig("auth.login.max_attempts")
-                .map(ConfiguracionSistema::getValorConfig)
-                .map(Integer::parseInt)
-                .orElse(3);
-        this.BLOCK_DURATION_MINUTES = configuracionRepo.findByClaveConfig("seguridad.tiempo_bloqueo_minutos")
-                .map(ConfiguracionSistema::getValorConfig)
-                .map(Long::parseLong)
-                .orElse(15L);
+        this.configuracionRepo = configuracionRepo;
     }
 
     @Override
@@ -45,13 +36,22 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
     @Override
     @Transactional
     public void loginFailed(String key) {
+        int maxAttempts = configuracionRepo.findByClaveConfig("seguridad.intentos_fallidos")
+                .map(ConfiguracionSistema::getValorConfig)
+                .map(Integer::parseInt)
+                .orElse(5);
+        long blockDurationMinutes = configuracionRepo.findByClaveConfig("seguridad.tiempo_bloqueo_minutos")
+                .map(ConfiguracionSistema::getValorConfig)
+                .map(Long::parseLong)
+                .orElse(15L);
+
         usuarioRepository.findByUsuario(key).ifPresent(usuario -> {
             int attempts = usuario.getIntentosFallidos() != null ? usuario.getIntentosFallidos() : 0;
             attempts++;
             usuario.setIntentosFallidos(attempts);
 
-            if (attempts >= MAX_ATTEMPTS) {
-                usuario.setBloqueadoHasta(LocalDateTime.now().plusMinutes(BLOCK_DURATION_MINUTES));
+            if (attempts >= maxAttempts) {
+                usuario.setBloqueadoHasta(LocalDateTime.now().plusMinutes(blockDurationMinutes));
             }
             usuarioRepository.save(usuario);
         });

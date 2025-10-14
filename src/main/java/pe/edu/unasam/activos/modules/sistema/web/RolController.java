@@ -29,7 +29,7 @@ public class RolController {
     private final PermisoService permisoService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLES_LEER')")
+    @PreAuthorize("hasAuthority('ROLES_ACCEDER')")
     public String listRoles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -43,7 +43,7 @@ public class RolController {
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<RolDTO.Response> rolesPage = rolService.findAll(query, estado, pageable);
+        Page<RolDTO.Response> rolesPage = rolService.findAll(query, estado, pageable, "ROLES_LEER");
 
         model.addAttribute("rolesPage", rolesPage);
         model.addAttribute("searchQuery", query);
@@ -69,7 +69,7 @@ public class RolController {
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<RolDTO.Response> rolesPage = rolService.findAll(query, estado, pageable);
+        Page<RolDTO.Response> rolesPage = rolService.findAll(query, estado, pageable, "ROLES_LEER");
 
         model.addAttribute("rolesPage", rolesPage);
 
@@ -78,7 +78,7 @@ public class RolController {
 
     @GetMapping("/{id}/json")
     @ResponseBody
-    @PreAuthorize("hasAuthority('ROLES_LEER')")
+    @PreAuthorize("hasAuthority('ROLES_VER')")
     public ResponseEntity<RolDTO.Response> getRolDetailsJson(@PathVariable Integer id) {
         return rolService.findById(id)
                 .map(ResponseEntity::ok)
@@ -93,18 +93,18 @@ public class RolController {
         model.addAttribute("permisosTabla", permisoService.getPermisosAsTabla());
         model.addAttribute("acciones", permisoService.getAllAcciones());
         model.addAttribute("rol", rol);
-        model.addAttribute("rolPermisoIds",
+        model.addAttribute("permisosSeleccionados",
                 rol.getPermisos() != null ? rol.getPermisos().stream()
-                        .filter(p -> p != null && p.getPermiso() != null)
-                        .map(p -> p.getPermiso().getIdPermiso())
-                        .collect(Collectors.toSet())
+                        .filter(p -> p.isPermitido() && p.getPermiso() != null && p.getPermiso().getModuloSistema() != null && p.getPermiso().getAccion() != null)
+                        .map(p -> p.getPermiso().getModuloSistema().getIdModuloSistemas() + "-" + p.getPermiso().getAccion().getIdAccion())
+                        .collect(Collectors.toSet()) 
                         : java.util.Collections.emptySet());
 
         return "sistema/roles/modal/EditarModal :: contenido-editar";
     }
 
     @GetMapping("/detalles/{id}")
-    @PreAuthorize("hasAuthority('ROLES_LEER')")
+    @PreAuthorize("hasAuthority('ROLES_VER')")
     public String showDetails(@PathVariable Integer id, Model model) {
         RolDTO.Response rol = rolService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
@@ -113,11 +113,11 @@ public class RolController {
         model.addAttribute("permisosTabla", permisoService.getPermisosAsTabla());
         model.addAttribute("acciones", permisoService.getAllAcciones());
         model.addAttribute("rol", rol);
-        model.addAttribute("rolPermisoIds",
+        model.addAttribute("permisosSeleccionados",
                 rol.getPermisos() != null ? rol.getPermisos().stream()
-                        .filter(p -> p != null && p.getPermiso() != null)
-                        .map(p -> p.getPermiso().getIdPermiso())
-                        .collect(Collectors.toSet())
+                        .filter(p -> p.isPermitido() && p.getPermiso() != null && p.getPermiso().getModuloSistema() != null && p.getPermiso().getAccion() != null)
+                        .map(p -> p.getPermiso().getModuloSistema().getIdModuloSistemas() + "-" + p.getPermiso().getAccion().getIdAccion())
+                        .collect(Collectors.toSet()) 
                         : java.util.Collections.emptySet());
         return "sistema/roles/modal/DetalleModal :: detalle-content";
     }
@@ -143,4 +143,12 @@ public class RolController {
         rolService.deleteById(id);
         return "redirect:/seguridad/roles";
     }
+
+    @PostMapping("/{id}/cambiar-estado")
+    @PreAuthorize("hasAuthority('ROLES_EDITAR')")
+    public String toggleRolStatus(@PathVariable Integer id) {
+        rolService.toggleStatus(id);
+        return "redirect:/seguridad/roles";
+    }
+
 }

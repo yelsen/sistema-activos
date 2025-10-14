@@ -22,10 +22,10 @@ public class UsuarioController {
     private final RolService rolService; // Para poblar el dropdown de roles
 
     @GetMapping
-    @PreAuthorize("hasAuthority('USUARIOS_LEER')")
+    @PreAuthorize("hasAuthority('USUARIOS_ACCEDER')")
     public String listUsuarios(Model model, @PageableDefault(size = 10) Pageable pageable) {
         model.addAttribute("page", usuarioService.getAllUsuarios(pageable));
-        model.addAttribute("roles", rolService.findAll(null, null, Pageable.unpaged()).getContent());
+        model.addAttribute("roles", rolService.findAll(null, null, Pageable.unpaged(), "ROLES_LEER").getContent());
         return "sistema/usuarios/index";
     }
 

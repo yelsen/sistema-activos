@@ -8,7 +8,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pe.edu.unasam.activos.common.enums.EstadoModulo;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -34,7 +33,7 @@ public class ModuloSistema {
     @Column(name = "descripcion_modulo", columnDefinition = "TEXT")
     private String descripcionModulo;
     
-    @Column(name = "icono_modulo", length = 45)
+    @Column(name = "icono_modulo", length = 100)
     private String iconoModulo;
     
     @Column(name = "ruta_modulo", length = 100)
@@ -42,7 +41,7 @@ public class ModuloSistema {
     
     @Column(name = "orden_modulo")
     private Integer ordenModulo;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "estado_modulo")
     private EstadoModulo estadoModulo;

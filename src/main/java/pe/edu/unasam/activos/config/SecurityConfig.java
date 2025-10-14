@@ -51,7 +51,8 @@ public class SecurityConfig {
                                                 .authenticated())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                                .authenticationProvider(authenticationProvider())
+                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); 
 
                 return http.build();
         }
@@ -100,7 +101,7 @@ public class SecurityConfig {
                                                 .permitAll())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-                                .authenticationProvider(authenticationProvider()); // ¡Esta es la línea clave!
+                                .authenticationProvider(authenticationProvider());
 
                 return http.build();
         }

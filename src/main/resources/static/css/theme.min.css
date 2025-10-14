@@ -32820,6 +32820,10 @@ html.collapsed .brand-logo .logo-collapsed {
 .icon-blue { background: var(--ds-primary-bg-subtle); color: var(--ds-primary-text-emphasis); }
 .icon-green { background: var(--ds-success-bg-subtle); color: var(--ds-success-text-emphasis); }
 .icon-purple { background-color: #e9d5ff; color: #6b21a8; }
+.icon-orange { background: var(--ds-warning-bg-subtle); color: var(--ds-warning-text-emphasis); }
+.icon-red { background: var(--ds-danger-bg-subtle); color: var(--ds-danger-text-emphasis); }
+.icon-cyan { background: var(--ds-info-bg-subtle); color: var(--ds-info-text-emphasis); }
+.icon-pink { background-color: #fce7f3; color: #9d174d; }
 
 .search-filter-bar {
     display: flex;

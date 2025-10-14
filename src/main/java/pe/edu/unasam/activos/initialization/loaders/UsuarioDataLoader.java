@@ -16,7 +16,7 @@ import pe.edu.unasam.activos.modules.sistema.repository.UsuarioRepository;
 import java.time.LocalTime;
 
 @Component
-@Order(7)
+@Order(8)
 @RequiredArgsConstructor
 public class UsuarioDataLoader extends AbstractDataLoader {
     
@@ -89,8 +89,6 @@ public class UsuarioDataLoader extends AbstractDataLoader {
                 .build()
         };
         
-        for (Usuario usuario : usuarios) {
-            usuarioRepository.save(usuario);
-        }
+        usuarioRepository.saveAll(java.util.Arrays.asList(usuarios));
     }
 }

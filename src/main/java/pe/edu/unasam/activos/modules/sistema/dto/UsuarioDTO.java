@@ -1,12 +1,18 @@
 package pe.edu.unasam.activos.modules.sistema.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import pe.edu.unasam.activos.common.enums.EstadoUsuario;
 import java.time.LocalDateTime;
 
 public class UsuarioDTO {
 
     @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Request {
         private String usuario;
         private String contrasena;
@@ -17,6 +23,9 @@ public class UsuarioDTO {
     }
 
     @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Response {
         private Integer idUsuario;
         private String usuario;

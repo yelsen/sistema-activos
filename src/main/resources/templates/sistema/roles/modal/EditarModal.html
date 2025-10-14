@@ -31,9 +31,8 @@
     </div>
 
     <!-- El contenido del formulario se cargará aquí -->
-    <div th:fragment="contenido-editar">
-        <form th:action="@{/seguridad/roles/update/{id}(id=${rol.idRol})}" method="post" th:id="'formEditarRol' + ${rol.idRol}"
-            novalidate="novalidate">
+    <form th:fragment="contenido-editar" th:action="@{/seguridad/roles/update/{id}(id=${rol.idRol})}" method="post"
+            th:id="'formEditarRol' + ${rol.idRol}" novalidate class="d-flex flex-column h-100">
             <div class="modal-body">
                 <!-- Información básica del rol -->
                 <div class="row">
@@ -64,6 +63,9 @@
                     <textarea class="form-control" th:id="'descripcionRol' + ${rol.idRol}" name="descripcionRol"
                         rows="2" th:text="${rol.descripcionRol}" required></textarea>
                 </div>
+
+                <!-- CAMBIO: Añadir campo oculto para el estado del rol -->
+                <input type="hidden" name="estadoRol" th:value="${rol.estadoRol}" />
 
                 <!-- Barra de búsqueda y filtros -->
                 <div class="search-filter-bar">
@@ -113,7 +115,7 @@
                                     <td class="module-name">
                                         <div
                                             th:class="'stat-icon icon-' + ${ {'blue','green','purple','orange','red','cyan','pink'}[iterStat.index % 7] }">
-                                            <i th:class="${modulo.iconoModulo ?: 'ti ti-puzzle'}"></i>
+                                            <i th:class="'ti ' + (${modulo.iconoModulo} ?: 'ti-puzzle')"></i>
                                         </div>
                                         <div>
                                             <div th:text="${modulo.nombreModulo}"></div>
@@ -125,7 +127,7 @@
                                         <input class="form-check-input permission-checkbox" type="checkbox"
                                             th:value="${modulo.idModuloSistemas + '-' + accion.idAccion}"
                                             name="permisosSeleccionados"
-                                            th:checked="${rolPermisoIds.contains(permisosPorAccion[accion.codigoAccion.toLowerCase()]?.idPermiso)}">
+                                            th:checked="${permisosSeleccionados.contains(modulo.idModuloSistemas + '-' + accion.idAccion)}">
                                     </td>
                                 </tr>
                                 <tr th:if="${#maps.isEmpty(permisosTabla)}">
@@ -176,6 +178,6 @@
                         Cambios</button>
                 </div>
             </div>
-        </form>
-    </div>
+    </form>
+
 </html>

@@ -204,15 +204,13 @@
                                 <div class="row gx-2">
                                     <div class="col-12 mb-3" id="costo-group">
                                         <label for="longitud_minima_contrasena" class="form-label">Longitud mínima de
-                                            contraseña</label>
-                                        <input type="number" class="form-control" id="longitud_minima_contrasena"
-                                            name="longitud_minima_contrasena" placeholder="8" />
+                                            contraseña</label> 
+                                        <input type="number" class="form-control" name="seguridad.longitud_minima_password" th:value="${configMap['seguridad.longitud_minima_password']}" placeholder="8" />
                                     </div>
                                     <div class="col-12 mb-3">
                                         <label for="tiempo_bloqueo" class="form-label">Tiempo de bloqueo
                                             (minutos)</label>
-                                        <input type="number" class="form-control" id="tiempo_bloqueo"
-                                            name="tiempo_bloqueo" placeholder="15" />
+                                        <input type="number" class="form-control" name="seguridad.tiempo_bloqueo_minutos" th:value="${configMap['seguridad.tiempo_bloqueo_minutos']}" placeholder="15" />
                                     </div>
                                 </div>
                             </div>
@@ -221,9 +219,8 @@
                                 <div class="row gx-2">
                                     <div class="col-12 mb-3">
                                         <label for="max_intentos_login" class="form-label">Máximo intentos de
-                                            login</label>
-                                        <input type="number" class="form-control" id="max_intentos_login"
-                                            name="max_intentos_login" placeholder="3" />
+                                            login</label> 
+                                        <input type="number" class="form-control" name="seguridad.intentos_fallidos" th:value="${configMap['seguridad.intentos_fallidos']}" placeholder="5" />
                                     </div>
                                     <div class="col-12 mb-3">
                                         <label for="cambio_contrasena_dias" class="form-label">Cambio de contraseña
@@ -317,13 +314,11 @@
                                 <div class="row gx-2">
                                     <div class="col-12 mb-3" id="costo-group">
                                         <label for="smtp_server" class="form-label">Servidor SMTP</label>
-                                        <input type="text" class="form-control" id="smtp_server" name="smtp_server"
-                                            placeholder="smtp.unasam.edu.pe" />
+                                        <input type="text" class="form-control" name="email.smtp.host" th:value="${configMap['email.smtp.host']}" placeholder="smtp.unasam.edu.pe" />
                                     </div>
                                     <div class="col-12 mb-3">
                                         <label for="smtp_port" class="form-label">Usuario SMTP</label>
-                                        <input type="text" class="form-control" id="smtp_user" name="smtp_user"
-                                            placeholder="sistema@unasam.edu.pe" />
+                                        <input type="text" class="form-control" id="smtp_user" name="email.smtp.user" placeholder="sistema@unasam.edu.pe" />
                                     </div>
                                 </div>
                             </div>
@@ -332,8 +327,7 @@
                                 <div class="row gx-2">
                                     <div class="col-12 mb-3">
                                         <label for="max_intentos_login" class="form-label">Puerto SMTP</label>
-                                        <input type="text" class="form-control" id="smtp_port" name="smtp_port"
-                                            placeholder="587" />
+                                        <input type="text" class="form-control" id="smtp_port" name="email.smtp.port" placeholder="587" />
                                     </div>
                                     <div class="col-12 mb-3">
                                         <label for="cambio_contrasena_dias" class="form-label">Email remitente</label>

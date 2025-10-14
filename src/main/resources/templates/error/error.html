@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Inesperado</title>
+    <link rel="stylesheet" th:href="@{/libs/bootstrap/dist/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/libs/@tabler/icons-webfont/tabler-icons.min.css}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            margin-top: 5rem;
+        }
+        .card-header {
+            background-color: #dc3545;
+            color: white;
+        }
+        .display-1 {
+            font-size: 6rem;
+            font-weight: 300;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #e9ecef;
+            padding: 1rem;
+            border-radius: 0.25rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header text-center">
+                    <h3 class="fw-light my-4">
+                        <i class="ti ti-alert-triangle me-2"></i>
+                        Error Inesperado
+                    </h3>
+                </div>
+                <div class="card-body p-5">
+                    <div class="text-center">
+                        <h1 class="display-1" th:text="${status}">500</h1>
+                        <p class="lead" th:text="${error}">Internal Server Error</p>
+                        <p>Ha ocurrido un problema en el servidor. Por favor, inténtelo de nuevo más tarde o contacte al administrador.</p>
+                    </div>
+
+                    <!-- Solo mostrar en desarrollo -->
+                    <div th:if="${trace}" class="mt-4">
+                        <hr/>
+                        <h5 class="text-muted">Información de depuración (Solo en DEV)</h5>
+                        <p><strong>Timestamp:</strong> <span th:text="${timestamp}"></span></p>
+                        <p><strong>Mensaje:</strong> <span class="text-danger" th:text="${message}"></span></p>
+                        <p><strong>Ruta:</strong> <span th:text="${path}"></span></p>
+                        <details>
+                            <summary>Ver Stack Trace</summary>
+                            <pre th:text="${trace}"></pre>
+                        </details>
+                    </div>
+                </div>
+                <div class="card-footer text-center py-3">
+                    <a th:href="@{/home}" class="btn btn-primary"><i class="ti ti-home me-2"></i>Volver al Inicio</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

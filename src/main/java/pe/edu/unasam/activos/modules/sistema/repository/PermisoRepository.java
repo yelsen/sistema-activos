@@ -43,6 +43,6 @@ public interface PermisoRepository extends JpaRepository<Permiso, Integer> {
     List<Permiso> findByCodigoAccion(@Param("codigoAccion") String codigoAccion);
 
     /* Busca todos los permisos cargando ansiosamente las relaciones de módulo y acción */
-    @Query("SELECT p FROM Permiso p JOIN FETCH p.moduloSistema JOIN FETCH p.accion")
+    @Query("SELECT p FROM Permiso p JOIN FETCH p.moduloSistema ms JOIN FETCH p.accion")
     List<Permiso> findAllWithModuloAndAccion();
 }

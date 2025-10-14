@@ -1,6 +1,7 @@
 package pe.edu.unasam.activos.modules.sistema.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,8 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import pe.edu.unasam.activos.modules.sistema.dto.AccionDTO;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -48,12 +49,13 @@ public class PermisoService {
 
     @Cacheable("permisosTabla")
     public Map<ModuloSistemaDTO.Response, Map<String, PermisoDTO.Response>> getPermisosAsTabla() {
-        Map<ModuloSistemaDTO.Response, Map<String, PermisoDTO.Response>> tabla = new java.util.LinkedHashMap<>(); // LinkedHashMap para mantener el orden
+        Map<ModuloSistemaDTO.Response, Map<String, PermisoDTO.Response>> tabla = new java.util.LinkedHashMap<>();
         List<PermisoDTO.Response> todosLosPermisos = this.getAllPermisos();
 
         for (PermisoDTO.Response permiso : todosLosPermisos) {
             ModuloSistemaDTO.Response modulo = permiso.getModuloSistema();
-            if (permiso.getAccion() == null || permiso.getAccion().getCodigoAccion() == null) continue; // Guarda contra datos nulos
+            if (permiso.getAccion() == null || permiso.getAccion().getCodigoAccion() == null)
+                continue;
             String codigoAccion = permiso.getAccion().getCodigoAccion().toLowerCase();
             tabla.computeIfAbsent(modulo, k -> new java.util.HashMap<>()).put(codigoAccion, permiso);
         }
@@ -65,35 +67,44 @@ public class PermisoService {
     @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
     public List<AccionDTO.Response> getAllAcciones() {
         return accionRepository.findAll().stream()
-                .map(accion -> new AccionDTO.Response(accion.getIdAccion(), accion.getNombreAccion(), accion.getCodigoAccion(), accion.getDescripcionAccion()))
+                .map(accion -> new AccionDTO.Response(
+                        accion.getIdAccion(),
+                        accion.getNombreAccion(),
+                        accion.getCodigoAccion(),
+                        accion.getDescripcionAccion()))
                 .collect(Collectors.toList());
     }
 
-    @Transactional(propagation = Propagation.MANDATORY)
+    @Transactional
     public Permiso findOrCreatePermiso(Integer idModulo, Integer idAccion) {
+
         List<Permiso> permisosExistentes = permisoRepository.findByModuloAndAccion(idModulo, idAccion);
 
-        return permisosExistentes.stream().findFirst()
-                .orElseGet(() -> {
-                    ModuloSistema modulo = moduloSistemaRepository.findById(idModulo)
-                            .orElseThrow(() -> new NotFoundException("Módulo no encontrado con ID: " + idModulo));
-                    Accion accion = accionRepository.findById(idAccion)
-                            .orElseThrow(() -> new NotFoundException("Acción no encontrada con ID: " + idAccion));
+        if (!permisosExistentes.isEmpty()) {
+            return permisosExistentes.get(0);
+        }
 
-                    String codigoPermiso = modulo.getNombreModulo().toUpperCase().replace(" ", "_") + "_" + accion.getCodigoAccion().toUpperCase();
-                    String nombrePermiso = "Permiso para " + accion.getNombreAccion() + " en " + modulo.getNombreModulo();
+        ModuloSistema modulo = moduloSistemaRepository.findById(idModulo)
+                .orElseThrow(() -> new NotFoundException("Módulo no encontrado con ID: " + idModulo));
 
-                    Permiso nuevoPermiso = Permiso.builder()
-                            .codigoPermiso(codigoPermiso)
-                            .nombrePermiso(nombrePermiso)
-                            .descripcionPermiso("Permiso autogenerado para la acción '" + accion.getNombreAccion() + "' en el módulo '" + modulo.getNombreModulo() + "'.")
-                            .moduloSistema(modulo)
-                            .accion(accion)
-                            .build();
-                    
-                    // Usar saveAndFlush para asegurar que el permiso se persista inmediatamente
-                    return permisoRepository.saveAndFlush(nuevoPermiso);
-                });
+        Accion accion = accionRepository.findById(idAccion)
+                .orElseThrow(() -> new NotFoundException("Acción no encontrada con ID: " + idAccion));
+
+        String codigoPermiso = generarCodigoPermiso(modulo.getNombreModulo(), accion.getCodigoAccion());
+        String nombrePermiso = generarNombrePermiso(modulo.getNombreModulo(), accion.getNombreAccion());
+
+        Permiso nuevoPermiso = Permiso.builder()
+                .codigoPermiso(codigoPermiso)
+                .nombrePermiso(nombrePermiso)
+                .descripcionPermiso("Permiso autogenerado para la acción '" + accion.getNombreAccion()
+                        + "' en el módulo '" + modulo.getNombreModulo() + "'.")
+                .moduloSistema(modulo)
+                .accion(accion)
+                .build();
+
+        Permiso permisoGuardado = permisoRepository.saveAndFlush(nuevoPermiso);
+        
+        return permisoGuardado;
     }
 
     public boolean usuarioTienePermiso(Integer usuarioId, String codigoPermiso) {
@@ -117,21 +128,25 @@ public class PermisoService {
     private PermisoDTO.Response convertToDto(Permiso permiso) {
         ModuloSistemaDTO.Response moduloDto = null;
         if (permiso.getModuloSistema() != null) {
-            moduloDto = new ModuloSistemaDTO.Response(
-                    permiso.getModuloSistema().getIdModuloSistemas(),
-                    permiso.getModuloSistema().getNombreModulo(),
-                    permiso.getModuloSistema().getDescripcionModulo(),
-                    permiso.getModuloSistema().getIconoModulo(),
-                    permiso.getModuloSistema().getEstadoModulo());
+            moduloDto = ModuloSistemaDTO.Response.builder()
+                    .idModuloSistemas(permiso.getModuloSistema().getIdModuloSistemas())
+                    .nombreModulo(permiso.getModuloSistema().getNombreModulo())
+                    .descripcionModulo(permiso.getModuloSistema().getDescripcionModulo())
+                    .iconoModulo(permiso.getModuloSistema().getIconoModulo())
+                    .rutaModulo(permiso.getModuloSistema().getRutaModulo())
+                    .ordenModulo(permiso.getModuloSistema().getOrdenModulo())
+                    .estadoModulo(permiso.getModuloSistema().getEstadoModulo())
+                    .build();
         }
 
         AccionDTO.Response accionDto = null;
         if (permiso.getAccion() != null) {
-            accionDto = new AccionDTO.Response(
-                    permiso.getAccion().getIdAccion(),
-                    permiso.getAccion().getNombreAccion(),
-                    permiso.getAccion().getCodigoAccion(),
-                    permiso.getAccion().getDescripcionAccion());
+            accionDto = AccionDTO.Response.builder()
+                    .idAccion(permiso.getAccion().getIdAccion())
+                    .nombreAccion(permiso.getAccion().getNombreAccion())
+                    .codigoAccion(permiso.getAccion().getCodigoAccion())
+                    .descripcionAccion(permiso.getAccion().getDescripcionAccion())
+                    .build();
         }
 
         return PermisoDTO.Response.builder()
@@ -142,5 +157,29 @@ public class PermisoService {
                 .moduloSistema(moduloDto)
                 .accion(accionDto)
                 .build();
+    }
+
+    public String generarCodigoPermiso(String nombreModulo, String codigoAccion) {
+        String codigoModulo = nombreModulo.toUpperCase().replace(" ", "_")
+                .replace("Á", "A").replace("É", "E").replace("Í", "I")
+                .replace("Ó", "O").replace("Ú", "U")
+                .replace("/", "_");
+        return codigoModulo + "_" + codigoAccion.toUpperCase();
+    }
+
+    public String generarNombrePermiso(String nombreModulo, String nombreAccion) {
+        return capitalizar(nombreAccion) + " " + capitalizar(nombreModulo.replace("_", " "));
+    }
+
+    public String generarDescripcionPermiso(String nombreModulo, String nombreAccion) {
+        return "Permite " + nombreAccion.toLowerCase() + " en "
+                + capitalizar(nombreModulo.replace("_", " ")).toLowerCase();
+    }
+
+    private String capitalizar(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }
