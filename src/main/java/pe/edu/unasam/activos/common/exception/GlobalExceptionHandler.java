@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import pe.edu.unasam.activos.common.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -103,6 +104,14 @@ public class GlobalExceptionHandler {
                 .debugInfo(errors.toString())
                 .build();
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ReferentialIntegrityException.class)
+    public String handleReferentialIntegrityException(ReferentialIntegrityException ex, RedirectAttributes redirectAttributes) {
+        log.warn("Conflicto de integridad referencial: {}", ex.getMessage());
+        // Usamos addFlashAttribute para que el mensaje sobreviva a la redirección
+        redirectAttributes.addFlashAttribute("error", ex.getMessage());
+        return "redirect:/seguridad/roles";
     }
 
     

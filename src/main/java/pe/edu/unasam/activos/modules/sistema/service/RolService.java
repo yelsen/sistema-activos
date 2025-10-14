@@ -124,7 +124,7 @@ public class RolService {
         existingRol.setDescripcionRol(rolRequest.getDescripcionRol());
         existingRol.setNivelAcceso(rolRequest.getNivelAcceso());
         existingRol.setColorRol(rolRequest.getColorRol());
-        // FIX: Se olvidó establecer el estado del rol, causando que se guarde como NULL.
+        // FIX: Se olvidó establecer el estado del rol, causando que se guarde como NULL si no se envía.
         existingRol.setEstadoRol(rolRequest.getEstadoRol());
         
         // Restaurar la llamada para actualizar los permisos

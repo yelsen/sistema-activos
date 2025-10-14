@@ -32768,6 +32768,176 @@ html.collapsed .brand-logo .logo-collapsed {
     --ds-table-border-color: #28323d
 }
 
+/* ========================================
+   SISTEMA DE NOTIFICACIONES TOAST PERSONALIZADO
+   Sin dependencias de librerías externas
+   ======================================== */
+
+/* Contenedor principal de todas las notificaciones */
+.custom-toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+/* Cada notificación toast individual */
+.custom-toast {
+    min-width: 320px;
+    max-width: 420px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+    color: #ffffff;
+    font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    pointer-events: auto;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+/* Contenido interno del toast */
+.custom-toast-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    position: relative;
+}
+
+/* Ícono del toast */
+.custom-toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    flex-shrink: 0;
+    backdrop-filter: blur(5px);
+}
+
+.custom-toast-icon svg {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Texto del toast */
+.custom-toast-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-right: 8px;
+}
+
+.custom-toast-title {
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    margin: 0;
+}
+
+.custom-toast-message {
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 1.5;
+    opacity: 0.95;
+    word-wrap: break-word;
+    margin: 0;
+}
+
+/* Botón de cerrar */
+.custom-toast-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 6px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+    padding: 0;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    flex-shrink: 0;
+}
+
+.custom-toast-close:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+/* Animaciones */
+.custom-toast-enter {
+    opacity: 0;
+    transform: translateX(100%) scale(0.8);
+}
+
+.custom-toast-visible {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.custom-toast-exit {
+    opacity: 0;
+    transform: translateX(100%) scale(0.8);
+    transition: all 0.3s ease;
+}
+
+/* Responsive: Ajustes para móviles */
+@media only screen and (max-width: 480px) {
+    .custom-toast-container {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+    }
+    
+    .custom-toast {
+        min-width: 280px;
+        max-width: 100%;
+    }
+    
+    .custom-toast-content {
+        padding: 14px 16px;
+        gap: 12px;
+    }
+    
+    .custom-toast-icon {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .custom-toast-title {
+        font-size: 14px;
+    }
+    
+    .custom-toast-message {
+        font-size: 12px;
+    }
+}
+
+/* Modo oscuro */
+@media (prefers-color-scheme: dark) {
+    .custom-toast {
+        backdrop-filter: blur(20px);
+    }
+    
+    .custom-toast-icon {
+        background: rgba(255, 255, 255, 0.15);
+    }
+}
+
 /* Estilos para la Matriz de Permisos Mejorada */
 .stats-bar {
     display: flex;
