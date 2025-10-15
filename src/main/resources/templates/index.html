@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/head :: head('Bienvenido')}"></head>
 
 <body>
@@ -12,6 +13,1805 @@
         <div class="custom-container flex-grow-1 d-flex flex-column">
             <div class="flex-grow-1">
                 <h1 class="text-center mt-5">Hola Mundo</h1>
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Accordion Item #1
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                            data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <strong>This is the first item's accordion body.</strong>
+                                It is hidden by default, until the collapse plugin adds the appropriate classes that
+                                we use to style each element. These classes control the overall appearance, as well as
+                                the showing and hiding via CSS transitions. You can modify any of this with custom CSS
+                                or overriding our default variables. It's also worth noting that just about any HTML
+                                can go within the
+                                <code>.accordion-body</code>
+                                , though the transition does limit overflow.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Accordion Item #2
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                            data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <strong>This is the second item's accordion body.</strong>
+                                It is hidden by default, until the collapse plugin adds the appropriate classes that
+                                we use to style each element. These classes control the overall appearance, as well as
+                                the showing and hiding via CSS transitions. You can modify any of this with custom CSS
+                                or overriding our default variables. It's also worth noting that just about any HTML
+                                can go within the
+                                <code>.accordion-body</code>
+                                , though the transition does limit overflow.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Accordion Item #3
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                            data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <strong>This is the third item's accordion body.</strong>
+                                It is hidden by default, until the collapse plugin adds the appropriate classes that
+                                we use to style each element. These classes control the overall appearance, as well as
+                                the showing and hiding via CSS transitions. You can modify any of this with custom CSS
+                                or overriding our default variables. It's also worth noting that just about any HTML
+                                can go within the
+                                <code>.accordion-body</code>
+                                , though the transition does limit overflow.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-primary" role="alert">
+                    A simple primary alert with
+                    <a href="#" class="alert-link text-decoration-underline">an example link</a>. Give it a click if you
+                    like.
+                </div>
+                <div class="alert alert-secondary" role="alert">
+                    A simple secondary alert with
+                    <a href="#" class="alert-link text-decoration-underline">an example link</a>. Give it a click if you
+                    like.
+                </div>
+                <div class="alert alert-success" role="alert">
+                    A simple success alert with
+                    <a href="#" class="alert-link text-decoration-underline">an example link</a>. Give it a click if you
+                    like.
+                </div>
+                <div class="alert alert-danger" role="alert">
+                    A simple danger alert with
+                    <a href="#" class="alert-link text-decoration-underline">an example link</a>. Give it a click if you
+                    like.
+                </div>
+                <div class="alert alert-warning" role="alert">
+                    A simple warning alert with
+                    <a href="#" class="alert-link text-decoration-underline">an example link</a>. Give it a click if you
+                    like.
+                </div>
+                <div class="alert alert-info" role="alert">
+                    A simple info alert with
+                    <a href="#" class="alert-link text-decoration-underline">an example link</a>. Give it a click if you
+                    like.
+                </div>
+                <div class="alert alert-light text-body" role="alert">
+                    A simple light alert with
+                    <a href="#" class="alert-link text-decoration-underline">an example link</a>. Give it a click if you
+                    like.
+                </div>
+                <div class="alert alert-dark" role="alert">
+                    A simple dark alert with
+                    <a href="#" class="alert-link text-decoration-underline">an example link</a>. Give it a click if you
+                    like.
+                </div>
+
+
+                <!--Primary alert-->
+                <div class="alert alert-primary d-flex align-items-center" role="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-info-circle me-2">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+                        <path d="M12 9h.01" />
+                        <path d="M11 12h1v4h1" />
+                    </svg>
+                    <div>An example alert with an icon</div>
+                </div>
+                <!--Success alert-->
+                <div class="alert alert-success d-flex align-items-center" role="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-circle-check me-2">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path
+                            d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.293 5.953a1 1 0 0 0 -1.32 -.083l-.094 .083l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.403 1.403l.083 .094l2 2l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" />
+                    </svg>
+                    <div>An example success alert with an icon</div>
+                </div>
+                <!--Warning alert-->
+                <div class="alert alert-warning d-flex align-items-center" role="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="currentColor"
+                        class="icon icon-tabler icons-tabler-filled icon-tabler-alert-triangle me-2">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path
+                            d="M12 1.67c.955 0 1.845 .467 2.39 1.247l.105 .16l8.114 13.548a2.914 2.914 0 0 1 -2.307 4.363l-.195 .008h-16.225a2.914 2.914 0 0 1 -2.582 -4.2l.099 -.185l8.11 -13.538a2.914 2.914 0 0 1 2.491 -1.403zm.01 13.33l-.127 .007a1 1 0 0 0 0 1.986l.117 .007l.127 -.007a1 1 0 0 0 0 -1.986l-.117 -.007zm-.01 -7a1 1 0 0 0 -.993 .883l-.007 .117v4l.007 .117a1 1 0 0 0 1.986 0l.007 -.117v-4l-.007 -.117a1 1 0 0 0 -.993 -.883z" />
+                    </svg>
+                    <div>An example warning alert with an icon</div>
+                </div>
+                <!--Danger alert-->
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="currentColor"
+                        class="icon icon-tabler icons-tabler-filled icon-tabler-alert-triangle me-2">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path
+                            d="M12 1.67c.955 0 1.845 .467 2.39 1.247l.105 .16l8.114 13.548a2.914 2.914 0 0 1 -2.307 4.363l-.195 .008h-16.225a2.914 2.914 0 0 1 -2.582 -4.2l.099 -.185l8.11 -13.538a2.914 2.914 0 0 1 2.491 -1.403zm.01 13.33l-.127 .007a1 1 0 0 0 0 1.986l.117 .007l.127 -.007a1 1 0 0 0 0 -1.986l-.117 -.007zm-.01 -7a1 1 0 0 0 -.993 .883l-.007 .117v4l.007 .117a1 1 0 0 0 1.986 0l.007 -.117v-4l-.007 -.117a1 1 0 0 0 -.993 -.883z" />
+                    </svg>
+                    <div>An example danger alert with an icon</div>
+                </div>
+
+
+                <!--Background color-->
+                <span class="badge text-bg-primary">Primary</span>
+                <span class="badge text-bg-secondary">Secondary</span>
+                <span class="badge text-bg-success">Success</span>
+                <span class="badge text-bg-danger">Danger</span>
+                <span class="badge text-bg-warning">Warning</span>
+                <span class="badge text-bg-info">Info</span>
+                <span class="badge text-bg-gray-100">Light</span>
+                <span class="badge text-bg-dark">Dark</span>
+
+
+
+                <!--Background color-->
+                <span class="badge text-primary-emphasis bg-primary-subtle border border-primary-subtle">Primary
+                </span>
+                <span
+                    class="badge text-secondary-emphasis bg-secondary-subtle border border-secondary-subtle">Secondary</span>
+                <span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Success</span>
+                <span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Danger</span>
+                <span class="badge text-warning-emphasis bg-warning-subtle ">Warning</span>
+                <span class="badge text-info-emphasis bg-info-subtle border border-info-subtle">Info</span>
+
+
+
+                <!--Background color-->
+                <span
+                    class="badge text-primary-emphasis bg-primary-subtle border border-primary-subtle d-inline-flex gap-1 align-items-center">
+                    Primary
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-box">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" />
+                        <path d="M12 12l8 -4.5" />
+                        <path d="M12 12l0 9" />
+                        <path d="M12 12l-8 -4.5" />
+                    </svg>
+                </span>
+                <span
+                    class="badge text-secondary-emphasis bg-secondary-subtle border border-secondary-subtle d-inline-flex gap-1 align-items-center">
+                    Secondary
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-box">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" />
+                        <path d="M12 12l8 -4.5" />
+                        <path d="M12 12l0 9" />
+                        <path d="M12 12l-8 -4.5" />
+                    </svg>
+                </span>
+                <span
+                    class="badge text-success-emphasis bg-success-subtle border border-success-subtle d-inline-flex gap-1 align-items-center">
+                    Success
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-box">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" />
+                        <path d="M12 12l8 -4.5" />
+                        <path d="M12 12l0 9" />
+                        <path d="M12 12l-8 -4.5" />
+                    </svg>
+                </span>
+                <span
+                    class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle d-inline-flex gap-1 align-items-center">
+                    Danger
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-box">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" />
+                        <path d="M12 12l8 -4.5" />
+                        <path d="M12 12l0 9" />
+                        <path d="M12 12l-8 -4.5" />
+                    </svg>
+                </span>
+                <span class="badge text-warning-emphasis bg-warning-subtle  d-inline-flex gap-1 align-items-center">
+                    Warning
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-box">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" />
+                        <path d="M12 12l8 -4.5" />
+                        <path d="M12 12l0 9" />
+                        <path d="M12 12l-8 -4.5" />
+                    </svg>
+                </span>
+                <span
+                    class="badge text-info-emphasis bg-info-subtle border border-info-subtle d-inline-flex gap-1 align-items-center">
+                    Info
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-box">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" />
+                        <path d="M12 12l8 -4.5" />
+                        <path d="M12 12l0 9" />
+                        <path d="M12 12l-8 -4.5" />
+                    </svg>
+                </span>
+
+
+
+
+                <!-- Primary Button -->
+
+
+                <button type="button
+                                                                    " class="btn btn-primary mb-2
+                                                                    ">
+                    Primary
+
+
+                </button>
+
+                <!-- Secondary Button -->
+
+
+                <button type="button
+                                                                    " class="btn btn-secondary mb-2
+                                                                    ">
+                    Secondary
+
+
+                </button>
+
+                <!-- Success Button -->
+
+
+                <button type="button
+                                                                    " class="btn btn-success mb-2
+                                                                    ">
+                    Success
+
+
+                </button>
+
+                <!-- Danger Button -->
+
+
+                <button type="button
+                                                                    " class="btn btn-danger mb-2
+                                                                    ">
+                    Danger
+
+
+                </button>
+
+                <!-- Warning Button -->
+
+
+                <button type="button
+                                                                    " class="btn btn-warning mb-2
+                                                                    ">
+                    Warning
+
+
+                </button>
+
+                <!-- Info Button -->
+
+
+                <button type="button
+                                                                    " class="btn btn-info mb-2
+                                                                    ">
+                    Info
+
+
+                </button>
+
+                <!-- Light Button -->
+
+
+                <button type="button
+                                                                    " class="btn btn-light mb-2
+                                                                    ">
+                    Light
+
+
+                </button>
+
+                <!-- Dark Button -->
+
+
+                <button type="button
+                                                                    " class="btn btn-dark mb-2
+                                                                    ">
+                    Dark
+
+
+                </button>
+
+                <!-- Link Button -->
+
+
+                <button type="button
+                                                                    " class="btn btn-link mb-2
+                                                                    ">
+                    Link
+
+
+                </button>
+
+
+                <div class="row g-4">
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card text-bg-primary mb-3">
+                            <div class="card-header bg-transparent">Header</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Primary card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card text-bg-secondary mb-3">
+                            <div class="card-header bg-transparent">Header</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Secondary card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card text-bg-success mb-3">
+                            <div class="card-header bg-transparent">Header</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Success card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card text-bg-danger mb-3">
+                            <div class="card-header bg-transparent">Header</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Danger card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card text-bg-warning mb-3">
+                            <div class="card-header bg-transparent">Header</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Warning card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card text-bg-info mb-3">
+                            <div class="card-header bg-transparent">Header</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Info card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card text-bg-gray-100 mb-3">
+                            <div class="card-header bg-transparent">Header</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Light card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card text-bg-dark mb-3">
+                            <div class="card-header bg-transparent">Header</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Dark card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row g-3">
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card border-primary mb-3">
+                            <div class="card-header">Header</div>
+                            <div class="card-body text-primary">
+                                <h5 class="card-title">Primary card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card border-secondary mb-3">
+                            <div class="card-header">Header</div>
+                            <div class="card-body text-secondary">
+                                <h5 class="card-title">Secondary card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's
+                                    content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card border-success mb-3">
+                            <div class="card-header">Header</div>
+                            <div class="card-body text-success">
+                                <h5 class="card-title">Success card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's
+                                    content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card border-danger mb-3">
+                            <div class="card-header">Header</div>
+                            <div class="card-body text-danger">
+                                <h5 class="card-title">Danger card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's
+                                    content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card border-warning mb-3">
+                            <div class="card-header">Header</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Warning card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's
+                                    content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card border-info mb-3">
+                            <div class="card-header">Header</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Info card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's
+                                    content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card border-light mb-3">
+                            <div class="card-header">Header</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Light card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's
+                                    content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="card border-dark mb-3">
+                            <div class="card-header">Header</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Dark card title</h5>
+                                <p class="card-text">
+                                    Some quick example text to build on the card title and make up the bulk of the
+                                    card's
+                                    content.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="btn-group me-1">
+                    <button class="btn dropdown-toggle mb-1 btn-primary" type="button" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">Primary</button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Separated link</a>
+                    </div>
+                </div>
+                <div class="btn-group me-1">
+                    <button class="btn dropdown-toggle mb-1 btn-secondary" type="button" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">Secondary</button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Separated link</a>
+                    </div>
+                </div>
+                <div class="btn-group me-1">
+                    <button class="btn dropdown-toggle mb-1 btn-success" type="button" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">Success</button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Separated link</a>
+                    </div>
+                </div>
+                <div class="btn-group me-1">
+                    <button class="btn dropdown-toggle mb-1 btn-info" type="button" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">Info</button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Separated link</a>
+                    </div>
+                </div>
+                <div class="btn-group me-1">
+                    <button class="btn dropdown-toggle mb-1 btn-warning" type="button" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">Warning</button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Separated link</a>
+                    </div>
+                </div>
+                <div class="btn-group me-1">
+                    <button class="btn dropdown-toggle mb-1 btn-danger" type="button" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">Danger</button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Separated link</a>
+                    </div>
+                </div>
+
+
+
+
+                <div class="mb-3 mb-4">
+                    <label for="InputDisabled" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="InputDisabled" placeholder="name@example.com"
+                        disabled />
+                </div>
+                <div class="mb-3 mb-5">
+                    <label for="TextareaDisabled" class="form-label">Comments</label>
+                    <textarea class="form-control" placeholder="Leave a comment here" id="TextareaDisabled"
+                        disabled></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="SelectDisabled" class="form-label">Works with selects</label>
+                    <select class="form-select" id="SelectDisabled" aria-label=" label disabled select example"
+                        disabled>
+                        <option selected>Open this select menu</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">@</span>
+                    <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+                        aria-describedby="basic-addon1" />
+                </div>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Recipient's username"
+                        aria-label="Recipient's username" aria-describedby="basic-addon2" />
+                    <span class="input-group-text" id="basic-addon2">@example.com</span>
+                </div>
+                <div class="mb-3">
+                    <label for="basic-url" class="form-label">Your vanity URL</label>
+                    <div class="input-group">
+                        <span class="input-group-text" id="basic-addon3">https://example.com/users/</span>
+                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" />
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">$</span>
+                    <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" />
+                    <span class="input-group-text">.00</span>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Username" aria-label="Username" />
+                    <span class="input-group-text">@</span>
+                    <input type="text" class="form-control" placeholder="Server" aria-label="Server" />
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">With textarea</span>
+                    <textarea class="form-control" aria-label="With textarea"></textarea>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" id="inputGroupFile02" />
+                    <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                </div>
+
+
+
+                <form class="row g-3 needs-validation" novalidate>
+                    <div class="col-md-4">
+                        <label for="validationCustom01" class="form-label">First name</label>
+                        <input type="text" class="form-control" id="validationCustom01" value="Mark" required>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="validationCustom02" class="form-label">Last name</label>
+                        <input type="text" class="form-control" id="validationCustom02" value="Otto" required>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="validationCustomUsername" class="form-label">Username</label>
+                        <div class="input-group has-validation">
+                            <span class="input-group-text" id="inputGroupPrepend">@</span>
+                            <input type="text" class="form-control" id="validationCustomUsername"
+                                aria-describedby="inputGroupPrepend" required>
+                            <div class="invalid-feedback">
+                                Please choose a username.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationCustom03" class="form-label">City</label>
+                        <input type="text" class="form-control" id="validationCustom03" required>
+                        <div class="invalid-feedback">
+                            Please provide a valid city.
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="validationCustom04" class="form-label">State</label>
+                        <select class="form-select" id="validationCustom04" required>
+                            <option selected disabled value="">Choose...</option>
+                            <option>...</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select a valid state.
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="validationCustom05" class="form-label">Zip</label>
+                        <input type="text" class="form-control" id="validationCustom05" required>
+                        <div class="invalid-feedback">
+                            Please provide a valid zip.
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                            <label class="form-check-label" for="invalidCheck">
+                                Agree to terms and conditions
+                            </label>
+                            <div class="invalid-feedback">
+                                You must agree before submitting.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <button class="btn btn-primary" type="submit">Submit form</button>
+                    </div>
+                </form>
+
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="inputText" placeholder="Name" />
+                    <label for="inputText">Name</label>
+                </div>
+
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
+                        value="name@example.com">
+                    <label for="floatingInput">Email address</label>
+                </div>
+
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                    <label for="floatingPassword">Password</label>
+                </div>
+
+                <div class="form-floating">
+                    <textarea class="form-control" rows="4" placeholder="Leave a comment here" id="floatingTextarea"
+                        style="height: 6rem;"></textarea>
+                    <label for="floatingTextarea">Comments</label>
+                </div>
+
+                <div class="form-floating">
+                    <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+                        <option selected>Open this select menu</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                    <label for="floatingSelect">Works with selects</label>
+                </div>
+
+                <!-- Validation Form -->
+                <form class="row g-3 needs-validation" novalidate>
+                    <div class="col-md-4 form-floating mb-3">
+                        <input type="text" class="form-control" id="validationCustom01" value="Mark" required>
+                        <label for="validationCustom01" class="form-label">First name</label>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <div class="col-md-4 form-floating mb-3">
+                        <input type="text" class="form-control" id="validationCustom02" value="Otto" required>
+                        <label for="validationCustom02" class="form-label">Last name</label>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <div class="col-md-4 form-floating mb-3">
+                        <div class="input-group has-validation">
+                            <span class="input-group-text bg-transparent">@</span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="inputGroupPrepend" placeholder="Username"
+                                    required>
+                                <label for="inputGroupPrepend">Username</label>
+                            </div>
+                            <div class="invalid-feedback">
+                                Please choose a username.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 form-floating">
+                        <input type="text" class="form-control" id="validationCustom03" required>
+                        <label for="validationCustom03" class="form-label">City</label>
+                        <div class="invalid-feedback">
+                            Please provide a valid city.
+                        </div>
+                    </div>
+                    <div class="col-md-3 form-floating">
+                        <select class="form-select" id="validationCustom04" required>
+                            <option selected disabled value="">Choose...</option>
+                            <option>...</option>
+                        </select>
+                        <label for="validationCustom04" class="form-label">State</label>
+                        <div class="invalid-feedback">
+                            Please select a valid state.
+                        </div>
+                    </div>
+                    <div class="col-md-3 form-floating">
+                        <input type="text" class="form-control" id="validationCustom05" required>
+                        <label for="validationCustom05" class="form-label">Zip</label>
+                        <div class="invalid-feedback">
+                            Please provide a valid zip.
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                            <label class="form-check-label" for="invalidCheck">
+                                Agree to terms and conditions
+                            </label>
+                            <div class="invalid-feedback">
+                                You must agree before submitting.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <button class="btn btn-primary" type="submit">Submit form</button>
+                    </div>
+                </form>
+
+
+
+                <ul class="list-group">
+                    <li class="list-group-item">A simple default list group item</li>
+                    <li class="list-group-item list-group-item-primary">A simple primary list group item</li>
+                    <li class="list-group-item list-group-item-secondary">A simple secondary list group item</li>
+                    <li class="list-group-item list-group-item-success">A simple success list group item</li>
+                    <li class="list-group-item list-group-item-danger">A simple danger list group item</li>
+                    <li class="list-group-item list-group-item-warning">A simple warning list group item</li>
+                    <li class="list-group-item list-group-item-info">A simple info list group item</li>
+                    <li class="list-group-item list-group-item-light">A simple light list group item</li>
+                    <li class="list-group-item list-group-item-dark">A simple dark list group item</li>
+                </ul>
+
+
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination mb-0">
+                        <li class="page-item"><a class="page-link disabled" href="#">Previous</a></li>
+                        <li class="page-item"><a class="page-link active" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    </ul>
+                </nav>
+
+
+
+
+
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination mb-0 justify-content-center">
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="icon icon-tabler icon-tabler-chevron-left" width="12" height="12"
+                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M15 6l-6 6l6 6"></path>
+                                </svg>
+                            </a>
+                        </li>
+                        <li class="page-item"><a class="page-link active" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="icon icon-tabler icon-tabler-chevron-right" width="12" height="12"
+                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M9 6l6 6l-6 6"></path>
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination mb-0 justify-content-end">
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="icon icon-tabler icon-tabler-chevron-left" width="12" height="12"
+                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M15 6l-6 6l6 6"></path>
+                                </svg>
+                            </a>
+                        </li>
+                        <li class="page-item"><a class="page-link active" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="icon icon-tabler icon-tabler-chevron-right" width="12" height="12"
+                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M9 6l6 6l-6 6"></path>
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+
+
+                <div class="card w-md-50 w-100">
+                    <img src="../assets/images/placeholder/placeholder-4by3.svg" class="card-img-top" alt="...">
+
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of
+                            the card's content.</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+
+                <div class="card w-md-50 w-100" aria-hidden="true">
+                    <img src="../assets/images/placeholder/placeholder-4by3.svg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title placeholder-glow">
+                            <span class="placeholder col-6"></span>
+                        </h5>
+                        <p class="card-text placeholder-glow">
+                            <span class="placeholder col-7"></span>
+                            <span class="placeholder col-4"></span>
+                            <span class="placeholder col-4"></span>
+                            <span class="placeholder col-6"></span>
+                            <span class="placeholder col-8"></span>
+                        </p>
+                        <a class="btn btn-primary disabled placeholder col-6" aria-disabled="true"></a>
+                    </div>
+                </div>
+
+
+                <div>
+                    <span class="placeholder col-12 bg-primary"></span>
+                    <span class="placeholder col-12 bg-secondary"></span>
+                    <span class="placeholder col-12 bg-success"></span>
+                    <span class="placeholder col-12 bg-danger"></span>
+                    <span class="placeholder col-12 bg-warning"></span>
+                    <span class="placeholder col-12 bg-info"></span>
+                    <span class="placeholder col-12 bg-gray-100"></span>
+                    <span class="placeholder col-12 bg-dark"></span>
+                </div>
+
+
+
+                <a tabindex="0" class="btn btn-lg btn-danger" role="button" data-bs-toggle="popover"
+                    data-bs-trigger="focus" data-bs-title="Dismissible popover"
+                    data-bs-content="And here's some amazing content. It's very engaging. Right?">Dismissible
+                    popover</a>
+
+
+
+                <div class="progress" role="progressbar" aria-label="Success example" aria-valuenow="25"
+                    aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar bg-success" style="width: 25%"></div>
+                </div>
+                <div class="progress" role="progressbar" aria-label="Info example" aria-valuenow="50" aria-valuemin="0"
+                    aria-valuemax="100">
+                    <div class="progress-bar bg-info" style="width: 50%"></div>
+                </div>
+                <div class="progress" role="progressbar" aria-label="Warning example" aria-valuenow="75"
+                    aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar bg-warning" style="width: 75%"></div>
+                </div>
+                <div class="progress" role="progressbar" aria-label="Danger example" aria-valuenow="100"
+                    aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar bg-danger" style="width: 100%"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <nav id="navbar-example3" class="h-100 flex-column align-items-stretch pe-4 border-end">
+                            <nav class="nav nav-pills flex-column">
+                                <a class="nav-link" href="#item-1">Item 1</a>
+                                <nav class="nav nav-pills flex-column">
+                                    <a class="nav-link ms-3 my-1" href="#item-1-1">Item 1-1</a>
+                                    <a class="nav-link ms-3 my-1" href="#item-1-2">Item 1-2</a>
+                                </nav>
+                                <a class="nav-link" href="#item-2">Item 2</a>
+                                <a class="nav-link" href="#item-3">Item 3</a>
+                                <nav class="nav nav-pills flex-column">
+                                    <a class="nav-link ms-3 my-1" href="#item-3-1">Item 3-1</a>
+                                    <a class="nav-link ms-3 my-1" href="#item-3-2">Item 3-2</a>
+                                </nav>
+                            </nav>
+                        </nav>
+                    </div>
+
+                    <div class="col-8">
+                        <div data-bs-spy="scroll" data-bs-target="#navbar-example3" data-bs-smooth-scroll="true"
+                            class="scrollspy-example-2" tabindex="0">
+                            <div id="item-1">
+                                <h4>Item 1</h4>
+                                <p>This is some placeholder content for the scrollspy page. Note that as you scroll down
+                                    the page, the appropriate navigation link is highlighted. It's repeated throughout
+                                    the component example. We keep adding some more example copy here to emphasize the
+                                    scrolling and highlighting.</p>
+                                <p>Keep in mind that the JavaScript plugin tries to pick the right element among all
+                                    that may be visible. Multiple visible scrollspy targets at the same time may cause
+                                    some issues.</p>
+                            </div>
+                            <div id="item-1-1">
+                                <h5>Item 1-1</h5>
+                                <p>This is some placeholder content for the scrollspy page. Note that as you scroll down
+                                    the page, the appropriate navigation link is highlighted. It's repeated throughout
+                                    the component example. We keep adding some more example copy here to emphasize the
+                                    scrolling and highlighting.</p>
+                                <p>Keep in mind that the JavaScript plugin tries to pick the right element among all
+                                    that may be visible. Multiple visible scrollspy targets at the same time may cause
+                                    some issues.</p>
+                            </div>
+                            <div id="item-1-2">
+                                <h5>Item 1-2</h5>
+                                <p>This is some placeholder content for the scrollspy page. Note that as you scroll down
+                                    the page, the appropriate navigation link is highlighted. It's repeated throughout
+                                    the component example. We keep adding some more example copy here to emphasize the
+                                    scrolling and highlighting.</p>
+                                <p>Keep in mind that the JavaScript plugin tries to pick the right element among all
+                                    that may be visible. Multiple visible scrollspy targets at the same time may cause
+                                    some issues.</p>
+                            </div>
+                            <div id="item-2">
+                                <h4>Item 2</h4>
+                                <p>This is some placeholder content for the scrollspy page. Note that as you scroll down
+                                    the page, the appropriate navigation link is highlighted. It's repeated throughout
+                                    the component example. We keep adding some more example copy here to emphasize the
+                                    scrolling and highlighting.</p>
+                                <p>Keep in mind that the JavaScript plugin tries to pick the right element among all
+                                    that may be visible. Multiple visible scrollspy targets at the same time may cause
+                                    some issues.</p>
+                            </div>
+                            <div id="item-3">
+                                <h4>Item 3</h4>
+                                <p>This is some placeholder content for the scrollspy page. Note that as you scroll down
+                                    the page, the appropriate navigation link is highlighted. It's repeated throughout
+                                    the component example. We keep adding some more example copy here to emphasize the
+                                    scrolling and highlighting.</p>
+                                <p>Keep in mind that the JavaScript plugin tries to pick the right element among all
+                                    that may be visible. Multiple visible scrollspy targets at the same time may cause
+                                    some issues.</p>
+                            </div>
+                            <div id="item-3-1">
+                                <h5>Item 3-1</h5>
+                                <p>This is some placeholder content for the scrollspy page. Note that as you scroll down
+                                    the page, the appropriate navigation link is highlighted. It's repeated throughout
+                                    the component example. We keep adding some more example copy here to emphasize the
+                                    scrolling and highlighting.</p>
+                                <p>Keep in mind that the JavaScript plugin tries to pick the right element among all
+                                    that may be visible. Multiple visible scrollspy targets at the same time may cause
+                                    some issues.</p>
+                            </div>
+                            <div id="item-3-2">
+                                <h5>Item 3-2</h5>
+                                <p>This is some placeholder content for the scrollspy page. Note that as you scroll down
+                                    the page, the appropriate navigation link is highlighted. It's repeated throughout
+                                    the component example. We keep adding some more example copy here to emphasize the
+                                    scrolling and highlighting.</p>
+                                <p>Keep in mind that the JavaScript plugin tries to pick the right element among all
+                                    that may be visible. Multiple visible scrollspy targets at the same time may cause
+                                    some issues.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-border text-secondary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-border text-danger" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-border text-warning" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-border text-info" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-border text-light" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-border " role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+
+                <div class="spinner-grow text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-grow text-secondary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-grow text-success" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-grow text-danger" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-grow text-warning" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-grow text-info" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-grow text-light" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-grow " role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">First</th>
+                            <th scope="col">Last</th>
+                            <th scope="col">Handle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <table class="table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Header</th>
+                                            <th scope="col">Header</th>
+                                            <th scope="col">Header</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">A</th>
+                                            <td>First</td>
+                                            <td>Last</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">B</th>
+                                            <td>First</td>
+                                            <td>Last</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">C</th>
+                                            <td>First</td>
+                                            <td>Last</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td>Larry</td>
+                            <td>the Bird</td>
+                            <td>@twitter</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+
+
+
+                <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 100px;">
+                    <!-- Position it -->
+                    <div style="position: absolute; top: 0; right: 0;">
+                        <!-- Then put toasts within -->
+                        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="toast-header">
+                                <svg class="bd-placeholder-img me-2" width="20" height="20"
+                                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+                                    preserveAspectRatio="xMidYMid slice" focusable="false">
+                                    <rect width="100%" height="100%" fill="#007aff"></rect>
+                                </svg>
+                                <strong class="me-auto">Bootstrap</strong>
+                                <small class="text-secondary">just now</small>
+                                <button type="button" class="ms-2 mb-1 btn-close" data-bs-dismiss="toast"
+                                    aria-label="Close">
+                                </button>
+                            </div>
+                            <div class="toast-body">
+                                See? Just like this.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top"
+                    data-bs-title="Tooltip on top">
+                    Tooltip on top
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="right"
+                    data-bs-title="Tooltip on right">
+                    Tooltip on right
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    data-bs-title="Tooltip on bottom">
+                    Tooltip on bottom
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="left"
+                    data-bs-title="Tooltip on left">
+                    Tooltip on left
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-html="true"
+                    data-bs-title="<em>Tooltip</em> <u>with</u> <b>HTML</b>">Tooltip with HTML</button>
+
+
+
+
+
+
+
+
+                <!-- stepper -->
+                <div id="stepperForm" class="bs-stepper">
+                    <!-- Stepper Button -->
+                    <div class="bs-stepper-header p-0 bg-transparent mb-4" role="tablist">
+                        <div class="step" data-target="#test-l-1">
+                            <button type="button" class="step-trigger" role="tab" id="stepperFormtrigger1"
+                                aria-controls="test-l-1">
+                                <span class="bs-stepper-circle me-2 d-flex align-items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users"
+                                        width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5"
+                                        stroke="currentColor" fill="none" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                                        <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                        <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+                                    </svg>
+                                </span>
+                                <span class="bs-stepper-label">Email</span>
+                            </button>
+                        </div>
+                        <div class="bs-stepper-line"></div>
+                        <!-- Stepper Button -->
+                        <div class="step" data-target="#test-l-2">
+                            <button type="button" class="step-trigger" role="tab" id="stepperFormtrigger2"
+                                aria-controls="test-l-2">
+                                <span class="bs-stepper-circle me-2 d-flex align-items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="icon icon-tabler icon-tabler-shopping-bag" width="20" height="20"
+                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path
+                                            d="M6.331 8h11.339a2 2 0 0 1 1.977 2.304l-1.255 8.152a3 3 0 0 1 -2.966 2.544h-6.852a3 3 0 0 1 -2.965 -2.544l-1.255 -8.152a2 2 0 0 1 1.977 -2.304z" />
+                                        <path d="M9 11v-5a3 3 0 0 1 6 0v5" />
+                                    </svg>
+                                </span>
+                                <span class="bs-stepper-label">Password</span>
+                            </button>
+                        </div>
+                        <div class="bs-stepper-line"></div>
+                        <!-- Stepper Button -->
+                        <div class="step" data-target="#test-l-3">
+                            <button type="button" class="step-trigger" role="tab" id="stepperFormtrigger3"
+                                aria-controls="test-l-3">
+                                <span class="bs-stepper-circle me-2 d-flex align-items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="icon icon-tabler icon-tabler-credit-card" width="20" height="20"
+                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path
+                                            d="M3 5m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z">
+                                        </path>
+                                        <path d="M3 10l18 0"></path>
+                                        <path d="M7 15l.01 0"></path>
+                                        <path d="M11 15l2 0"></path>
+                                    </svg>
+                                </span>
+                                <span class="bs-stepper-label">Validate</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- card -->
+                    <div class="card card-lg">
+                        <div class="card-body px-6 py-5">
+                            <!-- Stepper content -->
+                            <div class="bs-stepper-content">
+                                <form onSubmit="return false">
+                                    <!-- Content one -->
+                                    <div id="test-l-1" role="tabpanel" class="bs-stepper-pane fade"
+                                        aria-labelledby="stepperFormtrigger1">
+                                        <div class="mb-3">
+                                            <label for="exampleInputEmail1" class="form-label">Email address</label>
+                                            <input type="email" class="form-control" id="exampleInputEmail1"
+                                                aria-describedby="emailHelp" />
+                                            <div id="emailHelp" class="form-text">We'll never share your email with
+                                                anyone else.</div>
+                                        </div>
+
+                                        <!-- Button -->
+                                        <div class="d-flex justify-content-end">
+                                            <button class="btn btn-primary" onclick="stepperForm.next()">Next</button>
+                                        </div>
+                                    </div>
+                                    <!-- Content two -->
+                                    <div id="test-l-2" role="tabpanel" class="bs-stepper-pane fade"
+                                        aria-labelledby="stepperFormtrigger2">
+                                        <div class="mb-3">
+                                            <label for="exampleInputPassword1" class="form-label">Password</label>
+                                            <input type="password" class="form-control" id="exampleInputPassword1" />
+                                        </div>
+
+                                        <!-- Button -->
+                                        <div class="d-md-flex justify-content-between mt-4">
+                                            <button class="btn btn-outline-primary mb-2 mb-md-0"
+                                                onclick="stepperForm.previous()">Back</button>
+                                            <!-- Button -->
+                                            <button class="btn btn-primary"
+                                                onclick="stepperForm.next()">Continue</button>
+                                        </div>
+                                    </div>
+                                    <!-- Content three -->
+                                    <div id="test-l-3" role="tabpanel" class="bs-stepper-pane fade"
+                                        aria-labelledby="stepperFormtrigger3">
+                                        <p class="text-center fs-4">Form Submit</p>
+                                        <!-- Button -->
+                                        <div class="d-flex justify-content-between">
+                                            <!-- Button -->
+                                            <button class="btn btn-outline-primary mt-3"
+                                                onclick="stepperForm.previous()">Back</button>
+                                            <!-- Button -->
+                                            <button type="submit" class="btn btn-primary mt-3"
+                                                onclick=" location.href='#!' ">Submit</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <select class="form-select" data-choices>
+                    <option selected>Filter Activity</option>
+                    <option value="Logged Call">Logged Call</option>
+                    <option value="Deal Activity">Deal Activity</option>
+                    <option value="Task">Task</option>
+                    <option value="Email">Email</option>
+                    <option value="Meetings">Meetings</option>
+                </select>
+
+
+
+
+
+                <div class="task-kanban-container pb-4">
+                    <div class="task-card card border-0 me-3">
+                        <div class="card-body">
+
+                            <!-- card -->
+                            <div id="do" class="d-flex flex-column overflow-y-auto overflow-x-hidden gap-3"
+                                style="height: 100vh">
+
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="">Card title</h5>
+                                        <p class="text-truncate">Some quick example text to build on the card title and
+                                            make up the bulk of the card's content.</p>
+                                    </div>
+                                </div>
+
+                                <!-- card -->
+
+                                <!-- card -->
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="">Card title</h5>
+                                        <p class="text-truncate">Some quick example text to build on the card title and
+                                            make up the bulk of the card's content.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="task-card card border-0 mx-3">
+                        <div class="card-body">
+
+                            <!-- card -->
+                            <div id="progress" class="d-flex flex-column overflow-y-auto overflow-x-hidden gap-3"
+                                style="height: 100vh">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="">Card title</h5>
+                                        <p class="text-truncate">Some quick example text to build on the card title and
+                                            make up the bulk of the card's content.</p>
+                                    </div>
+                                </div>
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="">Card title</h5>
+                                        <p class="text-truncate">Some quick example text to build on the card title and
+                                            make up the bulk of the card's content.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                <div class="input-group">
+                    <input class="form-control flatpickr" type="text" value="Select Date" placeholder="Select Date"
+                        aria-describedby="basic-addon2" />
+                    <span class="input-group-text text-secondary" id="basic-addon2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" width="16"
+                            height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" />
+                            <path d="M16 3v4" />
+                            <path d="M8 3v4" />
+                            <path d="M4 11h16" />
+                            <path d="M11 15h1" />
+                            <path d="M12 15v3" />
+                        </svg>
+                    </span>
+                </div>
+
+                <div id="map-world" style="width: 100%; height: 250px"></div>
+
+
+
+
+<div class="card card-lg" id="crmCompany" data-list="company_name,company_owner,company_category,company_rating,company_location">
+                              <div class="card-header border-bottom-0">
+                                <div class="row">
+                                  <div class="col-lg-4">
+                                    <input type="search" class="form-control listjs-search" placeholder="Search" />
+                                  </div>
+                                  <div class="col-lg-8 d-flex justify-content-end">
+                                    <div class="d-flex align-items-center gap-3">
+                                      <a href="#!" class="btn btn-dark d-md-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#contact-modal">
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="18"
+                                          height="18"
+                                          viewBox="0 0 24 24"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          class="icon icon-tabler icons-tabler-outline icon-tabler-plus"
+                                        >
+                                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                          <path d="M12 5l0 14" />
+                                          <path d="M5 12l14 0" />
+                                        </svg>
+                                        Add Company</a
+                                      >
+                                      <button type="button" class="btn btn-white">Import</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="table-responsive table-checkbox" data-simplebar style="height: 600px">
+                                <table class="table text-nowrap table-centered table-hover mb-0" data-check-container>
+                                  <thead class="sticky-top">
+                                    <tr>
+                                      <th class="pe-0">
+                                        <div class="form-check">
+                                          <input class="form-check-input" type="checkbox" value="" id="checkAll" data-check-all />
+                                          <label class="form-check-label" for="checkAll"></label>
+                                        </div>
+                                      </th>
+                                      <th class="listjs-sorter ps-0" data-sort="company_name">Name</th>
+                                      <th class="listjs-sorter" data-sort="company_owner">Age</th>
+                                      <th class="listjs-sorter" data-sort="company_category">City</th>
+                                      <th class="listjs-sorter" data-sort="company_rating">Rating</th>
+
+                                    </tr>
+                                  </thead>
+                                  <tbody class="list">
+                                    <tr>
+                                      <td class="pe-0">
+                                        <div class="form-check">
+                                          <input class="form-check-input" type="checkbox" value="" id="contactCheckbox2" />
+                                          <label class="form-check-label" for="contactCheckbox2"></label>
+                                        </div>
+                                      </td>
+                                      <td class="company_name ps-0">
+                                        <div class="">
+
+                                            <a href="#!" class="text-inherit">Jonas</a>
+
+                                        </div>
+                                      </td>
+                                      <td class="company_owner">-132	</td>
+                                      <td class="company_category">Berlin</td>
+                                      <td class="">
+                                        <span class="d-flex align-items-center gap-2 lh-1">
+                                          <span>3.9</span>
+                                          <span
+                                            ><svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              width="14"
+                                              height="14"
+                                              viewBox="0 0 24 24"
+                                              fill="currentColor"
+                                              class="icon icon-tabler icons-tabler-filled icon-tabler-star text-warning"
+                                            >
+                                              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                              <path
+                                                d="M8.243 7.34l-6.38 .925l-.113 .023a1 1 0 0 0 -.44 1.684l4.622 4.499l-1.09 6.355l-.013 .11a1 1 0 0 0 1.464 .944l5.706 -3l5.693 3l.1 .046a1 1 0 0 0 1.352 -1.1l-1.091 -6.355l4.624 -4.5l.078 -.085a1 1 0 0 0 -.633 -1.62l-6.38 -.926l-2.852 -5.78a1 1 0 0 0 -1.794 0l-2.853 5.78z"
+                                              />
+                                            </svg>
+                                          </span>
+                                        </span>
+                                      </td>
+
+
+                                    </tr>
+                                    <tr>
+                                      <td class="pe-0">
+                                        <div class="form-check">
+                                          <input class="form-check-input" type="checkbox" value="" id="contactCheckbox3" />
+                                          <label class="form-check-label" for="contactCheckbox3"></label>
+                                        </div>
+                                      </td>
+                                      <td class="company_name ps-0">
+
+                                            <a href="#!" class="text-inherit">Fredrik	</a>
+
+                                      </td>
+                                      <td class="company_owner">26</td>
+                                      <td class="company_category">Goteborg	</td>
+                                      <td class="company_rating">
+                                        <span class="d-flex align-items-center gap-2 lh-1">
+                                          <span>4.9</span>
+                                          <span
+                                            ><svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              width="14"
+                                              height="14"
+                                              viewBox="0 0 24 24"
+                                              fill="currentColor"
+                                              class="icon icon-tabler icons-tabler-filled icon-tabler-star text-warning"
+                                            >
+                                              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                              <path
+                                                d="M8.243 7.34l-6.38 .925l-.113 .023a1 1 0 0 0 -.44 1.684l4.622 4.499l-1.09 6.355l-.013 .11a1 1 0 0 0 1.464 .944l5.706 -3l5.693 3l.1 .046a1 1 0 0 0 1.352 -1.1l-1.091 -6.355l4.624 -4.5l.078 -.085a1 1 0 0 0 -.633 -1.62l-6.38 -.926l-2.852 -5.78a1 1 0 0 0 -1.794 0l-2.853 5.78z"
+                                              />
+                                            </svg>
+                                          </span>
+                                        </span>
+                                      </td>
+
+                                    </tr>
+                                    <tr>
+                                      <td class="pe-0">
+                                        <div class="form-check">
+                                          <input class="form-check-input" type="checkbox" value="" id="contactCheckbox4" />
+                                          <label class="form-check-label" for="contactCheckbox4"></label>
+                                        </div>
+                                      </td>
+                                      <td class="company_name ps-0">
+
+                                            <a href="#!" class="text-inherit">Jonny	</a>
+
+                                      </td>
+                                      <td class="company_owner">27</td>
+                                      <td class="company_category">Stockholm	</td>
+                                      <td class="company_rating">
+                                        <span class="d-flex align-items-center gap-2 lh-1">
+                                          <span>4.0</span>
+                                          <span
+                                            ><svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              width="14"
+                                              height="14"
+                                              viewBox="0 0 24 24"
+                                              fill="currentColor"
+                                              class="icon icon-tabler icons-tabler-filled icon-tabler-star text-warning"
+                                            >
+                                              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                              <path
+                                                d="M8.243 7.34l-6.38 .925l-.113 .023a1 1 0 0 0 -.44 1.684l4.622 4.499l-1.09 6.355l-.013 .11a1 1 0 0 0 1.464 .944l5.706 -3l5.693 3l.1 .046a1 1 0 0 0 1.352 -1.1l-1.091 -6.355l4.624 -4.5l.078 -.085a1 1 0 0 0 -.633 -1.62l-6.38 -.926l-2.852 -5.78a1 1 0 0 0 -1.794 0l-2.853 5.78z"
+                                              />
+                                            </svg>
+                                          </span>
+                                        </span>
+                                      </td>
+
+                                    </tr>
+                                    <tr>
+                                      <td class="pe-0">
+                                        <div class="form-check">
+                                          <input class="form-check-input" type="checkbox" value="" id="contactCheckbox5" />
+                                          <label class="form-check-label" for="contactCheckbox5"></label>
+                                        </div>
+                                      </td>
+                                      <td class="company_name ps-0">
+
+                                            <a href="#!" class="text-inherit">Gustaf	</a>
+
+                                      </td>
+                                      <td class="company_owner">23</td>
+                                      <td class="company_category">Sundsvall	</td>
+                                      <td class="company_rating">
+                                        <span class="d-flex align-items-center gap-2 lh-1">
+                                          <span>3.0</span>
+                                          <span
+                                            ><svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              width="14"
+                                              height="14"
+                                              viewBox="0 0 24 24"
+                                              fill="currentColor"
+                                              class="icon icon-tabler icons-tabler-filled icon-tabler-star text-warning"
+                                            >
+                                              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                              <path
+                                                d="M8.243 7.34l-6.38 .925l-.113 .023a1 1 0 0 0 -.44 1.684l4.622 4.499l-1.09 6.355l-.013 .11a1 1 0 0 0 1.464 .944l5.706 -3l5.693 3l.1 .046a1 1 0 0 0 1.352 -1.1l-1.091 -6.355l4.624 -4.5l.078 -.085a1 1 0 0 0 -.633 -1.62l-6.38 -.926l-2.852 -5.78a1 1 0 0 0 -1.794 0l-2.853 5.78z"
+                                              />
+                                            </svg>
+                                          </span>
+                                        </span>
+                                      </td>
+
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+
+                              <div class="btn-toolbar card-footer border-top border-dashed d-flex justify-content-between align-items-center">
+                                <p class="mb-0 listjs-showing-items-label"></p>
+                                <div class="d-flex gap-4">
+                                  <div class="d-flex align-items-center gap-2">
+                                    <label class="form-label text-nowrap mb-0">Rows per page:</label>
+                                    <select class="form-select listjs-items-per-page" data-choices="">
+                                      <option value="8" selected>8</option>
+                                      <option value="11">11</option>
+                                    </select>
+                                  </div>
+                                  <div>
+                                    <div class="pagination-buttons d-flex">
+                                      <button class="btn btn-white prev">Previous</button>
+                                      <ul class="pagination mb-0 ms-1"></ul>
+                                      <button class="btn btn-white next">Next</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+
+                             <div class="row">
+<div class="col-12">
+  <div
+    class="swiper-container swiper"
+    id="swiper-2"
+    data-pagination-type=""
+    data-speed="400"
+    data-space-between="100"
+    data-pagination="true"
+    data-navigation="false"
+    data-autoplay="true"
+    data-autoplay-delay="2000"
+    data-breakpoints='{"480": {"slidesPerView": 1}, "768": {"slidesPerView": 1}, "1024": {"slidesPerView": 1}}'
+  >
+    <div class="swiper-wrapper pb-6">
+      <div class="swiper-slide">
+        <div class="ratio ratio-16x9 bg-secondary position-relative border-0 w-100">
+          <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center display-6">1</div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="ratio ratio-16x9 bg-secondary position-relative border-0 w-100">
+          <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center display-6">2</div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="ratio ratio-16x9 bg-secondary position-relative border-0 w-100">
+          <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center display-6">3</div>
+        </div>
+      </div>
+      <!-- Add more slides as needed -->
+    </div>
+    <!-- Add Pagination -->
+    <div class="swiper-pagination"></div>
+    <!-- Add Navigation -->
+    <div class="swiper-navigation">
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<span class="border border-primary"></span>
+<span class="border border-primary-subtle"></span>
+<span class="border border-secondary"></span>
+<span class="border border-secondary-subtle"></span>
+<span class="border border-success"></span>
+<span class="border border-success-subtle"></span>
+<span class="border border-danger"></span>
+<span class="border border-danger-subtle"></span>
+<span class="border border-warning"></span>
+<span class="border border-warning-subtle"></span>
+<span class="border border-info"></span>
+<span class="border border-info-subtle"></span>
+<span class="border border-light"></span>
+<span class="border border-light-subtle"></span>
+<span class="border border-dark"></span>
+<span class="border border-dark-subtle"></span>
+<span class="border border-black"></span>
+<span class="border border-white"></span>
+
+
+<div class="text-primary">This is default primary text</div>
+<div class="text-primary text-opacity-75">This is 75% opacity primary text</div>
+<div class="text-primary text-opacity-50">This is 50% opacity primary text</div>
+<div class="text-primary text-opacity-25">This is 25% opacity primary text</div>
+
+
+
+
+
+
+
+
+
+
+
             </div>
         </div>
     </div>

@@ -11,25 +11,6 @@ import java.time.LocalDateTime;
 public class ModuloSistemaDTO {
 
     @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Response {
-        
-        private Integer idModuloSistemas;
-        private String nombreModulo;
-        private String descripcionModulo;
-        private String iconoModulo;
-        private String rutaModulo;
-        private Integer ordenModulo;
-        private EstadoModulo estadoModulo;
-        private String estadoModuloTexto;
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
-    }
-
-    @Data
-    @NoArgsConstructor
     @AllArgsConstructor
     public static class Request {
 
@@ -53,6 +34,24 @@ public class ModuloSistemaDTO {
         private EstadoModulo estadoModulo;
 
         private Integer idModuloPadre;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Response {
+        
+        private Integer idModuloSistemas;
+        private String nombreModulo;
+        private String descripcionModulo;
+        private String iconoModulo;
+        private String rutaModulo;
+        private Integer ordenModulo;
+        private EstadoModulo estadoModulo;
+        private String estadoModuloTexto;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
     }
 
     @Data

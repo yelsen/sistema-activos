@@ -18,12 +18,12 @@
 
     </main>
 
+    <th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
+
     <!-- Contenedor de mensajes Flash para los toasts -->
     <div id="flash-messages" style="display: none;"
         th:attr="data-success=${success}, data-error=${error}, data-warning=${warning}, data-info=${info}">
     </div>
-
-    <th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
 
     <!-- Script unificado para leer los mensajes y mostrar los toasts -->
     <script>

@@ -24,6 +24,22 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:uploads/");
+        
+        // Configuración para librerías con @ en el nombre
+        registry.addResourceHandler("/libs/@tabler/**")
+                .addResourceLocations("classpath:/static/libs/@tabler/")
+                .setCachePeriod(3600)
+                .resourceChain(true);
+        
+        registry.addResourceHandler("/libs/@popperjs/**")
+                .addResourceLocations("classpath:/static/libs/@popperjs/")
+                .setCachePeriod(3600)
+                .resourceChain(true);
+        
+        registry.addResourceHandler("/libs/@yaireo/**")
+                .addResourceLocations("classpath:/static/libs/@yaireo/")
+                .setCachePeriod(3600)
+                .resourceChain(true);
     }
 
     @Override

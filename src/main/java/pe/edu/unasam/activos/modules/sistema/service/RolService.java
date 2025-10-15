@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import pe.edu.unasam.activos.common.enums.EstadoRol;
 import pe.edu.unasam.activos.common.exception.NotFoundException;
+import pe.edu.unasam.activos.common.exception.BusinessException;
 import pe.edu.unasam.activos.common.exception.ReferentialIntegrityException;
 import pe.edu.unasam.activos.modules.sistema.domain.Accion;
 import pe.edu.unasam.activos.modules.sistema.domain.Permiso;
@@ -97,6 +98,8 @@ public class RolService {
     @Transactional
     public RolDTO.Response save(RolDTO.Request rolRequest) {
 
+        validateUniqueRolName(rolRequest.getNombreRol(), null);
+
         Rol rol = Rol.builder()
                 .nombreRol(rolRequest.getNombreRol())
                 .descripcionRol(rolRequest.getDescripcionRol())
@@ -115,17 +118,18 @@ public class RolService {
     
     @Transactional
     public RolDTO.Response update(Integer id, RolDTO.Request rolRequest) {
-        log.info("Actualizando rol con ID: {}", id);
-
         Rol existingRol = rolRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Rol no encontrado con ID: " + id));
+
+        validateUniqueRolName(rolRequest.getNombreRol(), id);
 
         existingRol.setNombreRol(rolRequest.getNombreRol());
         existingRol.setDescripcionRol(rolRequest.getDescripcionRol());
         existingRol.setNivelAcceso(rolRequest.getNivelAcceso());
         existingRol.setColorRol(rolRequest.getColorRol());
-        // FIX: Se olvidó establecer el estado del rol, causando que se guarde como NULL si no se envía.
-        existingRol.setEstadoRol(rolRequest.getEstadoRol());
+        if (rolRequest.getEstadoRol() != null) {
+            existingRol.setEstadoRol(rolRequest.getEstadoRol());
+        }
         
         // Restaurar la llamada para actualizar los permisos
         updateRolPermissionsFromString(existingRol, rolRequest.getPermisosSeleccionados());
@@ -137,19 +141,18 @@ public class RolService {
 
     @Transactional
     public void deleteById(Integer id) {
-        log.info("Iniciando borrado lógico para el rol ID: {}", id);
         Rol rol = rolRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Rol no encontrado con ID: " + id));
 
         verificarPrecondicionesDeEliminacion(rol);
 
-        // 1. Eliminar físicamente todas las asignaciones de permisos para este rol.
+        // 1. Eliminar físicamente todas las asignaciones de permisos para este rol (CASCADE).
         log.debug("Eliminando todas las asignaciones de permisos para el rol ID: {}", id);
         rolPermisoRepository.deleteByRol_IdRol(id);
 
-        // 2. Realizar el borrado lógico del rol.
+        // 2. Realizar el borrado físico del rol.
         rolRepository.deleteById(id);
-        log.info("Borrado lógico del rol ID: {} completado.", id);
+        log.info("Rol con ID: {} eliminado físicamente.", id);
     }
 
     @Transactional
@@ -176,6 +179,17 @@ public class RolService {
         // FUTURA PRE-CONDICIÓN 2: Podrías añadir más validaciones aquí.
         // Ejemplo: if (rol.esRolDelSistema()) { throw new ... }
     }
+
+    private void validateUniqueRolName(String nombreRol, Integer excludeId) {
+        Optional<Rol> existingRol = rolRepository.findByNombreRol(nombreRol);
+        if (existingRol.isPresent()) {
+            if (excludeId == null || !existingRol.get().getIdRol().equals(excludeId)) {
+                throw new BusinessException("El nombre del rol '" + nombreRol + "' ya está en uso.");
+            }
+        }
+    }
+
+
     @Transactional(readOnly = true)
     public List<PermisoDTO.Response> getPermisosPorRol(Integer idRol) {
         List<RolPermiso> rolPermisos = rolPermisoRepository.findByRolIdWithPermisos(idRol);
@@ -199,17 +213,16 @@ public class RolService {
         // 1. Obtener todos los RolPermiso existentes para este rol y ponerlos en un mapa para fácil acceso.
         Map<Integer, RolPermiso> permisosActualesMap = rolPermisoRepository.findByRol_IdRol(rol.getIdRol()).stream()
                 .collect(Collectors.toMap(rp -> rp.getPermiso().getIdPermiso(), rp -> rp));
-        log.debug("El rol tiene {} permisos preexistentes en la tabla de unión.", permisosActualesMap.size());
-
-        // 2. Marcar todos los permisos existentes como NO permitidos inicialmente.
-        //    Se actualizarán a 'true' solo si vienen en la lista del formulario.
+                
         permisosActualesMap.values().forEach(rp -> rp.setPermitido(false));
+        if (permisosSeleccionados == null) {
+            permisosSeleccionados = new ArrayList<>();
+        }
 
         // 3. Procesar los permisos que vienen del formulario.
-        if (permisosSeleccionados != null && !permisosSeleccionados.isEmpty()) {
-            for (String permisoStr : permisosSeleccionados) {
-                try {
-                    String[] ids = permisoStr.split("-");
+        for (String permisoStr : permisosSeleccionados) {
+            try {
+                String[] ids = permisoStr.split("-");
                     if (ids.length != 2) {
                         log.warn("Formato de permiso inválido, se omitirá: {}", permisoStr);
                         continue;
@@ -220,11 +233,7 @@ public class RolService {
                     // 4. Buscar el permiso. Si no existe, se crea en el acto.
                     Permiso permiso = permisoService.findOrCreatePermiso(idModulo, idAccion);
 
-                    // FIX: Asegurarse de que el permiso esté gestionado por la sesión actual
-                    // volviéndolo a buscar si es necesario, aunque findOrCreatePermiso ya debería devolverlo gestionado.
-                    Permiso managedPermiso = permisoRepository.findById(permiso.getIdPermiso()).get();
-
-                    RolPermiso rolPermiso = permisosActualesMap.get(managedPermiso.getIdPermiso());
+                    RolPermiso rolPermiso = permisosActualesMap.get(permiso.getIdPermiso());
 
                     if (rolPermiso != null) {
                         // Si ya existía la relación, simplemente la marcamos como permitida.
@@ -233,16 +242,15 @@ public class RolService {
                         // Si no existía, creamos una nueva relación y la añadimos al mapa.
                         RolPermiso nuevoRolPermiso = RolPermiso.builder()
                                 .rol(rol)
-                                .permiso(managedPermiso)
+                                .permiso(permiso)
                                 .permitido(true)
                                 .build();
-                        permisosActualesMap.put(managedPermiso.getIdPermiso(), nuevoRolPermiso);
+                        permisosActualesMap.put(permiso.getIdPermiso(), nuevoRolPermiso);
                     }
                 } catch (NumberFormatException e) {
-                    log.error("Error al parsear IDs del permiso: {}", permisoStr, e);
-                }
+                log.error("Error al parsear IDs del permiso: {}", permisoStr, e);
             }
-        }
+        } 
 
         // 5. Guardar todos los cambios (actualizaciones y nuevas inserciones).
         List<RolPermiso> rolPermisosAGuardar = new ArrayList<>(permisosActualesMap.values());
@@ -278,7 +286,7 @@ public class RolService {
 
         if (!rolPermisos.isEmpty()) {
             dto.setPermisos(rolPermisos.stream()
-                    .map(rp -> RolDTO.Response.RolPermisoResponse.builder()
+                    .map(rp -> RolPermisoDTO.Response.builder()
                             .permiso(convertToFullPermisoResponse(rp.getPermiso()))
                             .permitido(rp.isPermitido())
                             .build())
@@ -292,8 +300,8 @@ public class RolService {
                     .collect(Collectors.groupingBy(this::convertToFullModuloResponse,
                             Collectors.mapping(p -> convertToFullAccionResponse(p.getAccion()), Collectors.toList())));
 
-            List<RolDTO.Response.PermisoAgrupadoResponse> permisosAgrupados = groupedPermissions.entrySet().stream()
-                    .map(entry -> RolDTO.Response.PermisoAgrupadoResponse.builder()
+            List<RolPermisoDTO.PermisoAgrupadoResponse> permisosAgrupados = groupedPermissions.entrySet().stream()
+                    .map(entry -> RolPermisoDTO.PermisoAgrupadoResponse.builder()
                             .modulo(entry.getKey())
                             .acciones(entry.getValue())
                             .build())

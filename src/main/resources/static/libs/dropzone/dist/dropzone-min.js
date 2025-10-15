@@ -30,8 +30,8 @@
       (a = Object.setPrototypeOf
         ? Object.getPrototypeOf
         : function (e) {
-            return e.__proto__ || Object.getPrototypeOf(e);
-          }),
+          return e.__proto__ || Object.getPrototypeOf(e);
+        }),
       a(e)
     );
   }
@@ -145,9 +145,9 @@
               }
             return (
               this.element &&
-                this.element.dispatchEvent(
-                  this.makeEvent("dropzone:" + e, { args: i })
-                ),
+              this.element.dispatchEvent(
+                this.makeEvent("dropzone:" + e, { args: i })
+              ),
               this
             );
           },
@@ -185,447 +185,447 @@
     );
   })();
   var p = {
-      url: null,
-      method: "post",
-      withCredentials: !1,
-      timeout: null,
-      parallelUploads: 2,
-      uploadMultiple: !1,
-      chunking: !1,
-      forceChunking: !1,
-      chunkSize: 2097152,
-      parallelChunkUploads: !1,
-      retryChunks: !1,
-      retryChunksLimit: 3,
-      maxFilesize: 256,
-      paramName: "file",
-      createImageThumbnails: !0,
-      maxThumbnailFilesize: 10,
-      thumbnailWidth: 120,
-      thumbnailHeight: 120,
-      thumbnailMethod: "crop",
-      resizeWidth: null,
-      resizeHeight: null,
-      resizeMimeType: null,
-      resizeQuality: 0.8,
-      resizeMethod: "contain",
-      filesizeBase: 1e3,
-      maxFiles: null,
-      headers: null,
-      defaultHeaders: !0,
-      clickable: !0,
-      ignoreHiddenFiles: !0,
-      acceptedFiles: null,
-      acceptedMimeTypes: null,
-      autoProcessQueue: !0,
-      autoQueue: !0,
-      addRemoveLinks: !1,
-      previewsContainer: null,
-      disablePreviews: !1,
-      hiddenInputContainer: "body",
-      capture: null,
-      renameFilename: null,
-      renameFile: null,
-      forceFallback: !1,
-      dictDefaultMessage: "Drop files here to upload",
-      dictFallbackMessage:
-        "Your browser does not support drag'n'drop file uploads.",
-      dictFallbackText:
-        "Please use the fallback form below to upload your files like in the olden days.",
-      dictFileTooBig:
-        "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
-      dictInvalidFileType: "You can't upload files of this type.",
-      dictResponseError: "Server responded with {{statusCode}} code.",
-      dictCancelUpload: "Cancel upload",
-      dictUploadCanceled: "Upload canceled.",
-      dictCancelUploadConfirmation:
-        "Are you sure you want to cancel this upload?",
-      dictRemoveFile: "Remove file",
-      dictRemoveFileConfirmation: null,
-      dictMaxFilesExceeded: "You can not upload any more files.",
-      dictFileSizeUnits: { tb: "TB", gb: "GB", mb: "MB", kb: "KB", b: "b" },
-      init: function () {},
-      params: function (e, t, i) {
-        if (i)
-          return {
-            dzuuid: i.file.upload.uuid,
-            dzchunkindex: i.index,
-            dztotalfilesize: i.file.size,
-            dzchunksize: this.options.chunkSize,
-            dztotalchunkcount: i.file.upload.totalChunkCount,
-            dzchunkbyteoffset: i.index * this.options.chunkSize,
-          };
-      },
-      accept: function (e, t) {
-        return t();
-      },
-      chunksUploaded: function (e, t) {
-        t();
-      },
-      binaryBody: !1,
-      fallback: function () {
-        var e;
-        this.element.className = "".concat(
-          this.element.className,
-          " dz-browser-not-supported"
-        );
-        var t = !0,
-          i = !1,
-          n = void 0;
-        try {
-          for (
-            var r,
-              a = this.element.getElementsByTagName("div")[Symbol.iterator]();
-            !(t = (r = a.next()).done);
-            t = !0
-          ) {
-            var o = r.value;
-            if (/(^| )dz-message($| )/.test(o.className)) {
-              (e = o), (o.className = "dz-message");
-              break;
-            }
-          }
-        } catch (e) {
-          (i = !0), (n = e);
-        } finally {
-          try {
-            t || null == a.return || a.return();
-          } finally {
-            if (i) throw n;
+    url: null,
+    method: "post",
+    withCredentials: !1,
+    timeout: null,
+    parallelUploads: 2,
+    uploadMultiple: !1,
+    chunking: !1,
+    forceChunking: !1,
+    chunkSize: 2097152,
+    parallelChunkUploads: !1,
+    retryChunks: !1,
+    retryChunksLimit: 3,
+    maxFilesize: 256,
+    paramName: "file",
+    createImageThumbnails: !0,
+    maxThumbnailFilesize: 10,
+    thumbnailWidth: 120,
+    thumbnailHeight: 120,
+    thumbnailMethod: "crop",
+    resizeWidth: null,
+    resizeHeight: null,
+    resizeMimeType: null,
+    resizeQuality: 0.8,
+    resizeMethod: "contain",
+    filesizeBase: 1e3,
+    maxFiles: null,
+    headers: null,
+    defaultHeaders: !0,
+    clickable: !0,
+    ignoreHiddenFiles: !0,
+    acceptedFiles: null,
+    acceptedMimeTypes: null,
+    autoProcessQueue: !0,
+    autoQueue: !0,
+    addRemoveLinks: !1,
+    previewsContainer: null,
+    disablePreviews: !1,
+    hiddenInputContainer: "body",
+    capture: null,
+    renameFilename: null,
+    renameFile: null,
+    forceFallback: !1,
+    dictDefaultMessage: "Drop files here to upload",
+    dictFallbackMessage:
+      "Your browser does not support drag'n'drop file uploads.",
+    dictFallbackText:
+      "Please use the fallback form below to upload your files like in the olden days.",
+    dictFileTooBig:
+      "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
+    dictInvalidFileType: "You can't upload files of this type.",
+    dictResponseError: "Server responded with {{statusCode}} code.",
+    dictCancelUpload: "Cancel upload",
+    dictUploadCanceled: "Upload canceled.",
+    dictCancelUploadConfirmation:
+      "Are you sure you want to cancel this upload?",
+    dictRemoveFile: "Remove file",
+    dictRemoveFileConfirmation: null,
+    dictMaxFilesExceeded: "You can not upload any more files.",
+    dictFileSizeUnits: { tb: "TB", gb: "GB", mb: "MB", kb: "KB", b: "b" },
+    init: function () { },
+    params: function (e, t, i) {
+      if (i)
+        return {
+          dzuuid: i.file.upload.uuid,
+          dzchunkindex: i.index,
+          dztotalfilesize: i.file.size,
+          dzchunksize: this.options.chunkSize,
+          dztotalchunkcount: i.file.upload.totalChunkCount,
+          dzchunkbyteoffset: i.index * this.options.chunkSize,
+        };
+    },
+    accept: function (e, t) {
+      return t();
+    },
+    chunksUploaded: function (e, t) {
+      t();
+    },
+    binaryBody: !1,
+    fallback: function () {
+      var e;
+      this.element.className = "".concat(
+        this.element.className,
+        " dz-browser-not-supported"
+      );
+      var t = !0,
+        i = !1,
+        n = void 0;
+      try {
+        for (
+          var r,
+          a = this.element.getElementsByTagName("div")[Symbol.iterator]();
+          !(t = (r = a.next()).done);
+          t = !0
+        ) {
+          var o = r.value;
+          if (/(^| )dz-message($| )/.test(o.className)) {
+            (e = o), (o.className = "dz-message");
+            break;
           }
         }
-        e ||
-          ((e = f.createElement('<div class="dz-message"><span></span></div>')),
+      } catch (e) {
+        (i = !0), (n = e);
+      } finally {
+        try {
+          t || null == a.return || a.return();
+        } finally {
+          if (i) throw n;
+        }
+      }
+      e ||
+        ((e = f.createElement('<div class="dz-message"><span></span></div>')),
           this.element.appendChild(e));
-        var l = e.getElementsByTagName("span")[0];
-        return (
-          l &&
-            (null != l.textContent
-              ? (l.textContent = this.options.dictFallbackMessage)
-              : null != l.innerText &&
-                (l.innerText = this.options.dictFallbackMessage)),
-          this.element.appendChild(this.getFallbackForm())
-        );
-      },
-      resize: function (e, t, i, n) {
-        var r = { srcX: 0, srcY: 0, srcWidth: e.width, srcHeight: e.height },
-          a = e.width / e.height;
-        null == t && null == i
-          ? ((t = r.srcWidth), (i = r.srcHeight))
-          : null == t
+      var l = e.getElementsByTagName("span")[0];
+      return (
+        l &&
+        (null != l.textContent
+          ? (l.textContent = this.options.dictFallbackMessage)
+          : null != l.innerText &&
+          (l.innerText = this.options.dictFallbackMessage)),
+        this.element.appendChild(this.getFallbackForm())
+      );
+    },
+    resize: function (e, t, i, n) {
+      var r = { srcX: 0, srcY: 0, srcWidth: e.width, srcHeight: e.height },
+        a = e.width / e.height;
+      null == t && null == i
+        ? ((t = r.srcWidth), (i = r.srcHeight))
+        : null == t
           ? (t = i * a)
           : null == i && (i = t / a);
-        var o = (t = Math.min(t, r.srcWidth)) / (i = Math.min(i, r.srcHeight));
-        if (r.srcWidth > t || r.srcHeight > i)
-          if ("crop" === n)
-            a > o
-              ? ((r.srcHeight = e.height), (r.srcWidth = r.srcHeight * o))
-              : ((r.srcWidth = e.width), (r.srcHeight = r.srcWidth / o));
-          else {
-            if ("contain" !== n)
-              throw new Error("Unknown resizeMethod '".concat(n, "'"));
-            a > o ? (i = t / a) : (t = i * a);
-          }
-        return (
-          (r.srcX = (e.width - r.srcWidth) / 2),
-          (r.srcY = (e.height - r.srcHeight) / 2),
-          (r.trgWidth = t),
-          (r.trgHeight = i),
-          r
-        );
-      },
-      transformFile: function (e, t) {
-        return (this.options.resizeWidth || this.options.resizeHeight) &&
-          e.type.match(/image.*/)
-          ? this.resizeImage(
-              e,
-              this.options.resizeWidth,
-              this.options.resizeHeight,
-              this.options.resizeMethod,
-              t
-            )
-          : t(e);
-      },
-      previewTemplate: e(
-        '<div class="dz-file-preview dz-preview"> <div class="dz-image"><img data-dz-thumbnail=""></div> <div class="dz-details"> <div class="dz-size"><span data-dz-size=""></span></div> <div class="dz-filename"><span data-dz-name=""></span></div> </div> <div class="dz-progress"> <span class="dz-upload" data-dz-uploadprogress=""></span> </div> <div class="dz-error-message"><span data-dz-errormessage=""></span></div> <div class="dz-success-mark"> <svg width="54" height="54" fill="#fff"><path d="m10.207 29.793 4.086-4.086a1 1 0 0 1 1.414 0l5.586 5.586a1 1 0 0 0 1.414 0l15.586-15.586a1 1 0 0 1 1.414 0l4.086 4.086a1 1 0 0 1 0 1.414L22.707 42.293a1 1 0 0 1-1.414 0L10.207 31.207a1 1 0 0 1 0-1.414Z"/></svg> </div> <div class="dz-error-mark"> <svg width="54" height="54" fill="#fff"><path d="m26.293 20.293-7.086-7.086a1 1 0 0 0-1.414 0l-4.586 4.586a1 1 0 0 0 0 1.414l7.086 7.086a1 1 0 0 1 0 1.414l-7.086 7.086a1 1 0 0 0 0 1.414l4.586 4.586a1 1 0 0 0 1.414 0l7.086-7.086a1 1 0 0 1 1.414 0l7.086 7.086a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7.086-7.086a1 1 0 0 1 0-1.414l7.086-7.086a1 1 0 0 0 0-1.414l-4.586-4.586a1 1 0 0 0-1.414 0l-7.086 7.086a1 1 0 0 1-1.414 0Z"/></svg> </div> </div>'
-      ),
-      drop: function (e) {
-        return this.element.classList.remove("dz-drag-hover");
-      },
-      dragstart: function (e) {},
-      dragend: function (e) {
-        return this.element.classList.remove("dz-drag-hover");
-      },
-      dragenter: function (e) {
-        return this.element.classList.add("dz-drag-hover");
-      },
-      dragover: function (e) {
-        return this.element.classList.add("dz-drag-hover");
-      },
-      dragleave: function (e) {
-        return this.element.classList.remove("dz-drag-hover");
-      },
-      paste: function (e) {},
-      reset: function () {
-        return this.element.classList.remove("dz-started");
-      },
-      addedfile: function (e) {
-        if (
-          (this.element === this.previewsContainer &&
-            this.element.classList.add("dz-started"),
-          this.previewsContainer && !this.options.disablePreviews)
-        ) {
-          var t = this;
-          (e.previewElement = f.createElement(
-            this.options.previewTemplate.trim()
-          )),
-            (e.previewTemplate = e.previewElement),
-            this.previewsContainer.appendChild(e.previewElement);
-          var i = !0,
-            n = !1,
-            r = void 0;
-          try {
-            for (
-              var a,
-                o = e.previewElement
-                  .querySelectorAll("[data-dz-name]")
-                  [Symbol.iterator]();
-              !(i = (a = o.next()).done);
-              i = !0
-            ) {
-              var l = a.value;
-              l.textContent = e.name;
-            }
-          } catch (e) {
-            (n = !0), (r = e);
-          } finally {
-            try {
-              i || null == o.return || o.return();
-            } finally {
-              if (n) throw r;
-            }
-          }
-          var s = !0,
-            u = !1,
-            c = void 0;
-          try {
-            for (
-              var d,
-                h = e.previewElement
-                  .querySelectorAll("[data-dz-size]")
-                  [Symbol.iterator]();
-              !(s = (d = h.next()).done);
-              s = !0
-            )
-              (l = d.value).innerHTML = this.filesize(e.size);
-          } catch (e) {
-            (u = !0), (c = e);
-          } finally {
-            try {
-              s || null == h.return || h.return();
-            } finally {
-              if (u) throw c;
-            }
-          }
-          this.options.addRemoveLinks &&
-            ((e._removeLink = f.createElement(
-              '<a class="dz-remove" href="javascript:undefined;" data-dz-remove>'.concat(
-                this.options.dictRemoveFile,
-                "</a>"
-              )
-            )),
-            e.previewElement.appendChild(e._removeLink));
-          var p = function (i) {
-              var n = t;
-              if (
-                (i.preventDefault(),
-                i.stopPropagation(),
-                e.status === f.UPLOADING)
-              )
-                return f.confirm(
-                  t.options.dictCancelUploadConfirmation,
-                  function () {
-                    return n.removeFile(e);
-                  }
-                );
-              var r = t;
-              return t.options.dictRemoveFileConfirmation
-                ? f.confirm(t.options.dictRemoveFileConfirmation, function () {
-                    return r.removeFile(e);
-                  })
-                : t.removeFile(e);
-            },
-            m = !0,
-            v = !1,
-            y = void 0;
-          try {
-            for (
-              var g,
-                b = e.previewElement
-                  .querySelectorAll("[data-dz-remove]")
-                  [Symbol.iterator]();
-              !(m = (g = b.next()).done);
-              m = !0
-            ) {
-              g.value.addEventListener("click", p);
-            }
-          } catch (e) {
-            (v = !0), (y = e);
-          } finally {
-            try {
-              m || null == b.return || b.return();
-            } finally {
-              if (v) throw y;
-            }
-          }
+      var o = (t = Math.min(t, r.srcWidth)) / (i = Math.min(i, r.srcHeight));
+      if (r.srcWidth > t || r.srcHeight > i)
+        if ("crop" === n)
+          a > o
+            ? ((r.srcHeight = e.height), (r.srcWidth = r.srcHeight * o))
+            : ((r.srcWidth = e.width), (r.srcHeight = r.srcWidth / o));
+        else {
+          if ("contain" !== n)
+            throw new Error("Unknown resizeMethod '".concat(n, "'"));
+          a > o ? (i = t / a) : (t = i * a);
         }
-      },
-      removedfile: function (e) {
-        return (
-          null != e.previewElement &&
-            null != e.previewElement.parentNode &&
-            e.previewElement.parentNode.removeChild(e.previewElement),
-          this._updateMaxFilesReachedClass()
-        );
-      },
-      thumbnail: function (e, t) {
-        if (e.previewElement) {
-          e.previewElement.classList.remove("dz-file-preview");
-          var i = !0,
-            n = !1,
-            r = void 0;
-          try {
-            for (
-              var a,
-                o = e.previewElement
-                  .querySelectorAll("[data-dz-thumbnail]")
-                  [Symbol.iterator]();
-              !(i = (a = o.next()).done);
-              i = !0
-            ) {
-              var l = a.value;
-              (l.alt = e.name), (l.src = t);
-            }
-          } catch (e) {
-            (n = !0), (r = e);
-          } finally {
-            try {
-              i || null == o.return || o.return();
-            } finally {
-              if (n) throw r;
-            }
-          }
-          return setTimeout(function () {
-            return e.previewElement.classList.add("dz-image-preview");
-          }, 1);
-        }
-      },
-      error: function (e, t) {
-        if (e.previewElement) {
-          e.previewElement.classList.add("dz-error"),
-            "string" != typeof t && t.error && (t = t.error);
-          var i = !0,
-            n = !1,
-            r = void 0;
-          try {
-            for (
-              var a,
-                o = e.previewElement
-                  .querySelectorAll("[data-dz-errormessage]")
-                  [Symbol.iterator]();
-              !(i = (a = o.next()).done);
-              i = !0
-            ) {
-              a.value.textContent = t;
-            }
-          } catch (e) {
-            (n = !0), (r = e);
-          } finally {
-            try {
-              i || null == o.return || o.return();
-            } finally {
-              if (n) throw r;
-            }
-          }
-        }
-      },
-      errormultiple: function () {},
-      processing: function (e) {
-        if (
-          e.previewElement &&
-          (e.previewElement.classList.add("dz-processing"), e._removeLink)
-        )
-          return (e._removeLink.innerHTML = this.options.dictCancelUpload);
-      },
-      processingmultiple: function () {},
-      uploadprogress: function (e, t, i) {
-        var n = !0,
-          r = !1,
-          a = void 0;
-        if (e.previewElement)
-          try {
-            for (
-              var o,
-                l = e.previewElement
-                  .querySelectorAll("[data-dz-uploadprogress]")
-                  [Symbol.iterator]();
-              !(n = (o = l.next()).done);
-              n = !0
-            ) {
-              var s = o.value;
-              "PROGRESS" === s.nodeName
-                ? (s.value = t)
-                : (s.style.width = "".concat(t, "%"));
-            }
-          } catch (e) {
-            (r = !0), (a = e);
-          } finally {
-            try {
-              n || null == l.return || l.return();
-            } finally {
-              if (r) throw a;
-            }
-          }
-      },
-      totaluploadprogress: function () {},
-      sending: function () {},
-      sendingmultiple: function () {},
-      success: function (e) {
-        if (e.previewElement)
-          return e.previewElement.classList.add("dz-success");
-      },
-      successmultiple: function () {},
-      canceled: function (e) {
-        return this.emit("error", e, this.options.dictUploadCanceled);
-      },
-      canceledmultiple: function () {},
-      complete: function (e) {
-        if (
-          (e._removeLink &&
-            (e._removeLink.innerHTML = this.options.dictRemoveFile),
-          e.previewElement)
-        )
-          return e.previewElement.classList.add("dz-complete");
-      },
-      completemultiple: function () {},
-      maxfilesexceeded: function () {},
-      maxfilesreached: function () {},
-      queuecomplete: function () {},
-      addedfiles: function () {},
+      return (
+        (r.srcX = (e.width - r.srcWidth) / 2),
+        (r.srcY = (e.height - r.srcHeight) / 2),
+        (r.trgWidth = t),
+        (r.trgHeight = i),
+        r
+      );
     },
+    transformFile: function (e, t) {
+      return (this.options.resizeWidth || this.options.resizeHeight) &&
+        e.type.match(/image.*/)
+        ? this.resizeImage(
+          e,
+          this.options.resizeWidth,
+          this.options.resizeHeight,
+          this.options.resizeMethod,
+          t
+        )
+        : t(e);
+    },
+    previewTemplate: e(
+      '<div class="dz-file-preview dz-preview"> <div class="dz-image"><img data-dz-thumbnail=""></div> <div class="dz-details"> <div class="dz-size"><span data-dz-size=""></span></div> <div class="dz-filename"><span data-dz-name=""></span></div> </div> <div class="dz-progress"> <span class="dz-upload" data-dz-uploadprogress=""></span> </div> <div class="dz-error-message"><span data-dz-errormessage=""></span></div> <div class="dz-success-mark"> <svg width="54" height="54" fill="#fff"><path d="m10.207 29.793 4.086-4.086a1 1 0 0 1 1.414 0l5.586 5.586a1 1 0 0 0 1.414 0l15.586-15.586a1 1 0 0 1 1.414 0l4.086 4.086a1 1 0 0 1 0 1.414L22.707 42.293a1 1 0 0 1-1.414 0L10.207 31.207a1 1 0 0 1 0-1.414Z"/></svg> </div> <div class="dz-error-mark"> <svg width="54" height="54" fill="#fff"><path d="m26.293 20.293-7.086-7.086a1 1 0 0 0-1.414 0l-4.586 4.586a1 1 0 0 0 0 1.414l7.086 7.086a1 1 0 0 1 0 1.414l-7.086 7.086a1 1 0 0 0 0 1.414l4.586 4.586a1 1 0 0 0 1.414 0l7.086-7.086a1 1 0 0 1 1.414 0l7.086 7.086a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7.086-7.086a1 1 0 0 1 0-1.414l7.086-7.086a1 1 0 0 0 0-1.414l-4.586-4.586a1 1 0 0 0-1.414 0l-7.086 7.086a1 1 0 0 1-1.414 0Z"/></svg> </div> </div>'
+    ),
+    drop: function (e) {
+      return this.element.classList.remove("dz-drag-hover");
+    },
+    dragstart: function (e) { },
+    dragend: function (e) {
+      return this.element.classList.remove("dz-drag-hover");
+    },
+    dragenter: function (e) {
+      return this.element.classList.add("dz-drag-hover");
+    },
+    dragover: function (e) {
+      return this.element.classList.add("dz-drag-hover");
+    },
+    dragleave: function (e) {
+      return this.element.classList.remove("dz-drag-hover");
+    },
+    paste: function (e) { },
+    reset: function () {
+      return this.element.classList.remove("dz-started");
+    },
+    addedfile: function (e) {
+      if (
+        (this.element === this.previewsContainer &&
+          this.element.classList.add("dz-started"),
+          this.previewsContainer && !this.options.disablePreviews)
+      ) {
+        var t = this;
+        (e.previewElement = f.createElement(
+          this.options.previewTemplate.trim()
+        )),
+          (e.previewTemplate = e.previewElement),
+          this.previewsContainer.appendChild(e.previewElement);
+        var i = !0,
+          n = !1,
+          r = void 0;
+        try {
+          for (
+            var a,
+            o = e.previewElement
+              .querySelectorAll("[data-dz-name]")
+            [Symbol.iterator]();
+            !(i = (a = o.next()).done);
+            i = !0
+          ) {
+            var l = a.value;
+            l.textContent = e.name;
+          }
+        } catch (e) {
+          (n = !0), (r = e);
+        } finally {
+          try {
+            i || null == o.return || o.return();
+          } finally {
+            if (n) throw r;
+          }
+        }
+        var s = !0,
+          u = !1,
+          c = void 0;
+        try {
+          for (
+            var d,
+            h = e.previewElement
+              .querySelectorAll("[data-dz-size]")
+            [Symbol.iterator]();
+            !(s = (d = h.next()).done);
+            s = !0
+          )
+            (l = d.value).innerHTML = this.filesize(e.size);
+        } catch (e) {
+          (u = !0), (c = e);
+        } finally {
+          try {
+            s || null == h.return || h.return();
+          } finally {
+            if (u) throw c;
+          }
+        }
+        this.options.addRemoveLinks &&
+          ((e._removeLink = f.createElement(
+            '<a class="dz-remove" href="javascript:undefined;" data-dz-remove>'.concat(
+              this.options.dictRemoveFile,
+              "</a>"
+            )
+          )),
+            e.previewElement.appendChild(e._removeLink));
+        var p = function (i) {
+          var n = t;
+          if (
+            (i.preventDefault(),
+              i.stopPropagation(),
+              e.status === f.UPLOADING)
+          )
+            return f.confirm(
+              t.options.dictCancelUploadConfirmation,
+              function () {
+                return n.removeFile(e);
+              }
+            );
+          var r = t;
+          return t.options.dictRemoveFileConfirmation
+            ? f.confirm(t.options.dictRemoveFileConfirmation, function () {
+              return r.removeFile(e);
+            })
+            : t.removeFile(e);
+        },
+          m = !0,
+          v = !1,
+          y = void 0;
+        try {
+          for (
+            var g,
+            b = e.previewElement
+              .querySelectorAll("[data-dz-remove]")
+            [Symbol.iterator]();
+            !(m = (g = b.next()).done);
+            m = !0
+          ) {
+            g.value.addEventListener("click", p);
+          }
+        } catch (e) {
+          (v = !0), (y = e);
+        } finally {
+          try {
+            m || null == b.return || b.return();
+          } finally {
+            if (v) throw y;
+          }
+        }
+      }
+    },
+    removedfile: function (e) {
+      return (
+        null != e.previewElement &&
+        null != e.previewElement.parentNode &&
+        e.previewElement.parentNode.removeChild(e.previewElement),
+        this._updateMaxFilesReachedClass()
+      );
+    },
+    thumbnail: function (e, t) {
+      if (e.previewElement) {
+        e.previewElement.classList.remove("dz-file-preview");
+        var i = !0,
+          n = !1,
+          r = void 0;
+        try {
+          for (
+            var a,
+            o = e.previewElement
+              .querySelectorAll("[data-dz-thumbnail]")
+            [Symbol.iterator]();
+            !(i = (a = o.next()).done);
+            i = !0
+          ) {
+            var l = a.value;
+            (l.alt = e.name), (l.src = t);
+          }
+        } catch (e) {
+          (n = !0), (r = e);
+        } finally {
+          try {
+            i || null == o.return || o.return();
+          } finally {
+            if (n) throw r;
+          }
+        }
+        return setTimeout(function () {
+          return e.previewElement.classList.add("dz-image-preview");
+        }, 1);
+      }
+    },
+    error: function (e, t) {
+      if (e.previewElement) {
+        e.previewElement.classList.add("dz-error"),
+          "string" != typeof t && t.error && (t = t.error);
+        var i = !0,
+          n = !1,
+          r = void 0;
+        try {
+          for (
+            var a,
+            o = e.previewElement
+              .querySelectorAll("[data-dz-errormessage]")
+            [Symbol.iterator]();
+            !(i = (a = o.next()).done);
+            i = !0
+          ) {
+            a.value.textContent = t;
+          }
+        } catch (e) {
+          (n = !0), (r = e);
+        } finally {
+          try {
+            i || null == o.return || o.return();
+          } finally {
+            if (n) throw r;
+          }
+        }
+      }
+    },
+    errormultiple: function () { },
+    processing: function (e) {
+      if (
+        e.previewElement &&
+        (e.previewElement.classList.add("dz-processing"), e._removeLink)
+      )
+        return (e._removeLink.innerHTML = this.options.dictCancelUpload);
+    },
+    processingmultiple: function () { },
+    uploadprogress: function (e, t, i) {
+      var n = !0,
+        r = !1,
+        a = void 0;
+      if (e.previewElement)
+        try {
+          for (
+            var o,
+            l = e.previewElement
+              .querySelectorAll("[data-dz-uploadprogress]")
+            [Symbol.iterator]();
+            !(n = (o = l.next()).done);
+            n = !0
+          ) {
+            var s = o.value;
+            "PROGRESS" === s.nodeName
+              ? (s.value = t)
+              : (s.style.width = "".concat(t, "%"));
+          }
+        } catch (e) {
+          (r = !0), (a = e);
+        } finally {
+          try {
+            n || null == l.return || l.return();
+          } finally {
+            if (r) throw a;
+          }
+        }
+    },
+    totaluploadprogress: function () { },
+    sending: function () { },
+    sendingmultiple: function () { },
+    success: function (e) {
+      if (e.previewElement)
+        return e.previewElement.classList.add("dz-success");
+    },
+    successmultiple: function () { },
+    canceled: function (e) {
+      return this.emit("error", e, this.options.dictUploadCanceled);
+    },
+    canceledmultiple: function () { },
+    complete: function (e) {
+      if (
+        (e._removeLink &&
+          (e._removeLink.innerHTML = this.options.dictRemoveFile),
+          e.previewElement)
+      )
+        return e.previewElement.classList.add("dz-complete");
+    },
+    completemultiple: function () { },
+    maxfilesexceeded: function () { },
+    maxfilesreached: function () { },
+    queuecomplete: function () { },
+    addedfiles: function () { },
+  },
     f = (function (n) {
       "use strict";
       function o(n, r) {
         var l, c, d, h;
         if (
           (i(this, o),
-          ((l = s(this, ((c = o), a(c)).call(this))).element = n),
-          (l.clickableElements = []),
-          (l.listeners = []),
-          (l.files = []),
-          "string" == typeof l.element &&
+            ((l = s(this, ((c = o), a(c)).call(this))).element = n),
+            (l.clickableElements = []),
+            (l.listeners = []),
+            (l.files = []),
+            "string" == typeof l.element &&
             (l.element = document.querySelector(l.element)),
-          !l.element || null == l.element.nodeType)
+            !l.element || null == l.element.nodeType)
         )
           throw new Error("Invalid dropzone element.");
         if (l.element.dropzone) throw new Error("Dropzone already attached.");
@@ -633,17 +633,17 @@
         var f = null != (h = o.optionsForElement(l.element)) ? h : {};
         if (
           ((l.options = e(u)(!0, {}, p, f, null != r ? r : {})),
-          (l.options.previewTemplate = l.options.previewTemplate.replace(
-            /\n*/g,
-            ""
-          )),
-          l.options.forceFallback || !o.isBrowserSupported())
+            (l.options.previewTemplate = l.options.previewTemplate.replace(
+              /\n*/g,
+              ""
+            )),
+            l.options.forceFallback || !o.isBrowserSupported())
         )
           return s(l, l.options.fallback.call(t(l)));
         if (
           (null == l.options.url &&
             (l.options.url = l.element.getAttribute("action")),
-          !l.options.url)
+            !l.options.url)
         )
           throw new Error("No URL provided.");
         if (l.options.acceptedFiles && l.options.acceptedMimeTypes)
@@ -658,31 +658,31 @@
           );
         return (
           l.options.acceptedMimeTypes &&
-            ((l.options.acceptedFiles = l.options.acceptedMimeTypes),
+          ((l.options.acceptedFiles = l.options.acceptedMimeTypes),
             delete l.options.acceptedMimeTypes),
           null != l.options.renameFilename &&
-            (l.options.renameFile = function (e) {
-              return l.options.renameFilename.call(t(l), e.name, e);
-            }),
+          (l.options.renameFile = function (e) {
+            return l.options.renameFilename.call(t(l), e.name, e);
+          }),
           "string" == typeof l.options.method &&
-            (l.options.method = l.options.method.toUpperCase()),
+          (l.options.method = l.options.method.toUpperCase()),
           (d = l.getExistingFallback()) &&
-            d.parentNode &&
-            d.parentNode.removeChild(d),
+          d.parentNode &&
+          d.parentNode.removeChild(d),
           !1 !== l.options.previewsContainer &&
-            (l.options.previewsContainer
-              ? (l.previewsContainer = o.getElement(
-                  l.options.previewsContainer,
-                  "previewsContainer"
-                ))
-              : (l.previewsContainer = l.element)),
+          (l.options.previewsContainer
+            ? (l.previewsContainer = o.getElement(
+              l.options.previewsContainer,
+              "previewsContainer"
+            ))
+            : (l.previewsContainer = l.element)),
           l.options.clickable &&
-            (!0 === l.options.clickable
-              ? (l.clickableElements = [l.element])
-              : (l.clickableElements = o.getElements(
-                  l.options.clickable,
-                  "clickable"
-                ))),
+          (!0 === l.options.clickable
+            ? (l.clickableElements = [l.element])
+            : (l.clickableElements = o.getElements(
+              l.options.clickable,
+              "clickable"
+            ))),
           l.init(),
           l
         );
@@ -775,7 +775,7 @@
                 if (
                   ("form" === this.element.tagName &&
                     this.element.setAttribute("enctype", "multipart/form-data"),
-                  this.element.classList.contains("dropzone") &&
+                    this.element.classList.contains("dropzone") &&
                     !this.element.querySelector(".dz-message") &&
                     this.element.appendChild(
                       o.createElement(
@@ -785,7 +785,7 @@
                         )
                       )
                     ),
-                  this.clickableElements.length)
+                    this.clickableElements.length)
                 ) {
                   var h = this,
                     p = function () {
@@ -798,21 +798,21 @@
                         h.hiddenFileInput.setAttribute("type", "file"),
                         (null === h.options.maxFiles ||
                           h.options.maxFiles > 1) &&
-                          h.hiddenFileInput.setAttribute(
-                            "multiple",
-                            "multiple"
-                          ),
+                        h.hiddenFileInput.setAttribute(
+                          "multiple",
+                          "multiple"
+                        ),
                         (h.hiddenFileInput.className = "dz-hidden-input"),
                         null !== h.options.acceptedFiles &&
-                          h.hiddenFileInput.setAttribute(
-                            "accept",
-                            h.options.acceptedFiles
-                          ),
+                        h.hiddenFileInput.setAttribute(
+                          "accept",
+                          h.options.acceptedFiles
+                        ),
                         null !== h.options.capture &&
-                          h.hiddenFileInput.setAttribute(
-                            "capture",
-                            h.options.capture
-                          ),
+                        h.hiddenFileInput.setAttribute(
+                          "capture",
+                          h.options.capture
+                        ),
                         h.hiddenFileInput.setAttribute("tabindex", "-1"),
                         (h.hiddenFileInput.style.visibility = "hidden"),
                         (h.hiddenFileInput.style.position = "absolute"),
@@ -931,7 +931,7 @@
                           var t;
                           try {
                             t = e.dataTransfer.effectAllowed;
-                          } catch (e) {}
+                          } catch (e) { }
                           return (
                             (e.dataTransfer.dropEffect =
                               "move" === t || "linkMove" === t
@@ -966,7 +966,7 @@
                                 i.target,
                                 t.element.querySelector(".dz-message")
                               )) &&
-                              t.hiddenFileInput.click(),
+                            t.hiddenFileInput.click(),
                             !0
                           );
                         },
@@ -987,9 +987,9 @@
                   (null != this.hiddenFileInput
                     ? this.hiddenFileInput.parentNode
                     : void 0) &&
-                    (this.hiddenFileInput.parentNode.removeChild(
-                      this.hiddenFileInput
-                    ),
+                  (this.hiddenFileInput.parentNode.removeChild(
+                    this.hiddenFileInput
+                  ),
                     (this.hiddenFileInput = null)),
                   delete this.element.dropzone,
                   o.instances.splice(o.instances.indexOf(this), 1)
@@ -1035,10 +1035,10 @@
                 return "function" == typeof this.options.paramName
                   ? this.options.paramName(e)
                   : ""
-                      .concat(this.options.paramName)
-                      .concat(
-                        this.options.uploadMultiple ? "[".concat(e, "]") : ""
-                      );
+                    .concat(this.options.paramName)
+                    .concat(
+                      this.options.uploadMultiple ? "[".concat(e, "]") : ""
+                    );
               },
             },
             {
@@ -1069,17 +1069,17 @@
                 return (
                   "FORM" !== this.element.tagName
                     ? (t = o.createElement(
-                        '<form action="'
-                          .concat(
-                            this.options.url,
-                            '" enctype="multipart/form-data" method="'
-                          )
-                          .concat(this.options.method, '"></form>')
-                      )).appendChild(n)
+                      '<form action="'
+                        .concat(
+                          this.options.url,
+                          '" enctype="multipart/form-data" method="'
+                        )
+                        .concat(this.options.method, '"></form>')
+                    )).appendChild(n)
                     : (this.element.setAttribute(
-                        "enctype",
-                        "multipart/form-data"
-                      ),
+                      "enctype",
+                      "multipart/form-data"
+                    ),
                       this.element.setAttribute("method", this.options.method)),
                   null != t ? t : n
                 );
@@ -1089,28 +1089,28 @@
               key: "getExistingFallback",
               value: function () {
                 var e = function (e) {
-                    var t = !0,
-                      i = !1,
-                      n = void 0;
-                    try {
-                      for (
-                        var r, a = e[Symbol.iterator]();
-                        !(t = (r = a.next()).done);
-                        t = !0
-                      ) {
-                        var o = r.value;
-                        if (/(^| )fallback($| )/.test(o.className)) return o;
-                      }
-                    } catch (e) {
-                      (i = !0), (n = e);
-                    } finally {
-                      try {
-                        t || null == a.return || a.return();
-                      } finally {
-                        if (i) throw n;
-                      }
+                  var t = !0,
+                    i = !1,
+                    n = void 0;
+                  try {
+                    for (
+                      var r, a = e[Symbol.iterator]();
+                      !(t = (r = a.next()).done);
+                      t = !0
+                    ) {
+                      var o = r.value;
+                      if (/(^| )fallback($| )/.test(o.className)) return o;
                     }
-                  },
+                  } catch (e) {
+                    (i = !0), (n = e);
+                  } finally {
+                    try {
+                      t || null == a.return || a.return();
+                    } finally {
+                      if (i) throw n;
+                    }
+                  }
+                },
                   t = !0,
                   i = !1,
                   n = void 0;
@@ -1224,7 +1224,7 @@
                 return null != this.options.maxFiles &&
                   this.getAcceptedFiles().length >= this.options.maxFiles
                   ? (this.getAcceptedFiles().length === this.options.maxFiles &&
-                      this.emit("maxfilesreached", this.files),
+                    this.emit("maxfilesreached", this.files),
                     this.element.classList.add("dz-max-files-reached"))
                   : this.element.classList.remove("dz-max-files-reached");
               },
@@ -1252,10 +1252,10 @@
                 if (
                   null !=
                   ((t = null != e ? e.clipboardData : void 0),
-                  (i = function (e) {
-                    return e.items;
-                  }),
-                  null != t ? i(t) : void 0)
+                    (i = function (e) {
+                      return e.items;
+                    }),
+                    null != t ? i(t) : void 0)
                 ) {
                   var t, i;
                   this.emit("paste", e);
@@ -1311,12 +1311,12 @@
                         ? s.isFile
                           ? i.push(t.addFile(u.getAsFile()))
                           : s.isDirectory
-                          ? i.push(t._addFilesFromDirectory(s, s.name))
-                          : i.push(void 0)
+                            ? i.push(t._addFilesFromDirectory(s, s.name))
+                            : i.push(void 0)
                         : null != u.getAsFile &&
                           (null == u.kind || "file" === u.kind)
-                        ? i.push(t.addFile(u.getAsFile()))
-                        : i.push(void 0);
+                          ? i.push(t.addFile(u.getAsFile()))
+                          : i.push(void 0);
                     }
                   } catch (e) {
                     (r = !0), (a = e);
@@ -1364,22 +1364,22 @@
                               c = e;
                             u.isFile
                               ? u.file(function (e) {
-                                  if (
-                                    !c.options.ignoreHiddenFiles ||
-                                    "." !== e.name.substring(0, 1)
-                                  )
-                                    return (
-                                      (e.fullPath = ""
-                                        .concat(t, "/")
-                                        .concat(e.name)),
-                                      c.addFile(e)
-                                    );
-                                })
+                                if (
+                                  !c.options.ignoreHiddenFiles ||
+                                  "." !== e.name.substring(0, 1)
+                                )
+                                  return (
+                                    (e.fullPath = ""
+                                      .concat(t, "/")
+                                      .concat(e.name)),
+                                    c.addFile(e)
+                                  );
+                              })
                               : u.isDirectory &&
-                                e._addFilesFromDirectory(
-                                  u,
-                                  "".concat(t, "/").concat(u.name)
-                                );
+                              e._addFilesFromDirectory(
+                                u,
+                                "".concat(t, "/").concat(u.name)
+                              );
                           }
                         } catch (e) {
                           (r = !0), (o = e);
@@ -1402,27 +1402,27 @@
               key: "accept",
               value: function (e, t) {
                 this.options.maxFilesize &&
-                e.size > 1048576 * this.options.maxFilesize
+                  e.size > 1048576 * this.options.maxFilesize
                   ? t(
-                      this.options.dictFileTooBig
-                        .replace(
-                          "{{filesize}}",
-                          Math.round(e.size / 1024 / 10.24) / 100
-                        )
-                        .replace("{{maxFilesize}}", this.options.maxFilesize)
-                    )
+                    this.options.dictFileTooBig
+                      .replace(
+                        "{{filesize}}",
+                        Math.round(e.size / 1024 / 10.24) / 100
+                      )
+                      .replace("{{maxFilesize}}", this.options.maxFilesize)
+                  )
                   : o.isValidFile(e, this.options.acceptedFiles)
-                  ? null != this.options.maxFiles &&
-                    this.getAcceptedFiles().length >= this.options.maxFiles
-                    ? (t(
+                    ? null != this.options.maxFiles &&
+                      this.getAcceptedFiles().length >= this.options.maxFiles
+                      ? (t(
                         this.options.dictMaxFilesExceeded.replace(
                           "{{maxFiles}}",
                           this.options.maxFiles
                         )
                       ),
-                      this.emit("maxfilesexceeded", e))
-                    : this.options.accept.call(this, e, t)
-                  : t(this.options.dictInvalidFileType);
+                        this.emit("maxfilesexceeded", e))
+                      : this.options.accept.call(this, e, t)
+                    : t(this.options.dictInvalidFileType);
               },
             },
             {
@@ -1540,9 +1540,9 @@
               value: function (e) {
                 if (
                   (e.status === o.UPLOADING && this.cancelUpload(e),
-                  (this.files = m(this.files, e)),
-                  this.emit("removedfile", e),
-                  0 === this.files.length)
+                    (this.files = m(this.files, e)),
+                    this.emit("removedfile", e),
+                    0 === this.files.length)
                 )
                   return this.emit("reset");
               },
@@ -1586,7 +1586,7 @@
                   var l = i.toDataURL(n, a.options.resizeQuality);
                   return (
                     ("image/jpeg" !== n && "image/jpg" !== n) ||
-                      (l = g.restore(e.dataURL, l)),
+                    (l = g.restore(e.dataURL, l)),
                     r(o.dataURItoBlob(l))
                   );
                 });
@@ -1636,7 +1636,7 @@
                   o && (s.crossOrigin = o),
                   (r =
                     "from-image" !=
-                      getComputedStyle(document.body).imageOrientation && r),
+                    getComputedStyle(document.body).imageOrientation && r),
                   (s.onload = function () {
                     var o = l,
                       u = function (e) {
@@ -1644,23 +1644,23 @@
                       };
                     return (
                       "undefined" != typeof EXIF &&
-                        null !== EXIF &&
-                        r &&
-                        (u = function (e) {
-                          return EXIF.getData(s, function () {
-                            return e(EXIF.getTag(this, "Orientation"));
-                          });
-                        }),
+                      null !== EXIF &&
+                      r &&
+                      (u = function (e) {
+                        return EXIF.getData(s, function () {
+                          return e(EXIF.getTag(this, "Orientation"));
+                        });
+                      }),
                       u(function (r) {
                         (e.width = s.width), (e.height = s.height);
                         var l = o.options.resize.call(o, e, t, i, n),
                           u = document.createElement("canvas"),
                           c = u.getContext("2d");
                         switch (
-                          ((u.width = l.trgWidth),
+                        ((u.width = l.trgWidth),
                           (u.height = l.trgHeight),
                           r > 4 &&
-                            ((u.width = l.trgHeight), (u.height = l.trgWidth)),
+                          ((u.width = l.trgHeight), (u.height = l.trgWidth)),
                           r)
                         ) {
                           case 2:
@@ -1719,7 +1719,7 @@
                   if (n.length > 0) {
                     if (this.options.uploadMultiple)
                       return this.processFiles(n.slice(0, e - t));
-                    for (; i < e; ) {
+                    for (; i < e;) {
                       if (!n.length) return;
                       this.processFile(n.shift()), i++;
                     }
@@ -1761,7 +1761,7 @@
                 }
                 return (
                   this.options.uploadMultiple &&
-                    this.emit("processingmultiple", e),
+                  this.emit("processingmultiple", e),
                   this.uploadFiles(e)
                 );
               },
@@ -1830,8 +1830,8 @@
                 } else
                   (e.status !== o.ADDED && e.status !== o.QUEUED) ||
                     ((e.status = o.CANCELED),
-                    this.emit("canceled", e),
-                    this.options.uploadMultiple &&
+                      this.emit("canceled", e),
+                      this.options.uploadMultiple &&
                       this.emit("canceledmultiple", [e]));
                 if (this.options.autoProcessQueue) return this.processQueue();
               },
@@ -1841,8 +1841,8 @@
               value: function (e) {
                 for (
                   var t = arguments.length,
-                    i = new Array(t > 1 ? t - 1 : 0),
-                    n = 1;
+                  i = new Array(t > 1 ? t - 1 : 0),
+                  n = 1;
                   n < t;
                   n++
                 )
@@ -1878,7 +1878,7 @@
                     n = i[0];
                     l.upload.chunks = [];
                     var s = function () {
-                      for (var t = 0; void 0 !== l.upload.chunks[t]; ) t++;
+                      for (var t = 0; void 0 !== l.upload.chunks[t];) t++;
                       if (!(t >= l.upload.totalChunkCount)) {
                         0;
                         var i = t * r.options.chunkSize,
@@ -1920,7 +1920,7 @@
                             n._finished(e, i, null);
                           });
                       }),
-                      t.options.parallelChunkUploads)
+                        t.options.parallelChunkUploads)
                     )
                       for (var u = 0; u < l.upload.totalChunkCount; u++) s();
                     else s();
@@ -1982,7 +1982,7 @@
                   f = this.resolveOption(this.options.url, t, i);
                 l.open(p, f, !0),
                   this.resolveOption(this.options.timeout, t) &&
-                    (l.timeout = this.resolveOption(this.options.timeout, t)),
+                  (l.timeout = this.resolveOption(this.options.timeout, t)),
                   (l.withCredentials = !!this.options.withCredentials),
                   (l.onload = function (e) {
                     n._finishedUploading(t, l, e);
@@ -2005,15 +2005,15 @@
                   });
                 var m = this.options.defaultHeaders
                   ? {
-                      Accept: "application/json",
-                      "Cache-Control": "no-cache",
-                      "X-Requested-With": "XMLHttpRequest",
-                    }
+                    Accept: "application/json",
+                    "Cache-Control": "no-cache",
+                    "X-Requested-With": "XMLHttpRequest",
+                  }
                   : {};
                 for (var v in (this.options.binaryBody &&
                   (m["Content-Type"] = t[0].type),
-                this.options.headers && e(u)(m, this.options.headers),
-                m)) {
+                  this.options.headers && e(u)(m, this.options.headers),
+                  m)) {
                   var y = m[v];
                   y && l.setRequestHeader(v, y);
                 }
@@ -2051,7 +2051,7 @@
                         l,
                         t[0].upload.chunked ? this._getChunk(t[0], l) : null
                       )),
-                    k)) {
+                      k)) {
                       var F = k[w];
                       if (Array.isArray(F))
                         for (var E = 0; E < F.length; E++) b.append(w, F[E]);
@@ -2094,14 +2094,14 @@
               value: function (e, t) {
                 for (
                   var i = this,
-                    n = function (n) {
-                      i.options.transformFile.call(i, e[n], function (i) {
-                        (r[n] = i), ++a === e.length && t(r);
-                      });
-                    },
-                    r = [],
-                    a = 0,
-                    o = 0;
+                  n = function (n) {
+                    i.options.transformFile.call(i, e[n], function (i) {
+                      (r[n] = i), ++a === e.length && t(r);
+                    });
+                  },
+                  r = [],
+                  a = 0,
+                  o = 0;
                   o < e.length;
                   o++
                 )
@@ -2119,7 +2119,7 @@
                     for (
                       var r = this.element
                         .querySelectorAll("input, textarea, select, button")
-                        [Symbol.iterator]();
+                      [Symbol.iterator]();
                       !(t = (s = r.next()).done);
                       t = !0
                     ) {
@@ -2189,8 +2189,8 @@
                     c.upload.chunks[l] &&
                       void 0 !== c.upload.chunks[l].progress &&
                       ((c.upload.progress += c.upload.chunks[l].progress),
-                      (c.upload.total += c.upload.chunks[l].total),
-                      (c.upload.bytesSent += c.upload.chunks[l].bytesSent));
+                        (c.upload.total += c.upload.chunks[l].total),
+                        (c.upload.bytesSent += c.upload.chunks[l].bytesSent));
                   (c.upload.progress =
                     c.upload.progress / c.upload.totalChunkCount),
                     this.emit(
@@ -2216,12 +2216,12 @@
                             (c.upload.bytesSent = i.loaded))
                           : ((c.upload.progress = 100),
                             (c.upload.bytesSent = c.upload.total)),
-                        this.emit(
-                          "uploadprogress",
-                          c,
-                          c.upload.progress,
-                          c.upload.bytesSent
-                        ));
+                          this.emit(
+                            "uploadprogress",
+                            c,
+                            c.upload.progress,
+                            c.upload.bytesSent
+                          ));
                     }
                   } catch (e) {
                     (r = !0), (a = e);
@@ -2243,7 +2243,7 @@
                     "arraybuffer" !== t.responseType &&
                     "blob" !== t.responseType &&
                     ((n = t.responseText),
-                    t.getResponseHeader("content-type") &&
+                      t.getResponseHeader("content-type") &&
                       ~t
                         .getResponseHeader("content-type")
                         .indexOf("application/json"))
@@ -2257,9 +2257,9 @@
                     200 <= t.status && t.status < 300
                       ? e[0].upload.chunked
                         ? e[0].upload.finishedChunkUpload(
-                            this._getChunk(e[0], t),
-                            n
-                          )
+                          this._getChunk(e[0], t),
+                          n
+                        )
                         : this._finished(e, n, i)
                       : this._handleUploadError(e, t, n);
                 }
@@ -2278,10 +2278,10 @@
                   this._errorProcessing(
                     e,
                     i ||
-                      this.options.dictResponseError.replace(
-                        "{{statusCode}}",
-                        t.status
-                      ),
+                    this.options.dictResponseError.replace(
+                      "{{statusCode}}",
+                      t.status
+                    ),
                     t
                   );
                 }
@@ -2332,8 +2332,8 @@
                 if (
                   (this.options.uploadMultiple &&
                     (this.emit("successmultiple", e, t, i),
-                    this.emit("completemultiple", e)),
-                  this.options.autoProcessQueue)
+                      this.emit("completemultiple", e)),
+                    this.options.autoProcessQueue)
                 )
                   return this.processQueue();
               },
@@ -2367,8 +2367,8 @@
                 if (
                   (this.options.uploadMultiple &&
                     (this.emit("errormultiple", e, t, i),
-                    this.emit("completemultiple", e)),
-                  this.options.autoProcessQueue)
+                      this.emit("completemultiple", e)),
+                    this.options.autoProcessQueue)
                 )
                   return this.processQueue();
               },
@@ -2439,7 +2439,7 @@
     (f.forElement = function (e) {
       if (
         ("string" == typeof e && (e = document.querySelector(e)),
-        null == (null != e ? e.dropzone : void 0))
+          null == (null != e ? e.dropzone : void 0))
       )
         throw new Error(
           "No Dropzone found for given element. This is probably because you're trying to access it before Dropzone had the time to initialize. Use the `init` option to setup any additional observers on your Dropzone."
@@ -2550,12 +2550,12 @@
     (f.dataURItoBlob = function (e) {
       for (
         var t = atob(e.split(",")[1]),
-          i = e.split(",")[0].split(":")[1].split(";")[0],
-          n = new ArrayBuffer(t.length),
-          r = new Uint8Array(n),
-          a = 0,
-          o = t.length,
-          l = 0 <= o;
+        i = e.split(",")[0].split(":")[1].split(";")[0],
+        n = new ArrayBuffer(t.length),
+        r = new Uint8Array(n),
+        a = 0,
+        o = t.length,
+        l = 0 <= o;
         l ? a <= o : a >= o;
         l ? a++ : a--
       )
@@ -2563,14 +2563,14 @@
       return new Blob([n], { type: i });
     });
   var m = function (e, t) {
-      return e
-        .filter(function (e) {
-          return e !== t;
-        })
-        .map(function (e) {
-          return e;
-        });
-    },
+    return e
+      .filter(function (e) {
+        return e !== t;
+      })
+      .map(function (e) {
+        return e;
+      });
+  },
     v = function (e) {
       return e.replace(/[\-_](\w)/g, function (e) {
         return e.charAt(1).toUpperCase();
@@ -2582,7 +2582,7 @@
   }),
     (f.elementInside = function (e, t) {
       if (e === t) return !0;
-      for (; (e = e.parentNode); ) if (e === t) return !0;
+      for (; (e = e.parentNode);) if (e === t) return !0;
       return !1;
     }),
     (f.getElement = function (e, t) {
@@ -2591,7 +2591,7 @@
         ("string" == typeof e
           ? (i = document.querySelector(e))
           : null != e.nodeType && (i = e),
-        null == i)
+          null == i)
       )
         throw new Error(
           "Invalid `".concat(
@@ -2700,12 +2700,12 @@
       return !1;
     }),
     "undefined" != typeof jQuery &&
-      null !== jQuery &&
-      (jQuery.fn.dropzone = function (e) {
-        return this.each(function () {
-          return new f(this, e);
-        });
-      }),
+    null !== jQuery &&
+    (jQuery.fn.dropzone = function (e) {
+      return this.each(function () {
+        return new f(this, e);
+      });
+    }),
     (f.ADDED = "added"),
     (f.QUEUED = "queued"),
     (f.ACCEPTED = f.QUEUED),
@@ -2715,24 +2715,24 @@
     (f.ERROR = "error"),
     (f.SUCCESS = "success");
   var y = function (e, t, i, n, r, a, o, l, s, u) {
-      var c = (function (e) {
-        e.naturalWidth;
-        var t = e.naturalHeight,
-          i = document.createElement("canvas");
-        (i.width = 1), (i.height = t);
-        var n = i.getContext("2d");
-        n.drawImage(e, 0, 0);
-        for (
-          var r = n.getImageData(1, 0, 1, t).data, a = 0, o = t, l = t;
-          l > a;
+    var c = (function (e) {
+      e.naturalWidth;
+      var t = e.naturalHeight,
+        i = document.createElement("canvas");
+      (i.width = 1), (i.height = t);
+      var n = i.getContext("2d");
+      n.drawImage(e, 0, 0);
+      for (
+        var r = n.getImageData(1, 0, 1, t).data, a = 0, o = t, l = t;
+        l > a;
 
-        )
-          0 === r[4 * (l - 1) + 3] ? (o = l) : (a = l), (l = (o + a) >> 1);
-        var s = l / t;
-        return 0 === s ? 1 : s;
-      })(t);
-      return e.drawImage(t, i, n, r, a, o, l, s, u / c);
-    },
+      )
+        0 === r[4 * (l - 1) + 3] ? (o = l) : (a = l), (l = (o + a) >> 1);
+      var s = l / t;
+      return 0 === s ? 1 : s;
+    })(t);
+    return e.drawImage(t, i, n, r, a, o, l, s, u / c);
+  },
     g = (function () {
       "use strict";
       function e() {
@@ -2752,28 +2752,28 @@
             value: function (e) {
               for (
                 var t = "",
-                  i = void 0,
-                  n = void 0,
-                  r = "",
-                  a = void 0,
-                  o = void 0,
-                  l = void 0,
-                  s = "",
-                  u = 0;
+                i = void 0,
+                n = void 0,
+                r = "",
+                a = void 0,
+                o = void 0,
+                l = void 0,
+                s = "",
+                u = 0;
                 (a = (i = e[u++]) >> 2),
-                  (o = ((3 & i) << 4) | ((n = e[u++]) >> 4)),
-                  (l = ((15 & n) << 2) | ((r = e[u++]) >> 6)),
-                  (s = 63 & r),
-                  isNaN(n) ? (l = s = 64) : isNaN(r) && (s = 64),
-                  (t =
-                    t +
-                    this.KEY_STR.charAt(a) +
-                    this.KEY_STR.charAt(o) +
-                    this.KEY_STR.charAt(l) +
-                    this.KEY_STR.charAt(s)),
-                  (i = n = r = ""),
-                  (a = o = l = s = ""),
-                  u < e.length;
+                (o = ((3 & i) << 4) | ((n = e[u++]) >> 4)),
+                (l = ((15 & n) << 2) | ((r = e[u++]) >> 6)),
+                (s = 63 & r),
+                isNaN(n) ? (l = s = 64) : isNaN(r) && (s = 64),
+                (t =
+                  t +
+                  this.KEY_STR.charAt(a) +
+                  this.KEY_STR.charAt(o) +
+                  this.KEY_STR.charAt(l) +
+                  this.KEY_STR.charAt(s)),
+                (i = n = r = ""),
+                (a = o = l = s = ""),
+                u < e.length;
 
               );
               return t;
@@ -2800,7 +2800,7 @@
           {
             key: "getExifArray",
             value: function (e) {
-              for (var t = void 0, i = 0; i < e.length; ) {
+              for (var t = void 0, i = 0; i < e.length;) {
                 if ((255 === (t = e[i])[0]) & (225 === t[1])) return t;
                 i++;
               }
@@ -2822,7 +2822,7 @@
           {
             key: "slice2Segments",
             value: function (e) {
-              for (var t = 0, i = []; ; ) {
+              for (var t = 0, i = []; ;) {
                 if ((255 === e[t]) & (218 === e[t + 1])) break;
                 if ((255 === e[t]) & (216 === e[t + 1])) t += 2;
                 else {
@@ -2848,24 +2848,24 @@
                 s = [];
               for (
                 /[^A-Za-z0-9\+\/\=]/g.exec(e) &&
-                  console.warn(
-                    "There were invalid base64 characters in the input text.\nValid base64 characters are A-Z, a-z, 0-9, '+', '/',and '='\nExpect errors in decoding."
-                  ),
-                  e = e.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+                console.warn(
+                  "There were invalid base64 characters in the input text.\nValid base64 characters are A-Z, a-z, 0-9, '+', '/',and '='\nExpect errors in decoding."
+                ),
+                e = e.replace(/[^A-Za-z0-9\+\/\=]/g, "");
                 (t =
                   (this.KEY_STR.indexOf(e.charAt(l++)) << 2) |
                   ((r = this.KEY_STR.indexOf(e.charAt(l++))) >> 4)),
-                  (i =
-                    ((15 & r) << 4) |
-                    ((a = this.KEY_STR.indexOf(e.charAt(l++))) >> 2)),
-                  (n =
-                    ((3 & a) << 6) | (o = this.KEY_STR.indexOf(e.charAt(l++)))),
-                  s.push(t),
-                  64 !== a && s.push(i),
-                  64 !== o && s.push(n),
-                  (t = i = n = ""),
-                  (r = a = o = ""),
-                  l < e.length;
+                (i =
+                  ((15 & r) << 4) |
+                  ((a = this.KEY_STR.indexOf(e.charAt(l++))) >> 2)),
+                (n =
+                  ((3 & a) << 6) | (o = this.KEY_STR.indexOf(e.charAt(l++)))),
+                s.push(t),
+                64 !== a && s.push(i),
+                64 !== o && s.push(n),
+                (t = i = n = ""),
+                (r = a = o = ""),
+                l < e.length;
 
               );
               return s;

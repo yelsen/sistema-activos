@@ -34,7 +34,13 @@ public class GlobalExceptionHandler {
     private final Environment environment;
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex, WebRequest request, HttpServletRequest httpRequest) {
+        // Skip handling for static resources
+        String requestURI = httpRequest.getRequestURI();
+        if (isStaticResource(requestURI)) {
+            return null; // Let Spring Boot handle it normally
+        }
+        
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.NOT_FOUND.value())
@@ -43,6 +49,29 @@ public class GlobalExceptionHandler {
                 .path(request.getDescription(false))
                 .build();
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+    
+    private boolean isStaticResource(String path) {
+        return path != null && (
+                path.startsWith("/css/") ||
+                path.startsWith("/js/") ||
+                path.startsWith("/libs/") ||
+                path.startsWith("/images/") ||
+                path.startsWith("/fonts/") ||
+                path.startsWith("/uploads/") ||
+                path.endsWith(".css") ||
+                path.endsWith(".js") ||
+                path.endsWith(".jpg") ||
+                path.endsWith(".jpeg") ||
+                path.endsWith(".png") ||
+                path.endsWith(".gif") ||
+                path.endsWith(".svg") ||
+                path.endsWith(".woff") ||
+                path.endsWith(".woff2") ||
+                path.endsWith(".ttf") ||
+                path.endsWith(".eot") ||
+                path.endsWith(".ico")
+        );
     }
     
 

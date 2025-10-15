@@ -1,20 +1,32 @@
-document.addEventListener("DOMContentLoaded", function () {
+// Función para verificar si Choices ya está inicializado
+function isChoicesInitialized(element) {
+  return element.hasAttribute('data-choice') || element.classList.contains('choices__input');
+}
+
+// Función para inicializar Choices de forma segura
+function initializeChoices() {
+  // Inicializar elementos con data-choices
   document.querySelectorAll("[data-choices]").forEach(function (e) {
-    var t = "input" === e.tagName.toLowerCase();
-    new Choices(e, {
-      removeItemButton: "true" === e.dataset.choicesRemoveitembutton,
-      itemSelectText: "",
-      maxItemCount: 5,
-      searchEnabled: !1,
-      placeholder: !0,
-      placeholderValue: e.getAttribute("placeholder") || "Select an option",
-      classNames: { containerInner: t ? "form-control" : "form-select" },
-    });
+    if (!isChoicesInitialized(e)) {
+      var t = "input" === e.tagName.toLowerCase();
+      new Choices(e, {
+        allowHTML: true,
+        removeItemButton: "true" === e.dataset.choicesRemoveitembutton,
+        itemSelectText: "",
+        maxItemCount: 5,
+        searchEnabled: !1,
+        placeholder: !0,
+        placeholderValue: e.getAttribute("placeholder") || "Select an option",
+        classNames: { containerInner: t ? "form-control" : "form-select" },
+      });
+    }
   });
-}),
-  document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll("[data-choices-innertext]").forEach(function (o) {
+
+  // Inicializar elementos con data-choices-innertext
+  document.querySelectorAll("[data-choices-innertext]").forEach(function (o) {
+    if (!isChoicesInitialized(o)) {
       new Choices(o, {
+        allowHTML: true,
         removeItemButton: "true" === o.dataset.choicesRemoveitembutton,
         itemSelectText: "",
         searchEnabled: !1,
@@ -59,5 +71,9 @@ document.addEventListener("DOMContentLoaded", function () {
           };
         },
       });
-    });
+    }
   });
+}
+
+// Un solo event listener
+document.addEventListener("DOMContentLoaded", initializeChoices);
