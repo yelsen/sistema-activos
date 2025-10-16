@@ -48,6 +48,47 @@
                         </option>
                     </select>
                 </div>
+                
+                <!-- Selects de prueba -->
+                <div class="col-md-4">
+                    <label class="form-label">Categoría (Con búsqueda)</label>
+                    <select class="form-select" data-choices-search data-search-placeholder="Buscar categoría...">
+                        <option value="">Seleccionar categoría</option>
+                        <option value="1">Administración</option>
+                        <option value="2">Ventas</option>
+                        <option value="3">Recursos Humanos</option>
+                        <option value="4">Tecnología</option>
+                        <option value="5">Marketing</option>
+                        <option value="6">Finanzas</option>
+                        <option value="7">Operaciones</option>
+                        <option value="8">Legal</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-4">
+                    <label class="form-label">Permisos (Múltiple)</label>
+                    <select class="form-select" data-choices-multiple multiple data-search-placeholder="Buscar permisos...">
+                        <option value="crear">Crear</option>
+                        <option value="editar">Editar</option>
+                        <option value="eliminar">Eliminar</option>
+                        <option value="ver">Ver</option>
+                        <option value="exportar">Exportar</option>
+                        <option value="importar">Importar</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-4">
+                    <label class="form-label">Departamento (Simple)</label>
+                    <select class="form-select" data-choices>
+                        <option value="">Seleccionar departamento</option>
+                        <option value="1">Finanzas</option>
+                        <option value="2">Operaciones</option>
+                        <option value="3">Legal</option>
+                        <option value="4">Compras</option>
+                        <option value="5">Logística</option>
+                        <option value="6">Atención al Cliente</option>
+                    </select>
+                </div>
             </form>
             <!-- Contenedor para la lista de roles que se actualizará dinámicamente -->
             <div id="roles-list-container" class="pt-4" th:fragment="rolesList">
