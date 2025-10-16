@@ -6474,250 +6474,66 @@ Estilos Personalizados para Choices.js
 }
 
 /* =================================================================
-   Estilos Personalizados para Choices.js (Estilo Moderno)
+   Choices.js - Personalización de Tema (Solo Variables CSS)
    ================================================================= */
 
-/* Contenedor principal */
-.choices {
-    font-size: .875rem;
-    position: relative;
-    margin-bottom: 0;
+/* Variables CSS para Modo Claro */
+:root {
+    --choices-bg-color: var(--ds-accordion-active-color);
+    --choices-bg-color-dropdown: var(--ds-white);
+    --choices-text-color: var(--ds-body-color);
+    --choices-border-color: var(--ds-border-color);
+    --choices-border-color-focus: #86b7fe;
+    --choices-border-radius: var(--ds-border-radius);
+    
+    --choices-search-bg: var(--ds-gray-100);
+    --choices-search-bg-focus: var(--ds-white);
+    --choices-search-border: var(--ds-border-color);
+    --choices-search-border-focus: #8ab4f8;
+    --choices-search-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
+    --choices-search-shadow-focus: inset 0 1px 2px rgba(0, 0, 0, 0.075), 0 0 0 0.2rem rgba(var(--ds-primary-rgb), 0.15);
+    
+    --choices-option-bg-hover: var(--ds-primary);
+    --choices-option-text-hover: #ffffff;
+    
+    --choices-chip-bg: var(--ds-primary);
+    --choices-chip-border: var(--ds-primary);
+    --choices-chip-text: #ffffff;
+    
+    --choices-placeholder-opacity: 0.5;
+    --choices-disabled-bg: var(--ds-gray-300);
+    
+    /* Borde discreto del dropdown */
+    --choices-dropdown-border-color: var(--ds-gray-300);
 }
 
-/* Caja del select (simula un form-select de Bootstrap) */
-.choices[data-type*='select-one'] .choices__inner {
-    display: flex !important;
-    align-items: center !important;
-    width: 100% !important;
-    padding: 0.375rem 2.25rem 0.375rem 0.75rem !important;
-    /* Idéntico a form-control */
-    background-color: var(--ds-white) !important;
-    /* Fondo blanco en modo claro */
-    background-image: var(--ds-form-select-bg-img) !important;
-    background-repeat: no-repeat !important;
-    background-position: right 0.75rem center !important;
-    background-size: 16px 12px !important;
-    border: 1px solid var(--ds-border-color) !important;
-    /* Mismo borde que form-control */
-    border-radius: var(--ds-border-radius) !important;
-    /* Mismo border-radius que form-control */
-    font-size: 0.875rem !important;
-    line-height: 1.5 !important;
-    /*min-height: calc(1.5em + 0.75rem + 2px) !important; /* Altura exacta de form-control */
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out !important;
-    cursor: pointer !important;
-    color: var(--ds-body-color) !important;
-}
-
-/* Estados focus y hover - idénticos a form-control */
-.choices[data-type*='select-one'].is-focused .choices__inner,
-.choices[data-type*='select-one'].is-open .choices__inner {
-    border-color: #8ab4f8 !important;
-    /* Borde azul */
-    box-shadow: 0 0 0 0.25rem rgba(var(--ds-primary-rgb), 0.25) !important;
-    outline: 0 !important;
-}
-
-/* Cuando está abierto, ocultar el icono del background y mostrar rotado */
-.choices[data-type*='select-one'].is-open .choices__inner {
-    background-image: none !important;
-}
-
-.choices[data-type*='select-one'].is-open .choices__inner::after {
-    content: '' !important;
-    background-image: var(--ds-form-select-bg-img) !important;
-    background-repeat: no-repeat !important;
-    background-position: center !important;
-    background-size: 16px 12px !important;
-    position: absolute !important;
-    right: 0.75rem !important;
-    top: 50% !important;
-    width: 16px !important;
-    height: 12px !important;
-    transform: translateY(-50%) rotate(180deg) !important;
-    pointer-events: none !important;
-    z-index: 10 !important;
-}
-
-.choices.is-open .choices__inner {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
-/* Panel de opciones desplegable */
-.choices__list--dropdown,
-.choices__list[aria-expanded] {
-    background-color: var(--ds-white);
-    /* Fondo blanco en modo claro */
-    border: 1px solid var(--ds-gray-300);
-    /* Borde gris */
-    border-top: 0;
-    border-radius: 0 0 var(--ds-border-radius) var(--ds-border-radius);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1);
-    margin-top: -1px;
-    max-height: 300px;
-    position: absolute;
-    top: 100%;
-    width: 100%;
-    z-index: 1056;
-    overflow: hidden;
-    display: none;
-    /* Oculto por defecto */
-}
-
-.is-active.choices__list--dropdown,
-.is-active.choices__list[aria-expanded] {
-    display: block;
-    /* Visible cuando está activo */
-}
-
-/* Campo de búsqueda (si está habilitado) */
-.choices__list--dropdown .choices__input--cloned {
-    background-color: var(--ds-gray-100);
-    border: 1px solid var(--ds-gray-300);
-    border-radius: var(--ds-border-radius-sm);
-    padding: .5rem .75rem;
-    margin: .5rem;
-    width: calc(100% - 1rem);
-    font-size: .875rem;
-}
-
-.choices__list--dropdown .choices__input--cloned:focus {
-    border-color: var(--ds-primary);
-    box-shadow: none;
-    outline: none;
-}
-
-/* Contenedor de las opciones */
-.choices__list--dropdown .choices__list,
-.choices__list[aria-expanded] .choices__list {
-    max-height: 240px;
-    overflow-y: auto;
-    padding: 0.25rem;
-}
-
-/* Cada opción individual */
-.choices__list--dropdown .choices__item,
-.choices__list[aria-expanded] .choices__item {
-    padding: 0.6rem 0.8rem;
-    font-size: .875rem;
-    color: var(--ds-body-color);
-    border-radius: var(--ds-border-radius-sm);
-    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
-}
-
-/* Opción resaltada (hover o teclado) */
-.choices__list--dropdown .choices__item--selectable.is-highlighted,
-.choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
-    background-color: var(--ds-primary);
-    color: #ffffff !important;
-    /* Texto blanco explícito en hover */
-}
-
-/* SOLO eliminar la línea blanca del input que viene de la librería original */
-.choices[data-type*=select-one] .choices__input {
-    border-bottom: none !important;
-}
-
-/* Placeholder */
-.choices__placeholder {
-    color: var(--ds-gray-500);
-    opacity: 1;
-}
-
-/* Input de búsqueda */
-.choices__input {
-    background-color: transparent;
-    border: 0;
-    color: var(--ds-gray-700);
-    font-size: inherit;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-}
-
-.choices__input:focus {
-    outline: 0;
-}
-
-/* Estado deshabilitado */
-.choices.is-disabled .choices__inner {
-    background-color: var(--ds-gray-300);
-    cursor: not-allowed;
-    user-select: none;
-}
-
-/* --- MODO OSCURO --- */
-[data-bs-theme=dark] .choices__inner {
-    background-color: var(--ds-gray-800) !important;
-    border-color: var(--ds-border-color) !important; /* Mismo borde que los inputs */
-    color: var(--ds-gray-800) !important;
-}
-
-/* Eliminar línea blanca en modo oscuro y mejorar focus */
-[data-bs-theme=dark] .choices[data-type*='select-one'].is-focused .choices__inner,
-[data-bs-theme=dark] .choices[data-type*='select-one'].is-open .choices__inner {
-    border-color: #8ab4f8 !important;
-    /* Borde azul */
-    box-shadow: 0 0 0 0.25rem rgba(var(--ds-primary-rgb), 0.25) !important;
-}
-
-[data-bs-theme=dark] .choices[data-type*='select-one']::after {
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23c4cdd5' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
-}
-
-[data-bs-theme=dark] .choices__list--dropdown,
-[data-bs-theme=dark] .choices__list[aria-expanded] {
-    background-color: var(--ds-body-bg) !important; /* Fondo azul-negro oscuro */
-    border-color: rgba(99, 100, 129, 0.3) !important; /* Borde oscuro similar al fondo */
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5) !important;
-}
-
-[data-bs-theme=dark] .choices__list--dropdown .choices__item,
-[data-bs-theme=dark] .choices__list[aria-expanded] .choices__item {
-    color: #ffffff !important; /* Texto blanco */
-}
-
-/* Hover azul consistente en modo oscuro con texto blanco */
-[data-bs-theme=dark] .choices__list--dropdown .choices__item--selectable.is-highlighted,
-[data-bs-theme=dark] .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
-    background-color: var(--ds-primary) !important;
-    color: #ffffff !important;
-    /* Texto blanco explícito en hover */
-}
-
-[data-bs-theme=dark] .choices__placeholder {
-    color: var(--ds-gray-400);
-}
-
-[data-bs-theme=dark] .choices__input {
-    color: var(--ds-gray-200);
-}
-
-/* --- MODO CLARO - Mejoras adicionales --- */
-[data-bs-theme=light] .choices__list--dropdown,
-[data-bs-theme=light] .choices__list[aria-expanded] {
-    background-color: var(--ds-white) !important; /* Fondo blanco explícito */
-    border-color: var(--ds-gray-300) !important; /* Borde gris */
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-}
-
-/* Hover azul consistente en modo claro con texto blanco */
-[data-bs-theme=light] .choices__list--dropdown .choices__item--selectable.is-highlighted,
-[data-bs-theme=light] .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
-    background-color: var(--ds-primary) !important;
-    color: #ffffff !important; /* Texto blanco explícito en hover */
-}
-
-/* ===== HTMX LOADING STATES ===== */
-.htmx-request .htmx-indicator {
-    display: block !important;
-}
-
-.htmx-request button[hx-post],
-.htmx-request button[hx-get] {
-    opacity: 0.6;
-    pointer-events: none;
+/* Variables CSS para Modo Oscuro */
+[data-bs-theme=dark] {
+    --choices-bg-color: var(--ds-gray-900);
+    --choices-bg-color-dropdown: var(--ds-gray-800);
+    --choices-text-color: var(--ds-gray-200);
+    --choices-border-color: var(--ds-border-color);
+    --choices-border-color-focus: #86b7fe;
+    
+    --choices-search-bg: rgba(0, 0, 0, 0.2);
+    --choices-search-bg-focus: var(--ds-gray-800);
+    --choices-search-border: var(--ds-border-color);
+    --choices-search-border-focus: #8ab4f8;
+    --choices-search-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+    --choices-search-shadow-focus: inset 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 0.2rem rgba(var(--ds-primary-rgb), 0.15);
+    
+    --choices-option-bg-hover: var(--ds-primary);
+    --choices-option-text-hover: #ffffff;
+    
+    --choices-chip-bg: var(--ds-primary);
+    --choices-chip-border: var(--ds-primary);
+    --choices-chip-text: #000000;
+    
+    --choices-placeholder-opacity: 0.5;
+    --choices-disabled-bg: var(--ds-gray-700);
+    
+    /* Borde discreto del dropdown - gris oscuro que se asemeja al fondo */
+    --choices-dropdown-border-color: rgba(99, 100, 129, 0.3);
 }
 
 /* Estados de botones durante peticiones HTMX */

@@ -48,12 +48,12 @@
                         </option>
                     </select>
                 </div>
-                
+
                 <!-- Selects de prueba -->
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label">Categoría (Con búsqueda)</label>
-                    <select class="form-select" data-choices-search data-search-placeholder="Buscar categoría...">
-                        <option value="">Seleccionar categoría</option>
+                    <select class="form-select" data-choices data-choices-search
+                        data-search-placeholder="Buscar categoría...">
                         <option value="1">Administración</option>
                         <option value="2">Ventas</option>
                         <option value="3">Recursos Humanos</option>
@@ -64,10 +64,11 @@
                         <option value="8">Legal</option>
                     </select>
                 </div>
-                
-                <div class="col-md-4">
-                    <label class="form-label">Permisos (Múltiple)</label>
-                    <select class="form-select" data-choices-multiple multiple data-search-placeholder="Buscar permisos...">
+
+                <div class="col-md-3">
+                    <label class="form-label">Permisos (Múltiple + Búsqueda)</label>
+                    <select class="form-select" data-choices data-choices-search data-choices-multiple multiple
+                        placeholder="Selecciona opciones" data-search-placeholder="Buscar permisos...">
                         <option value="crear">Crear</option>
                         <option value="editar">Editar</option>
                         <option value="eliminar">Eliminar</option>
@@ -77,18 +78,6 @@
                     </select>
                 </div>
                 
-                <div class="col-md-4">
-                    <label class="form-label">Departamento (Simple)</label>
-                    <select class="form-select" data-choices>
-                        <option value="">Seleccionar departamento</option>
-                        <option value="1">Finanzas</option>
-                        <option value="2">Operaciones</option>
-                        <option value="3">Legal</option>
-                        <option value="4">Compras</option>
-                        <option value="5">Logística</option>
-                        <option value="6">Atención al Cliente</option>
-                    </select>
-                </div>
             </form>
             <!-- Contenedor para la lista de roles que se actualizará dinámicamente -->
             <div id="roles-list-container" class="pt-4" th:fragment="rolesList">
@@ -122,7 +111,7 @@
                                                 th:title="${rol.estadoRol.name() == 'ACTIVO' ? 'Desactivar Rol' : 'Activar Rol'}"
                                                 data-bs-toggle="tooltip" data-bs-placement="top">
                                                 <i class="position-absolute top-50 start-50 translate-middle"
-                                                   th:classappend="${rol.estadoRol != null && rol.estadoRol.name() == 'ACTIVO' ? 'ti ti-toggle-left fs-5 text-danger' : 'ti ti-toggle-right fs-5 text-success'}"></i>
+                                                    th:classappend="${rol.estadoRol != null && rol.estadoRol.name() == 'ACTIVO' ? 'ti ti-toggle-left fs-5 text-danger' : 'ti ti-toggle-right fs-5 text-success'}"></i>
                                             </button>
                                         </form>
                                         <span class="badge"
@@ -421,7 +410,7 @@
 
         // Ejecutar el inicializador cuando el DOM esté listo
         if (document.readyState === 'loading' && !window.rolesInitialized) {
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 inicializarComponentesRoles();
                 window.rolesInitialized = true;
             });

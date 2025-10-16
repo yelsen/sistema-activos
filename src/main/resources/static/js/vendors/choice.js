@@ -1,9 +1,17 @@
 /**
- * Choices.js Initialization
- * Soporta 3 tipos de select:
- * 1. data-choices: Select simple sin búsqueda
- * 2. data-choices-search: Select con búsqueda
- * 3. data-choices-multiple: Select con búsqueda y selección múltiple
+ * Choices.js Initialization - Sistema Escalable
+ * 
+ * USO:
+ * - Base: data-choices (select simple sin búsqueda)
+ * - Modificadores opcionales:
+ *   · data-choices-search: Activa búsqueda
+ *   · data-choices-multiple: Activa selección múltiple
+ * 
+ * EJEMPLOS:
+ * 1. Select simple: <select data-choices>
+ * 2. Select con búsqueda: <select data-choices data-choices-search>
+ * 3. Select múltiple: <select data-choices data-choices-multiple multiple>
+ * 4. Select múltiple con búsqueda: <select data-choices data-choices-search data-choices-multiple multiple>
  */
 
 // Función para verificar si Choices ya está inicializado
@@ -27,129 +35,33 @@ function getSpanishTexts() {
 // Función principal de inicialización
 function initializeChoices() {
 
-  // 1. SELECT SIMPLE (sin búsqueda) - data-choices
+  // Inicializar todos los elementos con data-choices
   document.querySelectorAll('[data-choices]').forEach(function (element) {
     if (isChoicesInitialized(element)) return;
 
-    const isInput = element.tagName.toLowerCase() === 'input';
-    const removeButton = element.dataset.choicesRemoveitembutton === 'true';
-    const placeholder = element.getAttribute('placeholder');
+    // Detectar modificadores
+    const hasSearch = element.hasAttribute('data-choices-search');
+    const isMultiple = element.hasAttribute('data-choices-multiple') || element.hasAttribute('multiple');
     
-    // Si no hay placeholder y es un select, usar el primer option como valor por defecto
-    const hasPlaceholder = placeholder !== null && placeholder !== '';
-    const placeholderValue = hasPlaceholder ? placeholder : 'Selecciona una opción';
-
-    new Choices(element, {
-      allowHTML: true,
-      removeItemButton: removeButton,
-      searchEnabled: false, // Sin búsqueda
-      shouldSort: false,
-      placeholder: hasPlaceholder,
-      placeholderValue: placeholderValue,
-      itemSelectText: '',
-      classNames: {
-        containerOuter: 'choices',
-        containerInner: 'choices__inner',
-        input: 'choices__input',
-        inputCloned: 'choices__input--cloned',
-        list: 'choices__list',
-        listItems: 'choices__list--multiple',
-        listSingle: 'choices__list--single',
-        listDropdown: 'choices__list--dropdown',
-        item: 'choices__item',
-        itemSelectable: 'choices__item--selectable',
-        itemDisabled: 'choices__item--disabled',
-        itemChoice: 'choices__item--choice',
-        placeholder: 'choices__placeholder',
-        group: 'choices__group',
-        groupHeading: 'choices__heading',
-        button: 'choices__button',
-        activeState: 'is-active',
-        focusState: 'is-focused',
-        openState: 'is-open',
-        disabledState: 'is-disabled',
-        highlightedState: 'is-highlighted',
-        selectedState: 'is-selected',
-        flippedState: 'is-flipped',
-        loadingState: 'is-loading',
-        noResults: 'has-no-results',
-        noChoices: 'has-no-choices'
-      },
-      ...getSpanishTexts()
-    });
-  });
-
-  // 2. SELECT CON BÚSQUEDA - data-choices-search
-  document.querySelectorAll('[data-choices-search]').forEach(function (element) {
-    if (isChoicesInitialized(element)) return;
-
-    const isInput = element.tagName.toLowerCase() === 'input';
-    const removeButton = element.dataset.choicesRemoveitembutton === 'true';
-    const placeholder = element.getAttribute('placeholder') || 'Selecciona una opción';
-    const searchPlaceholder = element.dataset.searchPlaceholder || 'Buscar...';
-    const resultLimit = parseInt(element.dataset.searchLimit) || 10;
-
-    new Choices(element, {
-      allowHTML: true,
-      removeItemButton: removeButton,
-      searchEnabled: true, // Con búsqueda
-      searchPlaceholderValue: searchPlaceholder,
-      searchResultLimit: resultLimit,
-      shouldSort: false,
-      placeholder: true,
-      placeholderValue: placeholder,
-      itemSelectText: '',
-      classNames: {
-        containerOuter: 'choices',
-        containerInner: 'choices__inner',
-        input: 'choices__input',
-        inputCloned: 'choices__input--cloned',
-        list: 'choices__list',
-        listItems: 'choices__list--multiple',
-        listSingle: 'choices__list--single',
-        listDropdown: 'choices__list--dropdown',
-        item: 'choices__item',
-        itemSelectable: 'choices__item--selectable',
-        itemDisabled: 'choices__item--disabled',
-        itemChoice: 'choices__item--choice',
-        placeholder: 'choices__placeholder',
-        group: 'choices__group',
-        groupHeading: 'choices__heading',
-        button: 'choices__button',
-        activeState: 'is-active',
-        focusState: 'is-focused',
-        openState: 'is-open',
-        disabledState: 'is-disabled',
-        highlightedState: 'is-highlighted',
-        selectedState: 'is-selected',
-        flippedState: 'is-flipped',
-        loadingState: 'is-loading',
-        noResults: 'has-no-results',
-        noChoices: 'has-no-choices'
-      },
-      ...getSpanishTexts()
-    });
-  });
-
-  // 3. SELECT MÚLTIPLE CON BÚSQUEDA - data-choices-multiple
-  document.querySelectorAll('[data-choices-multiple]').forEach(function (element) {
-    if (isChoicesInitialized(element)) return;
-
-    const placeholder = element.getAttribute('placeholder') || 'Selecciona múltiples opciones';
+    // Configuración base
+    const placeholder = element.getAttribute('placeholder') || (isMultiple ? 'Selecciona opciones' : 'Selecciona una opción');
     const searchPlaceholder = element.dataset.searchPlaceholder || 'Buscar...';
     const maxItems = parseInt(element.dataset.maxItems) || -1;
-    const resultLimit = parseInt(element.dataset.searchLimit) || 10;
+    const resultLimit = parseInt(element.dataset.searchLimit) || 50;
+    const removeButton = element.dataset.choicesRemoveButton === 'true' || isMultiple;
 
-    new Choices(element, {
+    // Crear instancia de Choices con configuración dinámica
+    const instance = new Choices(element, {
       allowHTML: true,
-      removeItemButton: true, // Siempre con botón para remover
-      searchEnabled: true, // Con búsqueda
+      removeItemButton: removeButton,
+      // Rehabilitar búsqueda: tanto simple como múltiple si el atributo la solicita
+      searchEnabled: hasSearch,
       searchPlaceholderValue: searchPlaceholder,
       searchResultLimit: resultLimit,
       shouldSort: false,
       placeholder: true,
       placeholderValue: placeholder,
-      maxItemCount: maxItems,
+      maxItemCount: isMultiple ? maxItems : -1,
       itemSelectText: '',
       classNames: {
         containerOuter: 'choices',
@@ -181,6 +93,149 @@ function initializeChoices() {
       },
       ...getSpanishTexts()
     });
+
+    // Añadir clases de variante para estilos específicos sin afectar al select simple
+    try {
+      const container = element.parentElement?.closest('.choices') || element.closest('.choices');
+      if (container) {
+        if (hasSearch) container.classList.add('choices--panel');
+        if (isMultiple) container.classList.add('choices--multi');
+        // Exponer placeholder para estilos (especialmente en múltiple vacío)
+        const placeholderText = element.getAttribute('placeholder') || (isMultiple ? 'Selecciona opciones' : 'Selecciona una opción');
+        container.setAttribute('data-placeholder', placeholderText);
+      }
+    } catch (_) { /* noop */ }
+
+     // ==== FIX: Mover buscador al head del dropdown en múltiple con búsqueda ====
+    if (isMultiple && hasSearch) {
+      const container = element.parentElement?.closest('.choices') || element.closest('.choices');
+      if (container) {
+        // Quitar el input inline del control para evitar duplicado
+        const inlineAtControl = container.querySelector('.choices__inner .choices__input');
+        inlineAtControl?.remove();
+
+        // Pasar placeholder al contenedor de chips para que CSS pueda mostrarlo cuando esté vacío
+        const chipsList = container.querySelector('.choices__list--multiple');
+        const ph = container.getAttribute('data-placeholder') || 'Selecciona opciones';
+        chipsList?.setAttribute('data-placeholder', ph);
+
+        const inner = container.querySelector('.choices__inner');
+        const dropdown = container.querySelector('.choices__list--dropdown');
+
+        // Obtener el input clonado que inserta Choices
+        const getInlineInput = () => container.querySelector('.choices__input--cloned');
+
+        // Head del dropdown (crear una sola vez)
+        const ensureHead = () => {
+          if (!dropdown) return null;
+          let head = dropdown.querySelector('.choices__dropdown-head');
+          if (!head) {
+            head = document.createElement('div');
+            head.className = 'choices__dropdown-head';
+            dropdown.insertBefore(head, dropdown.firstChild);
+          }
+          return head;
+        };
+
+        // Al abrir: mover input al head
+        const moveInputToHead = () => {
+          const head = ensureHead();
+          const input = getInlineInput();
+          if (head && input && !head.contains(input)) {
+            head.appendChild(input);
+          }
+          // Enfocar automáticamente el buscador como en el select simple
+          const toFocus = head?.querySelector('.choices__input--cloned');
+          if (toFocus) {
+            setTimeout(() => {
+              try { toFocus.focus(); } catch (_) { /* noop */ }
+            }, 0);
+          }
+        };
+
+        // Al cerrar: devolver input al inner
+        const moveInputBack = () => {
+          const head = dropdown?.querySelector('.choices__dropdown-head');
+          const input = head?.querySelector('.choices__input--cloned');
+          if (input && inner && !inner.contains(input)) {
+            inner.appendChild(input);
+          }
+        };
+
+        element.addEventListener('showDropdown', moveInputToHead);
+        element.addEventListener('hideDropdown', moveInputBack);
+
+        // Comportamiento de colapso al hacer click de nuevo sobre el control cuando está abierto
+        const containerClickToggle = (evt) => {
+          if (container.classList.contains('is-open')) {
+            // Evitar que el click vuelva a abrir inmediatamente
+            evt.preventDefault();
+            evt.stopPropagation();
+            evt.stopImmediatePropagation?.();
+            instance.hideDropdown();
+            // Marcar que fue cerrado manualmente para suprimir la siguiente apertura automática
+            container.dataset.justClosed = 'true';
+            setTimeout(() => { delete container.dataset.justClosed; }, 150);
+          }
+        };
+        // Usamos mousedown para interceptar antes del manejo interno de Choices
+        container.addEventListener('mousedown', containerClickToggle, true);
+        // Si Choices intenta abrir justo después de cerrar manualmente, lo suprimimos
+        element.addEventListener('showDropdown', () => {
+          if (container.dataset.justClosed) {
+            instance.hideDropdown();
+            delete container.dataset.justClosed;
+          }
+        }, true);
+      }
+    }
+    // Para múltiple con búsqueda: mover el input inline al head del dropdown al abrir,
+    // y regresarlo al control al cerrar. De esta forma hay placeholder cuando está vacío
+    // y el buscador aparece en el panel como en el select simple.
+    if (isMultiple && hasSearch) {
+      const container = element.parentElement?.closest('.choices') || element.closest('.choices');
+      if (container) {
+        const inner = container.querySelector('.choices__inner');
+        const dropdown = container.querySelector('.choices__list--dropdown');
+        const getInlineInput = () => container.querySelector('.choices__inner .choices__input');
+
+        const ensureHead = () => {
+          if (!dropdown) return null;
+          let head = dropdown.querySelector('.choices__dropdown-head');
+          if (!head) {
+            head = document.createElement('div');
+            head.className = 'choices__dropdown-head';
+            head.style.position = 'sticky';
+            head.style.top = '0';
+            head.style.zIndex = '3';
+            head.style.background = 'var(--choices-bg-color-dropdown, #fff)';
+            head.style.padding = '0.5rem 0.75rem 0 0.75rem';
+            dropdown.insertBefore(head, dropdown.firstChild);
+          }
+          return head;
+        };
+
+        const moveInlineInputToHead = () => {
+          const head = ensureHead();
+          const input = getInlineInput();
+          if (!head || !input) return;
+          if (!head.contains(input)) {
+            head.appendChild(input);
+          }
+        };
+
+        const moveInlineInputBack = () => {
+          const input = dropdown?.querySelector('.choices__dropdown-head .choices__input');
+          if (!input || !inner) return;
+          if (!inner.contains(input)) {
+            inner.appendChild(input);
+          }
+        };
+
+        element.addEventListener('showDropdown', moveInlineInputToHead);
+        element.addEventListener('hideDropdown', moveInlineInputBack);
+      }
+    }
   });
 
   // 4. SELECT CON COLORES PERSONALIZADOS - data-choices-innertext
