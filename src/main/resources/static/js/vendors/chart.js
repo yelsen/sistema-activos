@@ -229,6 +229,11 @@ var theme = {
         new ApexCharts(document.querySelector("#totalSale"), e).render()),
       document.getElementById("map-world"))
     ) {
+      // Verificar si jsVectorMap está disponible
+      if (typeof jsVectorMap === 'undefined') {
+        console.warn('jsVectorMap no está cargado. Saltando inicialización del mapa.');
+        return;
+      }
       const t = new jsVectorMap({
         selector: "#map-world",
         map: "world",

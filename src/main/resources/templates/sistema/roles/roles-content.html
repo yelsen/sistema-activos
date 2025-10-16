@@ -77,11 +77,11 @@
                                         <form th:action="@{/seguridad/roles/{id}/cambiar-estado(id=${rol.idRol})}"
                                             method="post" class="d-inline" sec:authorize="hasAuthority('ROLES_EDITAR')">
                                             <button type="submit"
-                                                class="btn btn-sm btn-icon btn-ghost-secondary rounded-circle"
+                                                class="btn btn-sm btn-ghost-secondary rounded-circle position-relative"
                                                 th:title="${rol.estadoRol.name() == 'ACTIVO' ? 'Desactivar Rol' : 'Activar Rol'}"
                                                 data-bs-toggle="tooltip" data-bs-placement="top">
-                                                <i
-                                                    th:classappend="${rol.estadoRol != null && rol.estadoRol.name() == 'ACTIVO' ? 'ti ti-toggle-left fs-5 text-danger' : 'ti ti-toggle-right fs-5 text-success'}"></i>
+                                                <i class="position-absolute top-50 start-50 translate-middle"
+                                                   th:classappend="${rol.estadoRol != null && rol.estadoRol.name() == 'ACTIVO' ? 'ti ti-toggle-left fs-5 text-danger' : 'ti ti-toggle-right fs-5 text-success'}"></i>
                                             </button>
                                         </form>
                                         <span class="badge"
@@ -325,20 +325,40 @@
         function fetchRoles() {
             const formData = new FormData(filterForm);
             const params = new URLSearchParams(formData);
-            // Apuntamos a la URL principal, que ahora maneja fragmentos
             const url = `/seguridad/roles?${params.toString()}`;
 
             // Actualizar la URL del navegador sin recargar
             history.pushState(null, '', `/seguridad/roles?${params.toString()}`);
 
-            fetch(url)
-                .then(response => response.text())
+            // Realizar petición AJAX con header para indicar que queremos solo el fragmento
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With-Fragment': 'true',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la respuesta del servidor');
+                    }
+                    return response.text();
+                })
                 .then(html => {
                     if (rolesListContainer) {
                         rolesListContainer.innerHTML = html;
+                        // Reinicializar tooltips de Bootstrap para los nuevos elementos
+                        const tooltipTriggerList = rolesListContainer.querySelectorAll('[data-bs-toggle="tooltip"]');
+                        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
                     }
                 })
-                .catch(error => console.error('Error al filtrar roles:', error));
+                .catch(error => {
+                    console.error('Error al filtrar roles:', error);
+                    // Mostrar mensaje de error al usuario
+                    if (rolesListContainer) {
+                        rolesListContainer.innerHTML = '<div class="alert alert-danger">Error al cargar los roles. Por favor, intente nuevamente.</div>';
+                    }
+                });
         }
 
         if (filterForm) {
@@ -360,10 +380,14 @@
 
         // Ejecutar el inicializador cuando el DOM esté listo
         if (document.readyState === 'loading' && !window.rolesInitialized) {
-            document.addEventListener('DOMContentLoaded', inicializarComponentesRoles);
-        } else {
+            document.addEventListener('DOMContentLoaded', function() {
+                inicializarComponentesRoles();
+                window.rolesInitialized = true;
+            });
+        } else if (!window.rolesInitialized) {
             // El DOM ya está cargado
             inicializarComponentesRoles();
+            window.rolesInitialized = true;
         }
     </script>
 

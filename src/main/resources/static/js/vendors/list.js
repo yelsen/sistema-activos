@@ -1,5 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
-  document.querySelectorAll("[data-list]").forEach((n) => {
+  // Verificar si List.js está disponible
+  if (typeof List === 'undefined') {
+    console.warn('List.js no está cargado. Saltando inicialización.');
+    return;
+  }
+  
+  const listElements = document.querySelectorAll("[data-list]");
+  
+  if (!listElements.length) {
+    console.info('No se encontraron elementos [data-list]. Saltando inicialización.');
+    return;
+  }
+  
+  listElements.forEach((n) => {
     var a, s, l, e;
     function t(e) {
       var t = e.items.length,

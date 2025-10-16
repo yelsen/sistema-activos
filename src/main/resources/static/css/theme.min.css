@@ -3580,6 +3580,33 @@ textarea.form-control-lg {
     height: calc(1.571em + 1.16rem + 2px)
 }
 
+.choices__inner {
+    background-color: var(--ds-white);
+    border: 1px solid var(--ds-gray-400);
+    border-radius: 0.5rem;
+    color: var(--ds-gray-700);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    min-height: calc(1.571em + 1.16rem + 2px);
+    overflow: hidden;
+    padding: 0.58rem 2.25rem 0.58rem 0.75rem;
+    position: relative;
+    vertical-align: top;
+    width: 100%;
+    background-image: var(--ds-form-select-bg-img);
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
 .form-select {
     --ds-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
     -webkit-appearance: none;
@@ -6458,57 +6485,73 @@ Estilos Personalizados para Choices.js
 }
 
 /* Caja del select (simula un form-select de Bootstrap) */
-.choices__inner {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: .5rem 2.25rem .5rem .75rem; /* Espacio para la flecha */
-    background-color: var(--ds-white);
-    border: 1px solid var(--ds-gray-300);
-    border-radius: var(--ds-border-radius);
-    font-size: inherit;
-    line-height: 1.571;
-    min-height: calc(1.571em + 1rem + 2px);
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    cursor: pointer;
+.choices[data-type*='select-one'] .choices__inner {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem !important; /* Idéntico a form-control */
+    background-color: var(--ds-body-bg) !important;
+    background-image: var(--ds-form-select-bg-img) !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 16px 12px !important;
+    border: 1px solid var(--ds-border-color) !important; /* Mismo borde que form-control */
+    border-radius: var(--ds-border-radius) !important; /* Mismo border-radius que form-control */
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+    min-height: calc(1.5em + 0.75rem + 2px) !important; /* Altura exacta de form-control */
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out !important;
+    cursor: pointer !important;
+    color: var(--ds-body-color) !important;
 }
 
-/* Flecha del desplegable (simula la de Bootstrap) */
-.choices[data-type*='select-one']::after {
-    content: '';
-    background-image: var(--ds-form-select-bg-img);
-    background-repeat: no-repeat;
-    background-size: 16px 12px;
-    height: 1em;
-    width: 1em;
-    position: absolute;
-    right: .95rem;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    transition: transform .2s ease-in-out;
+/* Estados focus y hover - idénticos a form-control */
+.choices[data-type*='select-one'].is-focused .choices__inner,
+.choices[data-type*='select-one'].is-open .choices__inner {
+    border-color: var(--ds-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(var(--ds-primary-rgb), 0.15) !important;
+    outline: 0 !important;
 }
 
-/* Flecha cuando está abierto */
-.choices[data-type*='select-one'].is-open::after {
-    transform: translateY(-50%) rotate(180deg);
+/* Cuando está abierto, ocultar el icono del background y mostrar rotado */
+.choices[data-type*='select-one'].is-open .choices__inner {
+    background-image: none !important;
 }
 
-/* Estilos al obtener foco o estar abierto */
-.choices.is-focused .choices__inner,
+.choices[data-type*='select-one'].is-open .choices__inner::after {
+    content: '' !important;
+    background-image: var(--ds-form-select-bg-img) !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: 16px 12px !important;
+    position: absolute !important;
+    right: 0.75rem !important;
+    top: 50% !important;
+    width: 16px !important;
+    height: 12px !important;
+    transform: translateY(-50%) rotate(180deg) !important;
+    pointer-events: none !important;
+    z-index: 10 !important;
+}
+
 .choices.is-open .choices__inner {
-    border-color: #8ab4f8;
-    box-shadow: 0 0 0 0.25rem rgba(var(--ds-primary-rgb), 0.25);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 /* Panel de opciones desplegable */
 .choices__list--dropdown,
 .choices__list[aria-expanded] {
-    background-color: var(--ds-white);
-    border: 1px solid var(--ds-border-color-translucent);
-    border-radius: var(--ds-border-radius);
-    box-shadow: var(--ds-box-shadow-lg);
-    margin-top: 6px;
+    background-color: var(--ds-body-bg);
+    border: 1px solid var(--ds-border-color);
+    border-top: 0;
+    border-radius: 0 0 var(--ds-border-radius) var(--ds-border-radius);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1);
+    margin-top: -1px;
+    max-height: 300px;
+    position: absolute;
+    top: 100%;
+    width: 100%;
     z-index: 1056;
     overflow: hidden;
     display: none; /* Oculto por defecto */
@@ -6549,33 +6592,126 @@ Estilos Personalizados para Choices.js
     font-size: .875rem;
     color: var(--ds-body-color);
     border-radius: var(--ds-border-radius-sm);
-    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out; /* Transición suave sin hundimiento */
-    border-bottom: none !important; /* Asegura que no haya líneas divisorias */
+    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
 }
 
 /* Opción resaltada (hover o teclado) */
 .choices__list--dropdown .choices__item--selectable.is-highlighted,
 .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
-    background-color: var(--ds-primary-bg-subtle);
-    color: var(--ds-primary-text-emphasis);
+    background-color: var(--ds-primary);
+    color: var(--ds-white);
+}
+
+/* SOLO eliminar la línea blanca del input que viene de la librería original */
+.choices[data-type*=select-one] .choices__input {
+    border-bottom: none !important;
+}
+
+/* Placeholder */
+.choices__placeholder {
+    color: var(--ds-gray-500);
+    opacity: 1;
+}
+
+/* Input de búsqueda */
+.choices__input {
+    background-color: transparent;
+    border: 0;
+    color: var(--ds-gray-700);
+    font-size: inherit;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+.choices__input:focus {
+    outline: 0;
+}
+
+/* Estado deshabilitado */
+.choices.is-disabled .choices__inner {
+    background-color: var(--ds-gray-300);
+    cursor: not-allowed;
+    user-select: none;
 }
 
 /* --- MODO OSCURO --- */
 [data-bs-theme=dark] .choices__inner {
-    background-color: var(--ds-body-bg);
-    border-color: var(--ds-border-color);
-    color: var(--ds-body-color);
+    background-color: var(--ds-gray-800);
+    border-color: var(--ds-gray-600);
+    color: var(--ds-gray-200);
 }
 [data-bs-theme=dark] .choices[data-type*='select-one']::after {
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23c4cdd5' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
 }
 [data-bs-theme=dark] .choices__list--dropdown,
 [data-bs-theme=dark] .choices__list[aria-expanded] {
-    background-color: var(--ds-dark-bg-subtle);
-    border-color: var(--ds-dark-border-subtle);
+    background-color: var(--ds-gray-800);
+    border-color: var(--ds-gray-600);
 }
-[data-bs-theme=dark] .choices__list--dropdown .choices__item--selectable.is-highlighted {
-    background-color: rgba(var(--ds-primary-rgb), 0.2);
+[data-bs-theme=dark] .choices__list--dropdown .choices__item,
+[data-bs-theme=dark] .choices__list[aria-expanded] .choices__item {
+    color: var(--ds-gray-200);
+}
+[data-bs-theme=dark] .choices__placeholder {
+    color: var(--ds-gray-400);
+}
+[data-bs-theme=dark] .choices__input {
+    color: var(--ds-gray-200);
+}
+
+/* ===== HTMX LOADING STATES ===== */
+.htmx-request .htmx-indicator {
+    display: block !important;
+}
+.htmx-request button[hx-post],
+.htmx-request button[hx-get] {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Estados de botones durante peticiones HTMX */
+button.htmx-request {
+    opacity: 0.7;
+    cursor: not-allowed;
+    position: relative;
+}
+
+button.htmx-request::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Mejorar validación de formularios */
+.was-validated .form-control:valid,
+.form-control.is-valid {
+    border-color: var(--ds-success);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2322c55e' d='m2.3 6.73-.6-1.48-.27.27-.35.35.63.63L2.3 6.73zm2.54-4.02L3.14 4.4l-.35-.35L1.5 5.34l.63.63 1.7-1.7z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.was-validated .form-control:invalid,
+.form-control.is-invalid {
+    border-color: var(--ds-danger);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
 }
 
 .badge {
@@ -27157,6 +27293,21 @@ html.expanded #content .navbar-glass .collapse-expanded {
     vertical-align: .255em
 }
 
+/* ===== FIX SIDEBAR DUPLICADO: Ocultar offcanvas en desktop ===== */
+@media (min-width: 991px) {
+    .offcanvasNav {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+
+@media (max-width: 990px) {
+    #miniSidebar {
+        display: none !important;
+    }
+}
+/* ===== FIN FIX ===== */
+
 table tr:last-child td {
     border-bottom-width: 0
 }
@@ -31905,63 +32056,38 @@ div.table-responsive>div.dataTables_wrapper>div.row {
 
 .choices[data-type*=select-one] .choices__inner {
     padding: 0.375rem 0.75rem;
-    min-height: 38px; /* igual a input */
+    min-height: calc(1.571em + 1.16rem + 2px); /* igual altura que form-control */
     display: flex;
     align-items: center;
 }
 
 .choices[data-type*=select-one] .choices__input {
-    background-color: #fff;
-    border-bottom: 1px solid var(--ds-gray-200);
+    background-color: transparent;
+    border: none;
     display: block;
     margin: 0;
-    padding: 10px;
+    padding: 0;
     width: 100%
 }
 
 .choices[data-type*=select-one] .choices__button {
-    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMSIgaGVpZ2h0PSIyMSI+PGcgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJtMi41OTIuMDQ0IDE4LjM2NCAxOC4zNjQtMi41NDggMi41NDhMLjA0NCAyLjU5MnoiLz48cGF0aCBkPSJNMCAxOC4zNjQgMTguMzY0IDBsMi41NDggMi41NDhMMi41NDggMjAuOTEyeiIvPjwvZz48L3N2Zz4=");
-    background-size: 8px;
-    border-radius: 10em;
-    height: 20px;
-    margin-right: 40px;
-    margin-top: -10px;
-    opacity: .25;
-    padding: 0;
-    position: absolute;
-    right: 0;
-    top: 50%;
-    width: 20px
+    display: none !important;
 }
 
 .choices[data-type*=select-one] .choices__button:focus,
 .choices[data-type*=select-one] .choices__button:hover {
-    opacity: 1
+    display: none !important;
 }
 
 .choices[data-type*=select-one] .choices__button:focus {
-    box-shadow: 0 0 0 2px var(--ds-primary)
+    display: none !important;
 }
 
 .choices[data-type*=select-one] .choices__item[data-value=""] .choices__button {
     display: none
 }
 
-.choices[data-type*=select-one]:after {
-    content: "\f282";
-    display: none;
-    font-family: bootstrap-icons !important;
-    margin-top: 0;
-    padding: 13px 12px;
-    pointer-events: none;
-    position: absolute;
-    right: 0;
-    top: 0
-}
 
-.choices[data-type*=select-one].is-open:after {
-    border-color: transparent transparent var(--ds-gray-900) transparent
-}
 
 .choices[data-type*=select-one][dir=rtl]:after {
     left: 11.5px;
@@ -32003,20 +32129,6 @@ div.table-responsive>div.dataTables_wrapper>div.row {
     opacity: 1
 }
 
-.choices__inner {
-    background-color: var(--ds-body-bg);
-    border: 1px solid var(--ds-border-color);
-    border-radius: 0.5rem;
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    overflow: hidden;
-    padding: 0.375rem 0.75rem;
-    min-height: 38px; /* igual a input */
-    width: 100%;
-    transition: all 0.2s ease-in-out;
-    color: var(--ds-body-color);
-}
 
 .is-focused .choices__inner,
 .is-open .choices__inner {
@@ -32097,31 +32209,30 @@ div.table-responsive>div.dataTables_wrapper>div.row {
 
 .choices__list--dropdown,
 .choices__list[aria-expanded] {
-    background-color: var(--ds-body-bg);
-    border: none; /* sin línea alrededor */
-    border-radius: 0.5rem; /* panel flotante redondeado */
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35), 0 6px 18px rgba(0, 0, 0, 0.25);
-    margin-top: 8px;
-    overflow: visible; /* sin scroll interno */
+    background-color: var(--ds-white);
+    border: 1px solid var(--ds-border-color-translucent);
+    border-radius: var(--ds-border-radius);
+    box-shadow: var(--ds-box-shadow-lg);
+    margin-top: 6px;
+    overflow: hidden;
     padding: 0;
     position: absolute;
     top: 100%;
-    visibility: hidden;
+    visibility: visible;
     width: 100%;
-    will-change: visibility;
+    will-change: auto;
     word-break: break-all;
-    z-index: 1055;
-    backdrop-filter: blur(10px);
+    z-index: 1056;
 }
 
 .is-active.choices__list--dropdown,
 .is-active.choices__list[aria-expanded] {
-    visibility: visible
+    display: block; /* coherente con el bloque superior */
 }
 
 .is-open .choices__list--dropdown,
 .is-open .choices__list[aria-expanded] {
-    border-color: var(--ds-gray-100)
+    border-color: var(--ds-border-color-translucent)
 }
 
 .is-flipped .choices__list--dropdown,
@@ -32135,25 +32246,108 @@ div.table-responsive>div.dataTables_wrapper>div.row {
 
 .choices__list--dropdown .choices__list,
 .choices__list[aria-expanded] .choices__list {
-    max-height: none; /* sin scroll */
-    overflow: visible;
+    max-height: 240px;
+    overflow-y: auto;
     position: relative;
-    -webkit-overflow-scrolling: auto;
-    will-change: auto;
-    border-radius: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+    will-change: scroll-position;
+    padding: 0.25rem;
 }
 
 .choices__list--dropdown .choices__item,
 .choices__list[aria-expanded] .choices__item {
+    padding: 0.6rem 0.8rem;
+    font-size: .875rem;
     color: var(--ds-body-color);
-    font-size: 14px;
-    font-weight: 400;
-    padding: 10px 14px;
-    position: relative;
-    transition: all 0.2s ease-in-out;
-    display: flex; /* centrar verticalmente */
-    align-items: center;
-    border-bottom: 1px solid var(--ds-border-color);
+    border-radius: var(--ds-border-radius-sm);
+    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+    border-bottom: none !important;
+}
+
+/* Eliminar completamente la línea blanca del input interno */
+.choices__list--dropdown .choices__input--cloned {
+    border: none !important;
+    border-bottom: none !important;
+    background: transparent !important;
+}
+
+/* Sobrescribir estilos de la librería Choices.js */
+.choices[data-type*=select-one] .choices__input {
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: none !important;
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+/* Asegurar que el dropdown no tenga líneas blancas */
+.choices__list--dropdown .choices__item {
+    border-bottom: none !important;
+}
+
+.choices__list--dropdown .choices__input {
+    border-bottom: none !important;
+}
+
+/* Sobrescribir completamente los estilos problemáticos de choices.min.css */
+.choices[data-type*=select-one] .choices__input {
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Eliminar cualquier borde en elementos del dropdown */
+.choices__list--dropdown * {
+    border-bottom: none !important;
+}
+
+.choices__list--dropdown .choices__input--cloned {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0.5rem !important;
+    margin: 0.25rem !important;
+}
+
+/* Sobrescribir completamente los estilos de la librería Choices.js para que sea idéntico al input */
+.choices {
+    margin-bottom: 0 !important;
+    font-size: 0.875rem !important;
+}
+
+.choices__inner {
+    background-color: var(--ds-body-bg) !important;
+    border: 1px solid var(--ds-border-color) !important;
+    border-radius: var(--ds-border-radius) !important;
+    color: var(--ds-body-color) !important;
+    font-size: 0.875rem !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem !important;
+    min-height: calc(1.5em + 0.75rem + 2px) !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    cursor: pointer !important;
+    position: relative !important;
+    background-image: var(--ds-form-select-bg-img) !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 16px 12px !important;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+/* Asegurar que el texto seleccionado tenga el color correcto */
+.choices__list--single .choices__item {
+    color: var(--ds-body-color) !important;
+    background-color: transparent !important;
 }
 
 .choices__list--dropdown .choices__item:last-child,
@@ -32195,10 +32389,8 @@ div.table-responsive>div.dataTables_wrapper>div.row {
 
 .choices__list--dropdown .choices__item--selectable.is-highlighted,
 .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
-    background-color: var(--ds-primary);
-    color: white;
-    border-bottom-color: var(--ds-primary);
-    transform: translateX(4px);
+    background-color: var(--ds-primary-bg-subtle);
+    color: var(--ds-primary-text-emphasis);
 }
 
 .choices__list--dropdown .choices__item--selectable.is-highlighted:after,

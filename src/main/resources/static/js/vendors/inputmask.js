@@ -1,7 +1,11 @@
-!(function () {
-  var e,
-    n,
-    t = document.getElementById("phone-mask"),
+// Verificar si IMask está disponible
+if (typeof IMask === 'undefined') {
+  console.warn('IMask no está cargado. Saltando inicialización de input masks.');
+} else {
+  !(function () {
+    var e,
+      n,
+      t = document.getElementById("phone-mask"),
     t =
       (t &&
         ((d = IMask(t, { mask: "+{7}(000)000-00-00" })).on(
@@ -115,4 +119,5 @@
       (t && new IMask(t, { mask: "000" }),
       document.getElementById("discountCode"));
   t && new IMask(t, { mask: "FC-000000", lazy: !1, placeholderChar: "X" });
-})();
+  })();
+}
