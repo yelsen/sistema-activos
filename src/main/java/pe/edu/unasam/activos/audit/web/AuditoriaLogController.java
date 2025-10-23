@@ -31,21 +31,21 @@ public class AuditoriaLogController {
             @PageableDefault(size = 10, sort = "fechaHora", direction = Sort.Direction.DESC) Pageable pageable,
             Model model) {
  
-        Map<String, Object> params = new java.util.HashMap<>();
-        params.put("q", query);
-        params.put("modulo", modulo);
+        Map<String, Object> queryParams = new java.util.HashMap<>();
+        queryParams.put("q", query);
+        queryParams.put("modulo", modulo);
         if (accion != null) {
-            params.put("accion", accion.name());
+            queryParams.put("accion", accion.name());
         }
         if (fechaInicio != null) {
-            params.put("fechaInicio", fechaInicio);
+            queryParams.put("fechaInicio", fechaInicio);
         }
         if (fechaFin != null) {
-            params.put("fechaFin", fechaFin);
+            queryParams.put("fechaFin", fechaFin);
         }
 
         model.addAttribute("page", auditoriaLogService.getLogs(query, modulo, accion, fechaInicio, fechaFin, pageable));
-        model.addAttribute("params", params);
+        model.addAttribute("queryParams", queryParams);
         model.addAttribute("query", query);
         model.addAttribute("modulo", modulo);
         model.addAttribute("accion", accion);

@@ -2,6 +2,8 @@ package pe.edu.unasam.activos.modules.proveedores.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import pe.edu.unasam.activos.common.enums.EstadoProveedor;
+
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,9 +28,25 @@ public class Proveedor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idproveedor")
     private Integer idProveedor;
+
+    @Column(name = "ruc_proveedor", length = 13, nullable = false)
+    private String rucProveedor;
     
     @Column(name = "nombre_proveedor", length = 255, nullable = false)
     private String nombreProveedor;
+    
+    @Column(name = "direccion_proveedor", columnDefinition = "TEXT")
+    private String direccionProveedor;
+    
+    @Column(name = "telefono_proveedor", length = 20)
+    private String telefonoProveedor;
+    
+    @Column(name = "correo_proveedor", length = 100)
+    private String correoProveedor;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado_proveedor")
+    private EstadoProveedor estadoProveedor;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)

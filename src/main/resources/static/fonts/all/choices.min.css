@@ -1,0 +1,678 @@
+/*! 
+ * Choices.js - Estilos Base (Estructura y Funcionalidad)
+ * Variables CSS para personalización en theme.min.css
+ */
+
+/* ========================================
+   VARIABLES CSS (Personalizables desde theme.min.css)
+   ======================================== */
+:root {
+    /* Colores base */
+    --choices-bg-color: #f9f9fa;
+    --choices-bg-color-dropdown: #ffffff;
+    --choices-text-color: #333333;
+    --choices-border-color: #ddd;
+    --choices-border-radius: 0.375rem;
+    
+    /* Input de búsqueda */
+    --choices-search-bg: #f8f9fa;
+    --choices-search-bg-focus: #ffffff;
+    --choices-search-border: #dee2e6;
+    --choices-search-border-focus: #8ab4f8;
+    --choices-search-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
+    --choices-search-shadow-focus: inset 0 1px 2px rgba(0, 0, 0, 0.075), 0 0 0 0.2rem rgba(14, 165, 233, 0.15);
+    
+    /* Opciones */
+    --choices-option-bg-hover: #0ea5e9;
+    --choices-option-text-hover: #ffffff;
+    
+    /* Chips (select múltiple) */
+    --choices-chip-bg: #0ea5e9;
+    --choices-chip-border: #0ea5e9;
+    --choices-chip-text: #ffffff;
+    
+    /* Placeholder */
+    --choices-placeholder-opacity: 0.5;
+    
+    /* Disabled */
+    --choices-disabled-bg: #eaeaea;
+}
+
+/* ========================================
+   ESTRUCTURA BASE
+   ======================================== */
+.choices {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 0;
+    font-size: 0.875rem;
+}
+
+.choices:focus {
+    outline: 0;
+}
+
+.choices:last-child {
+    margin-bottom: 0;
+}
+
+.choices.is-open {
+    overflow: visible;
+}
+
+.choices.is-disabled .choices__inner,
+.choices.is-disabled .choices__input {
+    background-color: var(--choices-disabled-bg);
+    cursor: not-allowed;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.choices.is-disabled .choices__item {
+    cursor: not-allowed;
+}
+
+.choices [hidden] {
+    display: none !important;
+}
+
+/* ========================================
+   SELECT SIMPLE (select-one)
+   ======================================== */
+.choices[data-type*=select-one] {
+    cursor: pointer;
+}
+
+.choices[data-type*=select-one] .choices__inner {
+    padding-bottom: 7.5px;
+}
+
+.choices[data-type*=select-one] .choices__input {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border-bottom: none;
+    background-color: transparent;
+    margin: 0;
+}
+
+.choices[data-type*=select-one] .choices__button {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==);
+    padding: 0;
+    background-size: 8px;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    margin-top: -10px;
+    margin-right: 25px;
+    height: 20px;
+    width: 20px;
+    border-radius: 10em;
+    opacity: 0.25;
+}
+
+.choices[data-type*=select-one] .choices__button:focus,
+.choices[data-type*=select-one] .choices__button:hover {
+    opacity: 1;
+}
+
+.choices[data-type*=select-one] .choices__button:focus {
+    box-shadow: 0 0 0 2px var(--choices-search-border-focus);
+}
+
+.choices[data-type*=select-one] .choices__item[data-placeholder] .choices__button {
+    display: none;
+}
+
+.choices[data-type*=select-one]::after {
+    content: "";
+    height: 0;
+    width: 0;
+    border-style: solid;
+    border-color: var(--choices-text-color) transparent transparent;
+    border-width: 5px;
+    position: absolute;
+    right: 11.5px;
+    top: 50%;
+    margin-top: -2.5px;
+    pointer-events: none;
+}
+
+.choices[data-type*=select-one].is-open::after {
+    border-color: transparent transparent var(--choices-text-color);
+    margin-top: -7.5px;
+}
+
+.choices[data-type*=select-one][dir=rtl]::after {
+    left: 11.5px;
+    right: auto;
+}
+
+.choices[data-type*=select-one][dir=rtl] .choices__button {
+    right: auto;
+    left: 0;
+    margin-left: 25px;
+    margin-right: 0;
+}
+
+/* Ajustes para select-one estilo Bootstrap */
+.choices[data-type*='select-one'] .choices__inner {
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+    min-height: calc(1.5em + 0.75rem + 2px);
+}
+
+/* ========================================
+   SELECT MÚLTIPLE (select-multiple)
+   ======================================== */
+.choices[data-type*=select-multiple] .choices__inner,
+.choices[data-type*=text] .choices__inner {
+    cursor: text;
+}
+
+.choices[data-type*=select-multiple] .choices__button,
+.choices[data-type*=text] .choices__button {
+    position: relative;
+    display: inline-block;
+    margin: 0 -4px 0 8px;
+    padding-left: 16px;
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjRkZGIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==);
+    background-size: 8px;
+    width: 8px;
+    line-height: 1;
+    opacity: 0.75;
+    border-radius: 0;
+}
+
+.choices[data-type*=select-multiple] .choices__button:focus,
+.choices[data-type*=select-multiple] .choices__button:hover,
+.choices[data-type*=text] .choices__button:focus,
+.choices[data-type*=text] .choices__button:hover {
+    opacity: 1;
+}
+
+/* ========================================
+   CONTENEDOR INTERNO
+   ======================================== */
+.choices__inner {
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
+    background-color: var(--choices-bg-color);
+    padding: 7.5px 7.5px 3.75px;
+    border: 1px solid var(--choices-border-color);
+    border-radius: var(--choices-border-radius);
+    font-size: 0.875rem;
+    min-height: 44px;
+    overflow: hidden;
+}
+
+.is-focused .choices__inner,
+.is-open .choices__inner {
+    border-color: var(--choices-border-color-focus) !important;
+    box-shadow: 0 0 0 0.25rem rgba(14, 165, 233, 0.25) !important;
+    outline: 0 !important;
+}
+
+.is-open .choices__inner {
+    border-radius: var(--choices-border-radius) var(--choices-border-radius) 0 0;
+}
+
+.is-flipped.is-open .choices__inner {
+    border-radius: 0 0 var(--choices-border-radius) var(--choices-border-radius);
+}
+
+/* ========================================
+   LISTAS
+   ======================================== */
+.choices__list {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.choices__list--single {
+    display: inline-block;
+    padding: 4px 16px 4px 4px;
+    width: 100%;
+}
+
+[dir=rtl] .choices__list--single {
+    padding-right: 4px;
+    padding-left: 16px;
+}
+
+.choices__list--single .choices__item {
+    width: 100%;
+}
+
+.choices__list--multiple {
+    display: inline;
+}
+
+.choices__list--multiple .choices__item {
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: var(--choices-border-radius);
+    padding: 4px 10px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    margin-right: 3.75px;
+    margin-bottom: 3.75px;
+    background-color: var(--choices-chip-bg);
+    border: 1px solid var(--choices-chip-border);
+    color: var(--choices-chip-text);
+    word-break: break-all;
+    box-sizing: border-box;
+}
+
+.choices__list--multiple .choices__item[data-deletable] {
+    padding-right: 5px;
+}
+
+[dir=rtl] .choices__list--multiple .choices__item {
+    margin-right: 0;
+    margin-left: 3.75px;
+}
+
+.choices__list--multiple .choices__item.is-highlighted {
+    background-color: var(--choices-chip-bg);
+    opacity: 0.9;
+}
+
+.is-disabled .choices__list--multiple .choices__item {
+    background-color: #aaa;
+    border: 1px solid #919191;
+}
+
+/* ========================================
+   DROPDOWN (Panel de opciones)
+   ======================================== */
+.choices__list--dropdown,
+.choices__list[aria-expanded] {
+    display: none;
+    z-index: 1056;
+    position: absolute;
+    width: 100%;
+    background-color: var(--choices-bg-color-dropdown);
+    border: 1px solid var(--choices-dropdown-border-color);
+    border-top: 0;
+    top: 100%;
+    margin-top: -1px;
+    border-bottom-left-radius: var(--choices-border-radius);
+    border-bottom-right-radius: var(--choices-border-radius);
+    overflow: hidden;
+    word-break: break-all;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.is-active.choices__list--dropdown,
+.is-active.choices__list[aria-expanded] {
+    display: block;
+}
+
+.is-open .choices__list--dropdown,
+.is-open .choices__list[aria-expanded] {
+    border-color: var(--choices-dropdown-border-color);
+}
+
+.is-flipped .choices__list--dropdown,
+.is-flipped .choices__list[aria-expanded] {
+    top: auto;
+    bottom: 100%;
+    margin-top: 0;
+    margin-bottom: -1px;
+    border-radius: var(--choices-border-radius) var(--choices-border-radius) 0 0;
+}
+
+/* Contenedor scrolleable de opciones */
+.choices__list--dropdown .choices__list,
+.choices__list[aria-expanded] .choices__list {
+    position: relative;
+    max-height: 300px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    will-change: scroll-position;
+    padding: 0.5rem;
+    padding-bottom: 0.75rem;
+}
+
+/* Padding superior del panel cuando hay buscador */
+.choices.choices--panel .choices__list--dropdown,
+.choices.choices--panel .choices__list[aria-expanded] {
+    padding-top: 0.5rem;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+}
+
+/* Cada opción */
+.choices__list--dropdown .choices__item,
+.choices__list[aria-expanded] .choices__item {
+    position: relative;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    border-radius: calc(var(--choices-border-radius) - 2px);
+    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+/* Ocultar placeholder dentro del dropdown para selects con placeholder */
+.choices__list--dropdown .choices__item[data-placeholder],
+.choices__list[aria-expanded] .choices__item[data-placeholder] {
+    display: none !important;
+}
+
+[dir=rtl] .choices__list--dropdown .choices__item,
+[dir=rtl] .choices__list[aria-expanded] .choices__item {
+    text-align: right;
+}
+
+@media (min-width:640px) {
+    .choices__list--dropdown .choices__item--selectable[data-select-text],
+    .choices__list[aria-expanded] .choices__item--selectable[data-select-text] {
+        padding-right: 100px;
+    }
+    
+    /* Ocultar "Presiona para seleccionar" por defecto */
+    .choices:not([data-show-select-text="true"]) .choices__list--dropdown .choices__item--selectable[data-select-text]::after,
+    .choices:not([data-show-select-text="true"]) .choices__list[aria-expanded] .choices__item--selectable[data-select-text]::after {
+        display: none !important;
+    }
+
+    [dir=rtl] .choices__list--dropdown .choices__item--selectable[data-select-text],
+    [dir=rtl] .choices__list[aria-expanded] .choices__item--selectable[data-select-text] {
+        text-align: right;
+        padding-left: 100px;
+        padding-right: 10px;
+    }
+
+    [dir=rtl] .choices__list--dropdown .choices__item--selectable[data-select-text]::after,
+    [dir=rtl] .choices__list[aria-expanded] .choices__item--selectable[data-select-text]::after {
+        right: auto;
+        left: 10px;
+    }
+}
+
+.choices__list--dropdown .choices__item--selectable.is-highlighted,
+.choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
+    background-color: var(--choices-option-bg-hover);
+    color: var(--choices-option-text-hover);
+}
+
+.choices__list--dropdown .choices__item--selectable.is-highlighted::after,
+.choices__list[aria-expanded] .choices__item--selectable.is-highlighted::after {
+    opacity: 0.5;
+}
+
+/* ========================================
+   INPUT DE BÚSQUEDA (Mejorado con efecto hundido)
+   ======================================== */
+.choices__input--cloned {
+    background-color: var(--choices-search-bg) !important;
+    border: 1px solid var(--choices-search-border) !important;
+    border-radius: var(--choices-border-radius) !important;
+    padding: 0.75rem 1rem !important;
+    margin: 0.75rem !important;
+    width: calc(100% - 1.5rem) !important;
+    font-size: 0.875rem !important;
+    font-weight: 400 !important;
+    box-shadow: var(--choices-search-shadow) !important;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out !important;
+}
+
+.choices__input--cloned:focus {
+    background-color: var(--choices-search-bg-focus) !important;
+    border-color: var(--choices-search-border-focus) !important;
+    box-shadow: var(--choices-search-shadow-focus) !important;
+    outline: none !important;
+}
+
+.choices__input--cloned::placeholder {
+    color: var(--choices-text-color);
+    opacity: var(--choices-placeholder-opacity);
+}
+
+/* ========================================
+   ITEMS Y ESTADOS
+   ======================================== */
+.choices__item {
+    cursor: default;
+}
+
+.choices__item--selectable {
+    cursor: pointer;
+}
+
+.choices__item--disabled {
+    cursor: not-allowed;
+    -webkit-user-select: none;
+    user-select: none;
+    opacity: 0.5;
+}
+
+.choices__heading {
+    font-weight: 600;
+    font-size: 12px;
+    padding: 10px;
+    border-bottom: 1px solid #f7f7f7;
+    color: gray;
+}
+
+.choices__button {
+    text-indent: -9999px;
+    appearance: none;
+    border: 0;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+}
+
+.choices__button:focus,
+.choices__input:focus {
+    outline: 0;
+}
+
+.choices__input {
+    display: inline-block;
+    vertical-align: baseline;
+    background-color: transparent;
+    font-size: 0.875rem;
+    margin-bottom: 5px;
+    border: 0;
+    border-radius: 0;
+    max-width: 100%;
+    padding: 4px 0 4px 2px;
+}
+
+.choices__input::-webkit-search-cancel-button,
+.choices__input::-webkit-search-decoration,
+.choices__input::-webkit-search-results-button,
+.choices__input::-webkit-search-results-decoration {
+    display: none;
+}
+
+.choices__input::-ms-clear,
+.choices__input::-ms-reveal {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+[dir=rtl] .choices__input {
+    padding-right: 2px;
+    padding-left: 0;
+}
+
+.choices__placeholder {
+    opacity: var(--choices-placeholder-opacity);
+}
+
+/* ==== Variantes específicas: solo afectan a selects con buscador y múltiples ==== */
+
+/* ==== FIX: Select múltiple con búsqueda ==== */
+
+/* Head del dropdown para contener el input de búsqueda */
+.choices__dropdown-head {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: var(--choices-bg-color-dropdown, #fff);
+    padding: 0.75rem 0.75rem 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--choices-border-color, #ddd);
+}
+
+/* Input de búsqueda en el head del dropdown (múltiple) */
+.choices__dropdown-head .choices__input--cloned,
+.choices-search-input {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0.625rem 2.5rem 0.625rem 0.875rem !important;
+    background-color: var(--choices-search-bg) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2395a5a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 1.125rem !important;
+    border: 1px solid var(--choices-search-border) !important;
+    border-radius: 0.375rem !important;
+    box-shadow: var(--choices-search-shadow) !important;
+    font-size: 0.875rem !important;
+}
+
+.choices__dropdown-head .choices__input--cloned:focus,
+.choices-search-input:focus {
+    border-color: var(--choices-search-border-focus) !important;
+    background-color: var(--choices-search-bg-focus) !important;
+    box-shadow: var(--choices-search-shadow-focus) !important;
+    outline: none !important;
+}
+
+/* Altura del buscador para select simple con búsqueda (dentro del dropdown) */
+.choices[data-type*='select-one'] .choices__list--dropdown .choices__input--cloned,
+.choices[data-type*='select-one'] .choices__list[aria-expanded] .choices__input--cloned {
+    display: block !important;
+    width: calc(100% - 1.5rem) !important;
+    margin: 0.75rem !important;
+    padding: 0.625rem 2.5rem 0.625rem 0.875rem !important;
+    background-color: var(--choices-search-bg) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2395a5a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 1.125rem !important;
+    border: 1px solid var(--choices-search-border) !important;
+    border-radius: 0.375rem !important;
+    box-shadow: var(--choices-search-shadow) !important;
+    font-size: 0.875rem !important;
+}
+
+.choices[data-type*='select-one'] .choices__list--dropdown .choices__input--cloned:focus,
+.choices[data-type*='select-one'] .choices__list[aria-expanded] .choices__input--cloned:focus {
+    border-color: var(--choices-search-border-focus) !important;
+    background-color: var(--choices-search-bg-focus) !important;
+    box-shadow: var(--choices-search-shadow-focus) !important;
+    outline: none !important;
+}
+
+/* Ocultar SIEMPRE el input inline en el control del múltiple
+   (solo usamos el del panel/dropdown) */
+.choices.choices--multi .choices__inner .choices__input,
+.choices.choices--multi .choices__inner .choices__input--cloned {
+    display: none !important;
+}
+
+/* Multiselect: apariencia de checkbox en lista del dropdown */
+.choices.choices--multi .choices__list--dropdown .choices__item--choice,
+.choices.choices--multi .choices__list[aria-expanded] .choices__item--choice {
+    padding-left: 2.25rem;
+}
+
+/* Mostrar placeholder cuando el múltiple está vacío y cerrado */
+.choices.choices--multi .choices__list--multiple:empty::before {
+    content: attr(data-placeholder);
+    color: var(--choices-text-color);
+    opacity: var(--choices-placeholder-opacity);
+    padding: 4px;
+}
+
+/* Ocultar placeholder cuando está abierto */
+.choices.choices--multi.is-open .choices__inner::before {
+    display: none;
+}
+
+/* Ajustar padding del dropdown cuando tiene head */
+.choices.choices--multi .choices__list--dropdown:has(.choices__dropdown-head) .choices__list,
+.choices.choices--multi .choices__list[aria-expanded]:has(.choices__dropdown-head) .choices__list {
+    padding-top: 0.5rem;
+}
+
+/* Igualar altura del control múltiple con los selects por defecto */
+.choices.choices--multi .choices__inner {
+    min-height: calc(1.5em + 0.75rem + 2px);
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Alinear chips/placeholder y permitir varias líneas sin romper altura base */
+.choices.choices--multi .choices__list--multiple {
+    display: flex !important;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+/* Chevron para múltiple (similar al simple) */
+.choices.choices--multi::after {
+    content: "";
+    height: 0;
+    width: 0;
+    border-style: solid;
+    border-color: var(--choices-text-color) transparent transparent;
+    border-width: 5px;
+    position: absolute;
+    right: 11.5px;
+    top: 50%;
+    margin-top: -2.5px;
+    pointer-events: none;
+}
+
+.choices.choices--multi.is-open::after {
+    border-color: transparent transparent var(--choices-text-color);
+    margin-top: -7.5px;
+}
+
+.choices.choices--multi .choices__list--dropdown .choices__item--choice::before,
+.choices.choices--multi .choices__list[aria-expanded] .choices__item--choice::before {
+    content: "";
+    position: absolute;
+    left: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1rem;
+    height: 1rem;
+    border: 1.5px solid var(--choices-border-color);
+    border-radius: 0.25rem;
+    background: #fff;
+}
+
+.choices.choices--multi .choices__list--dropdown .choices__item--choice.is-selected::before,
+.choices.choices--multi .choices__list[aria-expanded] .choices__item--choice.is-selected::before {
+    background: var(--choices-option-bg-hover);
+    border-color: var(--choices-option-bg-hover);
+}
+
+/* Marca de verificación cuando está seleccionado */
+.choices.choices--multi .choices__list--dropdown .choices__item--choice.is-selected::after,
+.choices.choices--multi .choices__list[aria-expanded] .choices__item--choice.is-selected::after {
+    content: "";
+    position: absolute;
+    left: 0.875rem;
+    top: 50%;
+    transform: translate(2px, -55%) rotate(45deg);
+    width: 0.35rem;
+    height: 0.7rem;
+   
+}

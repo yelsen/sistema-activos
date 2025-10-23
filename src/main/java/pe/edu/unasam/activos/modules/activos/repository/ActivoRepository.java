@@ -15,16 +15,17 @@ public interface ActivoRepository extends JpaRepository<Activo, Integer> {
     
     List<Activo> findByEstadoActivo(EstadoActivo estadoActivo);
     
-    List<Activo> findByOficina_IdOficina(Integer idOficina);
+    @Query("SELECT a FROM Activo a, AsignacionActivo aa WHERE aa.activo = a AND aa.oficina.idOficina = :idOficina")
+    List<Activo> findByOficina_IdOficina(@Param("idOficina") Integer idOficina);
     
     List<Activo> findByProveedor_IdProveedor(Integer idProveedor);
     
-    @Query("SELECT a FROM Activo a WHERE a.fechaFinGarantia BETWEEN :inicio AND :fin")
+    @Query("SELECT a FROM Activo a WHERE a.fechaExpiracion BETWEEN :inicio AND :fin")
     List<Activo> findActivosConGarantiaPorVencer(
             @Param("inicio") LocalDate inicio, 
             @Param("fin") LocalDate fin);
     
-    @Query("SELECT a FROM Activo a WHERE a.fechaFinGarantia < :fecha")
+    @Query("SELECT a FROM Activo a WHERE a.fechaExpiracion < :fecha")
     List<Activo> findActivosConGarantiaVencida(@Param("fecha") LocalDate fecha);
     
     @Query("SELECT COUNT(a) FROM Activo a WHERE a.estadoActivo = :estado")

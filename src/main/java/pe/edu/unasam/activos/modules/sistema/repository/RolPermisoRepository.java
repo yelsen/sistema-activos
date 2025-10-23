@@ -22,15 +22,13 @@ public interface RolPermisoRepository extends JpaRepository<RolPermiso, RolPermi
     /**
      * CAMBIO CRÍTICO: Agregamos @Modifying y @Transactional para operaciones de eliminación
      */
-    @Modifying
-    @Transactional
-    @Query("DELETE FROM RolPermiso rp WHERE rp.rol.idRol = :idRol")
-    void deleteByRol_IdRol(@Param("idRol") Integer idRol);
+    @Modifying // Indica que es una consulta de modificación (DELETE, UPDATE)
+    void deleteByRol_IdRol(Integer idRol);
 
     @Query("SELECT COUNT(rp) FROM RolPermiso rp WHERE rp.rol.idRol = :idRol")
     long countByRol(@Param("idRol") Integer idRol);
 
-    @Query("SELECT rp.rol.idRol, COUNT(rp.permiso.idPermiso) FROM RolPermiso rp WHERE rp.rol.idRol IN :rolIds AND rp.permitido = true GROUP BY rp.rol.idRol")
+    @Query("SELECT rp.rol.idRol, COUNT(rp) FROM RolPermiso rp WHERE rp.rol.idRol IN :rolIds AND rp.permitido = true GROUP BY rp.rol.idRol")
     List<Object[]> countPermissionsByRolIds(@Param("rolIds") List<Integer> rolIds);
 
     @Modifying

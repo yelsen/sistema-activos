@@ -4,22 +4,16 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import pe.edu.unasam.activos.common.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -35,12 +29,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex, WebRequest request, HttpServletRequest httpRequest) {
-        // Skip handling for static resources
-        String requestURI = httpRequest.getRequestURI();
-        if (isStaticResource(requestURI)) {
-            return null; // Let Spring Boot handle it normally
-        }
-        
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.NOT_FOUND.value())
@@ -49,29 +37,6 @@ public class GlobalExceptionHandler {
                 .path(request.getDescription(false))
                 .build();
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
-    
-    private boolean isStaticResource(String path) {
-        return path != null && (
-                path.startsWith("/css/") ||
-                path.startsWith("/js/") ||
-                path.startsWith("/libs/") ||
-                path.startsWith("/images/") ||
-                path.startsWith("/fonts/") ||
-                path.startsWith("/uploads/") ||
-                path.endsWith(".css") ||
-                path.endsWith(".js") ||
-                path.endsWith(".jpg") ||
-                path.endsWith(".jpeg") ||
-                path.endsWith(".png") ||
-                path.endsWith(".gif") ||
-                path.endsWith(".svg") ||
-                path.endsWith(".woff") ||
-                path.endsWith(".woff2") ||
-                path.endsWith(".ttf") ||
-                path.endsWith(".eot") ||
-                path.endsWith(".ico")
-        );
     }
     
 
@@ -88,15 +53,26 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.FORBIDDEN.value())
-                .error("Forbidden")
-                .message("No tiene permiso para acceder a este recurso.")
-                .path(request.getDescription(false))
-                .build();
-        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    public Object handleAccessDeniedException(AccessDeniedException ex, WebRequest request, HttpServletRequest httpRequest) {
+        String requestURI = httpRequest.getRequestURI();
+        boolean isApiCall = requestURI.startsWith("/api/") || "XMLHttpRequest".equals(httpRequest.getHeader("X-Requested-With"));
+
+        if (isApiCall) {
+            ErrorResponse errorResponse = ErrorResponse.builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.FORBIDDEN.value())
+                    .error("Forbidden")
+                    .message("No tiene permiso para acceder a este recurso.")
+                    .path(request.getDescription(false))
+                    .build();
+            return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+        } else {
+            // Para peticiones de navegador, es mejor mostrar una página de error 403.
+            ModelAndView modelAndView = new ModelAndView("error/403"); // Asumiendo que tienes una vista error/403.html
+            modelAndView.addObject("path", requestURI);
+            modelAndView.setStatus(HttpStatus.FORBIDDEN);
+            return modelAndView;
+        }
     }
 
     @ExceptionHandler(UnauthorizedException.class)
@@ -111,43 +87,31 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex, WebRequest request) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-
-        String validationMessage = errors.entrySet().stream()
-                .map(entry -> entry.getKey() + ": " + entry.getValue())
-                .collect(Collectors.joining("; "));
-
+    @ExceptionHandler(ReferentialIntegrityException.class)
+    public ResponseEntity<ErrorResponse> handleReferentialIntegrityException(ReferentialIntegrityException ex, WebRequest request) {
+        log.warn("Conflicto de integridad referencial: {}", ex.getMessage());
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error("Validation Error")
-                .message("Error de validación. " + validationMessage)
+                .status(HttpStatus.CONFLICT.value())
+                .error("Conflict")
+                .message(ex.getMessage())
                 .path(request.getDescription(false))
-                .debugInfo(errors.toString())
                 .build();
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(ReferentialIntegrityException.class)
-    public String handleReferentialIntegrityException(ReferentialIntegrityException ex, RedirectAttributes redirectAttributes) {
-        log.warn("Conflicto de integridad referencial: {}", ex.getMessage());
-        // Usamos addFlashAttribute para que el mensaje sobreviva a la redirección
-        redirectAttributes.addFlashAttribute("error", ex.getMessage());
-        return "redirect:/seguridad/roles";
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
     
     @ResponseBody
     @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
-    public String handleHttpMediaTypeNotAcceptableException() {
-        return "acceptable MIME type:" + "application/json";
+    public ResponseEntity<ErrorResponse> handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException ex, WebRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_ACCEPTABLE.value())
+                .error("Not Acceptable")
+                .message("El tipo de medio no es aceptable. Se esperaba application/json.")
+                .path(request.getDescription(false))
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_ACCEPTABLE);
     }
 
     @ExceptionHandler(Exception.class)
@@ -170,8 +134,10 @@ public class GlobalExceptionHandler {
         // ¿El cliente quiere HTML o JSON?
         String acceptHeader = httpRequest.getHeader("Accept");
         boolean wantsHtml = acceptHeader != null && acceptHeader.contains("text/html");
+        boolean isAjax = "XMLHttpRequest".equals(httpRequest.getHeader("X-Requested-With"));
 
-        if (wantsHtml) {
+        // Si la petición es AJAX o pide JSON, siempre devolver JSON. Si no, devolver HTML.
+        if (wantsHtml && !isAjax) {
             ModelAndView modelAndView = new ModelAndView("error/error");
             modelAndView.addObject("timestamp", LocalDateTime.now());
             modelAndView.addObject("status", HttpStatus.INTERNAL_SERVER_ERROR.value());

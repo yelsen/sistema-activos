@@ -9,6 +9,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pe.edu.unasam.activos.common.enums.EstadoMantenimiento;
 import pe.edu.unasam.activos.modules.activos.domain.Activo;
+import pe.edu.unasam.activos.modules.personas.domain.Tecnico;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.LocalDateTime;

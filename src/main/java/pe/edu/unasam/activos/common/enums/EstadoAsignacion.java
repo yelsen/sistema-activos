@@ -1,5 +1,5 @@
 package pe.edu.unasam.activos.common.enums;
 
 public enum EstadoAsignacion {
-    ACTIVA, FINALIZADA, SUSPENDIDA
+    ASIGNADO, DEVUELTO, EN_MANTENIMIENTO, DADO_DE_BAJA
 }

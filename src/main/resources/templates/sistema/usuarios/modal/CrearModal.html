@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="modalCrear" class="modal fade" id="modalCrearUsuario" tabindex="-1"
+        aria-labelledby="modalCrearUsuarioLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
+                    <div class="d-flex align-items-center gap-3 position-relative">
+                        <i class="ti ti-user-plus fs-2"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Crear Nuevo Usuario</h5>
+                            <p class="fs-10 mb-0 text-white-50">Registra un nuevo usuario y asígnale un rol.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div id="usuario-contenido">
+                    <form action="#" method="post" id="formCrearUsuario" class="needs-validation" novalidate>
+                        <div class="modal-body p-4">
+                            <div class="row">
+                                <!-- Sección de Persona -->
+                                <div class="col-12 mb-3">
+                                    <h6 class="text-primary border-bottom pb-2 fw-semibold">
+                                        <i class="ti ti-user me-2"></i>Información Personal
+                                    </h6>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="tipoDocumento" class="form-label">
+                                            Tipo Documento <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select" id="tipoDocumento" name="tipoDocumento" data-choices
+                                            required>
+                                            <option value="" selected>DNI</option>
+                                            <option value="">Carnet de Extranjería</option>
+                                            <option value="">Pasaporte</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="documentoPersona" class="form-label">
+                                            N° Documento <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" id="documentoPersona"
+                                                name="documentoPersona" required />
+                                            <button type="button" class="btn btn-secondary" id="btnBuscarPersona"
+                                                name="btnBuscarPersona">
+                                                <i class="ti ti-search"></i>
+                                            </button>
+                                        </div>
+                                        <div class="invalid-feedback">Ingrese un documento válido</div>
+                                        <div id="persona-feedback" class="mt-2"></div>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="nombres" class="form-label">
+                                            Nombres <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control" id="nombres" name="nombres"
+                                            maxlength="100" required>
+                                        <div class="invalid-feedback">Ingrese los nombres</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="apellidos" class="form-label">
+                                            Apellidos <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control" id="apellidos" name="apellidos"
+                                            maxlength="100" required>
+                                        <div class="invalid-feedback">Ingrese los apellidos</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="email" class="form-label">
+                                            Email <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="email" class="form-control" id="email" name="email" maxlength="100"
+                                            required>
+                                        <div class="invalid-feedback">Ingrese un email válido</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="telefono" class="form-label">Teléfono</label>
+                                        <input type="number" class="form-control" id="telefono" name="telefono"
+                                            maxlength="20" pattern="[0-9+\-\s()]+">
+                                        <div class="invalid-feedback">Ingrese un teléfono válido</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="direccion" class="form-label">Dirección</label>
+                                        <input type="text" class="form-control" id="direccion" name="direccion"
+                                            maxlength="200">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="genero" class="form-label">
+                                            Género <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select" id="genero" name="genero" data-choices required>
+                                            <option value="" disabled>Seleccione...</option>
+                                            <option value="M">Masculino</option>
+                                            <option value="F">Femenino</option>
+                                            <option value="O">Otro</option>
+                                        </select>
+                                        <div class="invalid-feedback">Seleccione un género</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sección de Cuenta -->
+                            <div class="col-12 mb-3">
+                                <h6 class="text-primary border-bottom pb-2 fw-semibold">
+                                    <i class="ti ti-key me-2"></i>Credenciales de Acceso
+                                </h6>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="usuario" class="form-label">
+                                        Usuario <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="usuario" name="usuario" maxlength="100"
+                                        required>
+                                    <div class="invalid-feedback">Ingrese un nombre de usuario</div>
+                                    <small class="text-muted">la valides que venga de la bd</small>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="rol" class="form-label">
+                                        Rol <span class="text-danger">*</span>
+                                    </label>
+                                    <select id="rol" name="idRol" class="form-select" data-choices required>
+                                        <option value="">Seleccione un rol</option>
+                                        <option value="1">Administrador</option>
+                                        <option value="2">Usuario</option>
+                                        <option value="3">Supervisor</option>
+                                        <option value="4">Técnico</option>
+                                    </select>
+                                    <div class="invalid-feedback">Seleccione un rol</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="contrasena" class="form-label">
+                                        Contraseña <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="position-relative">
+                                        <input type="password" class="form-control" id="contrasena" name="contrasena"
+                                            required minlength="8">
+                                    </div>
+                                    <div class="invalid-feedback">Ingrese una contraseña válida</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                     <label for="contrasena" class="form-label">
+                                        Validación de contraseña
+                                    </label>
+                                    <div class="password-strength mt-2">
+                                        <div class="progress">
+                                            <div class="progress-bar" id="strengthBar" role="progressbar"></div>
+                                        </div>
+                                    </div>
+                                    <li>
+                                        Mínimo 8 caracteres, incluir mayúsculas, minúsculas y números
+                                    </li>
+                                    <li>
+                                        Debe contener al menos 8 caracteres
+                                    </li>
+                                    <li>
+                                        Debe contener al menos una letra mayúscula
+                                    </li>
+                                    <li>
+                                        Debe contener al menos una letra minúscula
+                                    </li>
+                                    <li>
+                                        Debe contener al menos un número
+                                    </li>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-ghost-secondary"
+                                data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="btnGuardarUsuario">
+                                <i class="ti ti-device-floppy me-1"></i> Guardar Usuario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalCrearEl = document.getElementById('modalCrearUsuario');
+            if (!modalCrearEl) return;
+
+            const btnBuscar = document.getElementById('btnBuscarPersona');
+            const inputDocumento = document.getElementById('documentoPersona');
+            const feedbackDiv = document.getElementById('persona-feedback');
+            const camposPersona = ['nombres', 'apellidos', 'email', 'tipoDocumento', 'telefono', 'direccion', 'genero'];
+
+            // Elementos para mostrar/ocultar contraseña
+            const togglePassword = document.getElementById('togglePassword');
+            const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+            const passwordInput = document.getElementById('contrasena');
+            const strengthBar = document.getElementById('strengthBar');
+
+            function setCamposPersona(readonly) {
+                camposPersona.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.readOnly = readonly;
+                });
+            }
+
+            // Función para mostrar/ocultar contraseña
+            function togglePasswordVisibility(input, icon) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('ti-eye');
+                    icon.classList.add('ti-eye-off');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('ti-eye-off');
+                    icon.classList.add('ti-eye');
+                }
+            }
+
+            // Event listeners para mostrar/ocultar contraseña
+            if (togglePassword) {
+                togglePassword.addEventListener('click', function () {
+                    togglePasswordVisibility(passwordInput, togglePassword);
+                });
+            }
+
+            if (toggleConfirmPassword) {
+                toggleConfirmPassword.addEventListener('click', function () {
+                    togglePasswordVisibility(confirmPasswordInput, toggleConfirmPassword);
+                });
+            }
+
+            // Función para evaluar la fortaleza de la contraseña
+            function checkPasswordStrength(password) {
+                let strength = 0;
+
+                if (password.length >= 8) strength += 25;
+                if (/[a-z]/.test(password)) strength += 25;
+                if (/[A-Z]/.test(password)) strength += 25;
+                if (/[0-9]/.test(password)) strength += 25;
+
+                return strength;
+            }
+
+            // Event listener para evaluar la contraseña mientras se escribe
+            if (passwordInput) {
+                passwordInput.addEventListener('input', function () {
+                    const strength = checkPasswordStrength(this.value);
+                    strengthBar.style.width = strength + '%';
+
+                    if (strength < 50) {
+                        strengthBar.className = 'progress-bar bg-danger';
+                    } else if (strength < 75) {
+                        strengthBar.className = 'progress-bar bg-warning';
+                    } else {
+                        strengthBar.className = 'progress-bar bg-success';
+                    }
+                });
+            }
+
+            // Validación de confirmación de contraseña
+            if (confirmPasswordInput) {
+                confirmPasswordInput.addEventListener('input', function () {
+                    if (this.value !== passwordInput.value) {
+                        this.setCustomValidity('Las contraseñas no coinciden');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                });
+            }
+
+            btnBuscar.addEventListener('click', function () {
+                const numeroDocumento = inputDocumento.value.trim();
+                if (!numeroDocumento) {
+                    feedbackDiv.innerHTML = `<div class="alert alert-warning p-2 small">Ingrese un número de documento.</div>`;
+                    return;
+                }
+
+                feedbackDiv.innerHTML = `<div class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Buscando...</span></div>`;
+
+                fetch(`/api/personas/buscar?numeroDocumento=${encodeURIComponent(numeroDocumento)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.tieneUsuario) {
+                            feedbackDiv.innerHTML = `<div class="alert alert-danger p-2 small">Esta persona ya tiene un usuario asignado.</div>`;
+                            setCamposPersona(true);
+                        } else {
+                            feedbackDiv.innerHTML = `<div class="alert alert-success p-2 small">Persona encontrada: ${data.nombres} ${data.apellidos}.</div>`;
+                            document.getElementById('nombres').value = data.nombres || '';
+                            document.getElementById('apellidos').value = data.apellidos || '';
+                            document.getElementById('email').value = data.email || '';
+                            document.getElementById('telefono').value = data.telefono || '';
+                            document.getElementById('direccion').value = data.direccion || '';
+                            document.getElementById('genero').value = data.genero || '';
+                            setCamposPersona(true);
+                        }
+                    })
+                    .catch(() => {
+                        feedbackDiv.innerHTML = `<div class="alert alert-info p-2 small">Persona no encontrada. Puede crearla completando los campos.</div>`;
+                        camposPersona.forEach(id => document.getElementById(id).value = '');
+                        setCamposPersona(false);
+                    });
+            });
+
+            // Validación del formulario
+            const form = document.getElementById('formCrearUsuario');
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+
+                    form.classList.add('was-validated');
+                }, false);
+            }
+        });
+    </script>
+</body>
+
+</html>

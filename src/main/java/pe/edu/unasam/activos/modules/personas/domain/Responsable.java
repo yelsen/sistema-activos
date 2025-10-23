@@ -30,7 +30,7 @@ public class Responsable {
     private Integer idResponsable;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_documento", referencedColumnName = "documento")
+    @JoinColumn(name = "fk_numero_documento", referencedColumnName = "numero_documento")
     private Persona persona;
     
     @ManyToOne(fetch = FetchType.LAZY)

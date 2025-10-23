@@ -5,7 +5,11 @@ import lombok.*;
 
 @Entity
 @Table(name = "rol_permisos")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter 
+@Setter 
+@NoArgsConstructor 
+@AllArgsConstructor 
+@Builder
 @IdClass(RolPermisoId.class)
 public class RolPermiso {
 

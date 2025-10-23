@@ -8,7 +8,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pe.edu.unasam.activos.common.enums.EstadoActivo;
-import pe.edu.unasam.activos.modules.ubicaciones.domain.Oficina;
 import pe.edu.unasam.activos.modules.ubicaciones.domain.Origen;
 import pe.edu.unasam.activos.modules.proveedores.domain.Proveedor;
 import java.math.BigDecimal;
@@ -31,15 +30,18 @@ public class Activo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idactivo")
     private Integer idActivo;
+
+    @Column(name = "codigo_activo", length = 45, nullable = false)
+    private String codigoActivo;
     
     @Column(name = "fecha_adquisicion")
     private LocalDate fechaAdquisicion;
     
-    @Column(name = "fecha_fin_garantia")
-    private LocalDate fechaFinGarantia;
+    @Column(name = "fecha_expiracion")
+    private LocalDate fechaExpiracion;
     
-    @Column(name = "costo_activo", precision = 9, scale = 2)
-    private BigDecimal costoActivo;
+    @Column(name = "precio_activo", precision = 9, scale = 2)
+    private BigDecimal precioActivo;
     
     @Column(name = "observaciones", columnDefinition = "TEXT")
     private String observaciones;
@@ -57,10 +59,6 @@ public class Activo {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_idorigen", referencedColumnName = "idorigen")
     private Origen origen;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_idoficina", referencedColumnName = "idoficina")
-    private Oficina oficina;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_idproveedor", referencedColumnName = "idproveedor")

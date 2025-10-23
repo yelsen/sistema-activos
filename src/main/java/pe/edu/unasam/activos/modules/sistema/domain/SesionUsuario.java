@@ -6,6 +6,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pe.edu.unasam.activos.common.enums.EstadoSesion;
+import pe.edu.unasam.activos.modules.personas.domain.Usuario;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,7 +25,7 @@ public class SesionUsuario {
     @Column(name = "idsesion_usuario")
     private Integer idSesionUsuario;
     
-    @Column(name = "token_sesion", length = 255, nullable = false)
+    @Column(name = "token_sesion", columnDefinition = "TEXT", nullable = false)
     private String tokenSesion;
     
     @Column(name = "user_agent", columnDefinition = "TEXT")

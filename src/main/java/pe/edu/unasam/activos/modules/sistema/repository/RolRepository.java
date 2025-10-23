@@ -22,7 +22,6 @@ public interface RolRepository extends JpaRepository<Rol, Integer>, JpaSpecifica
 
     List<Rol> findByNivelAccesoLessThanEqual(Integer nivelAcceso);
 
-    
     @Query("SELECT r FROM Rol r WHERE r.nombreRol = :nombreRol")
     Optional<Rol> findByNombreRolUnrestricted(@Param("nombreRol") String nombreRol);
 }

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="modalEditar" class="modal fade" id="modalEditarUsuario" tabindex="-1"
+        aria-labelledby="modalEditarUsuarioLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
+                    <div class="d-flex align-items-center gap-3 position-relative">
+                        <i class="ti ti-pencil fs-2"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Editar Usuario</h5>
+                            <p class="fs-10 mb-0 text-white-50">Modifica los datos de la cuenta del usuario.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div id="editar-usuario-contenido">
+                    <!-- El contenido del formulario se cargará aquí dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="editarForm">
+        <form th:action="@{/seguridad/usuarios/update/{id}(id=${usuario.idUsuario})}" th:object="${usuario}"
+            method="post" id="formEditarUsuario" class="needs-validation" novalidate>
+            <div class="modal-body p-4">
+                <div class="row">
+                    <!-- Información de la Persona (Solo lectura) -->
+                    <div class="col-12 mb-3">
+                        <div class="alert alert-light-info d-flex align-items-center">
+                            <i class="ti ti-info-circle me-2"></i>
+                            <div>
+                                <strong>Persona:</strong> <span th:text="${usuario.nombrePersona}"></span>
+                                <br>
+                                <small>
+                                    <strong>Documento:</strong> <span th:text="${usuario.documentoPersona}"></span>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nombre de Usuario -->
+                    <div class="col-md-6 mb-3">
+                        <label for="editarUsuario" class="form-label">
+                            Nombre de Usuario <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="editarUsuario" name="usuario" required
+                            th:value="${usuario.usuario}"
+                            th:classappend="${#fields.hasErrors('usuario')} ? 'is-invalid' : ''">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('usuario')}" th:errors="*{usuario}">
+                        </div>
+                    </div>
+
+                    <!-- Rol -->
+                    <div class="col-md-6 mb-3">
+                        <label for="editarIdRol" class="form-label">
+                            Rol <span class="text-danger">*</span>
+                        </label>
+                        <select id="editarIdRol" name="idRol" class="form-select" data-choices required
+                            th:classappend="${#fields.hasErrors('idRol')} ? 'is-invalid' : ''">
+                            <option value="">Seleccione un rol</option>
+                            <option th:each="rol : ${roles}" th:value="${rol.idRol}" th:text="${rol.nombreRol}"
+                                th:selected="${usuario.idRol == rol.idRol}"></option>
+                        </select>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('idRol')}" th:errors="*{idRol}"></div>
+                    </div>
+
+                    <!-- Nueva Contraseña (Opcional) -->
+                    <div class="col-md-12 mb-3">
+                        <label for="editarContrasena" class="form-label">
+                            Nueva Contraseña <small class="text-muted">(dejar en blanco para no cambiar)</small>
+                        </label>
+                        <input type="password" class="form-control" id="editarContrasena" name="contrasena"
+                            minlength="8" placeholder="Ingrese nueva contraseña solo si desea cambiarla">
+                        <small class="text-muted">Mínimo 8 caracteres</small>
+                    </div>
+
+                    <!-- Campo oculto para el documento de persona -->
+                    <input type="hidden" name="documentoPersona" th:value="${usuario.documentoPersona}">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="ti ti-device-floppy me-1"></i> Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

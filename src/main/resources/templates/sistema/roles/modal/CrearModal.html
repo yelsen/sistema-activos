@@ -36,7 +36,7 @@
                                 <label for="nivelAcceso" class="form-label">
                                     Nivel <span class="text-danger">*</span>
                                 </label>
-                                <select id="nivelAcceso" name="nivelAcceso" class="form-select" required>
+                                <select id="nivelAcceso" name="nivelAcceso" class="form-select" data-choices required>
                                     <option th:each="s : ${ {1, 2, 3, 4, 5} }" th:value="${s}" th:text="${s}"></option>
                                 </select>
                             </div>

@@ -25,8 +25,8 @@ import java.time.LocalDateTime;
 public class Persona {
     
     @Id
-    @Column(name = "documento", length = 20)
-    private String documento;
+    @Column(name = "numero_documento", length = 20)
+    private String numeroDocumento;
     
     @Column(name = "apellidos", length = 100, nullable = false)
     private String apellidos;
@@ -48,8 +48,8 @@ public class Persona {
     private Genero genero;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "estado")
-    private EstadoPersona estado;
+    @Column(name = "estado_persona")
+    private EstadoPersona estadoPersona;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_idtipo_documento", referencedColumnName = "idtipo_documento")

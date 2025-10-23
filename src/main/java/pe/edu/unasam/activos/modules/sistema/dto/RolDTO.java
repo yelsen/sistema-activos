@@ -51,6 +51,7 @@ public class RolDTO {
         private Integer nivelAcceso;
         private String colorRol;
         private EstadoRol estadoRol;
+        
         private Long usuariosCount;
         private Long permisosCount;
         private List<RolPermisoDTO.Response> permisos;

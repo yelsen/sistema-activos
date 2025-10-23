@@ -6,9 +6,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.unasam.activos.common.enums.EstadoSesion;
+import pe.edu.unasam.activos.modules.personas.domain.Usuario;
+import pe.edu.unasam.activos.modules.personas.repository.UsuarioRepository;
 import pe.edu.unasam.activos.modules.sistema.domain.SesionUsuario;
-import pe.edu.unasam.activos.modules.sistema.domain.Usuario;
-import pe.edu.unasam.activos.modules.sistema.repository.UsuarioRepository;
 import pe.edu.unasam.activos.modules.sistema.repository.SesionUsuarioRepository;
 
 import java.time.LocalDateTime;

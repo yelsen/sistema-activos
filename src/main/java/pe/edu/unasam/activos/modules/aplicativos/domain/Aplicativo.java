@@ -8,7 +8,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pe.edu.unasam.activos.common.enums.EstadoAplicativo;
-import pe.edu.unasam.activos.modules.activos.domain.Activo;
 
 import java.time.LocalDateTime;
 
@@ -48,10 +47,6 @@ public class Aplicativo {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_idtipo_aplicativo", referencedColumnName = "idtipo_aplicativo")
     private TipoAplicativo tipoAplicativo;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_idactivo", referencedColumnName = "idactivo")
-    private Activo activo;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)

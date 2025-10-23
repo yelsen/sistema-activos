@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments/head :: head(pageTitle='Gestión de Usuarios')}"></head>
+
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Contenido Principal -->
+    <main id="content">
+        <div th:replace="~{fragments/header :: header}"></div>
+        <div th:replace="~{fragments/search-modal :: searchModal}"></div>
+        <div th:replace="~{fragments/notification-panel :: notificationPanel}"></div>
+
+        <div class="custom-container flex-grow-1 d-flex flex-column pb-4">
+            <div th:replace="~{sistema/usuarios/usuarios-content :: content}"></div>
+        </div>
+
+    </main>
+
+    <th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
+
+    <!-- Contenedor de mensajes Flash para los toasts -->
+    <div id="flash-messages" style="display: none;"
+        th:attr="data-success=${success}, data-error=${error}, data-warning=${warning}, data-info=${info}, data-error-usuario-id=${errorUsuarioId}">
+    </div>
+
+    <!-- Script unificado para leer los mensajes y mostrar los toasts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const flashContainer = document.getElementById('flash-messages');
+            if (flashContainer) {
+                if (flashContainer.dataset.success) showToast(flashContainer.dataset.success, 'success');
+                if (flashContainer.dataset.error) showToast(flashContainer.dataset.error, 'error');
+                if (flashContainer.dataset.warning) showToast(flashContainer.dataset.warning, 'warning');
+                if (flashContainer.dataset.info) showToast(flashContainer.dataset.info, 'info');
+            }
+        });
+    </script>
+
+</body>
+
+</html>

@@ -11,9 +11,9 @@ import org.springframework.util.StringUtils;
 import pe.edu.unasam.activos.common.enums.EstadoSesion;
 import pe.edu.unasam.activos.common.exception.NotFoundException;
 import pe.edu.unasam.activos.modules.sistema.domain.SesionUsuario;
-import pe.edu.unasam.activos.modules.sistema.domain.Usuario;
 import pe.edu.unasam.activos.modules.sistema.dto.SesionUsuarioDTO;
 import pe.edu.unasam.activos.modules.personas.domain.Persona;
+import pe.edu.unasam.activos.modules.personas.domain.Usuario;
 import pe.edu.unasam.activos.modules.sistema.repository.SesionUsuarioRepository;
 import jakarta.persistence.criteria.Expression;
 

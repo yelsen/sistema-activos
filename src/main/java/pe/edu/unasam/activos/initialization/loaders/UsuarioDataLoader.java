@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 import pe.edu.unasam.activos.common.enums.EstadoUsuario;
 import pe.edu.unasam.activos.initialization.AbstractDataLoader;
 import pe.edu.unasam.activos.modules.personas.domain.Persona;
+import pe.edu.unasam.activos.modules.personas.domain.Usuario;
 import pe.edu.unasam.activos.modules.personas.repository.PersonaRepository;
+import pe.edu.unasam.activos.modules.personas.repository.UsuarioRepository;
 import pe.edu.unasam.activos.modules.sistema.domain.Rol;
-import pe.edu.unasam.activos.modules.sistema.domain.Usuario;
 import pe.edu.unasam.activos.modules.sistema.repository.RolRepository;
-import pe.edu.unasam.activos.modules.sistema.repository.UsuarioRepository;
 
 import java.time.LocalTime;
 
@@ -59,7 +59,6 @@ public class UsuarioDataLoader extends AbstractDataLoader {
                 .ultimoAcceso(LocalTime.now())
                 .intentosFallidos(0)
                 .bloqueadoHasta(null)
-                .debeCambiarPassword(false)
                 .estadoUsuarios(EstadoUsuario.ACTIVO)
                 .persona(adminPersona)
                 .build(),
@@ -71,7 +70,6 @@ public class UsuarioDataLoader extends AbstractDataLoader {
                 .ultimoAcceso(LocalTime.now())
                 .intentosFallidos(0)
                 .bloqueadoHasta(null)
-                .debeCambiarPassword(false)
                 .estadoUsuarios(EstadoUsuario.ACTIVO)
                 .persona(userPersona)
                 .build(),
@@ -83,7 +81,6 @@ public class UsuarioDataLoader extends AbstractDataLoader {
                 .ultimoAcceso(LocalTime.now())
                 .intentosFallidos(0)
                 .bloqueadoHasta(null)
-                .debeCambiarPassword(false)
                 .estadoUsuarios(EstadoUsuario.ACTIVO)
                 .persona(gestorPersona)
                 .build()

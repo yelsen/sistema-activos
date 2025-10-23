@@ -5,8 +5,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import pe.edu.unasam.activos.modules.sistema.domain.Usuario;
-import pe.edu.unasam.activos.modules.sistema.repository.UsuarioRepository;
+import pe.edu.unasam.activos.modules.personas.domain.Usuario;
+import pe.edu.unasam.activos.modules.personas.repository.UsuarioRepository;
 import pe.edu.unasam.activos.modules.sistema.service.PermisoService;
 
 import java.util.Optional;

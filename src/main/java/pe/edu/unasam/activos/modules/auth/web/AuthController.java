@@ -1,13 +1,16 @@
 package pe.edu.unasam.activos.modules.auth.web;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pe.edu.unasam.activos.modules.auth.dto.LoginRequest;
+import pe.edu.unasam.activos.modules.auth.dto.TokenResponse;
 import pe.edu.unasam.activos.modules.auth.service.AuthService;
 
 import jakarta.servlet.http.HttpSession;
@@ -35,6 +38,25 @@ public class AuthController {
         
         model.addAttribute("loginRequest", new LoginRequest());
         return "auth/login";
+    }
+
+    @PostMapping("/login")
+    public String login(@ModelAttribute LoginRequest loginRequest, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        try {
+            String userAgent = request.getHeader("User-Agent");
+            TokenResponse tokenResponse = authService.login(loginRequest, userAgent);
+            
+            // Guardar el token y la información del usuario en la sesión HTTP
+            // El tokenResponse ya contiene el UserInfoResponse con todos los datos cargados.
+            // No es necesario volver a consultar la base de datos.
+            request.getSession().setAttribute("token", tokenResponse.getToken());
+            request.getSession().setAttribute("user", tokenResponse.getUserInfo());
+            
+            return "redirect:/home";
+        } catch (AuthenticationException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/login?error=true";
+        }
     }
     
     @GetMapping("/home")

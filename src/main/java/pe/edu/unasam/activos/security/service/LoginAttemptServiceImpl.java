@@ -3,9 +3,10 @@ package pe.edu.unasam.activos.security.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import pe.edu.unasam.activos.modules.personas.repository.UsuarioRepository;
 import pe.edu.unasam.activos.modules.sistema.domain.ConfiguracionSistema;
 import pe.edu.unasam.activos.modules.sistema.repository.ConfiguracionSistemaRepository;
-import pe.edu.unasam.activos.modules.sistema.repository.UsuarioRepository;
 
 import java.time.LocalDateTime;
 

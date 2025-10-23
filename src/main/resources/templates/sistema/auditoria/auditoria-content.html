@@ -454,7 +454,7 @@
         </div>
         
         <div class="card-footer" th:if="${!page.empty}">
-            <div th:replace="~{fragments/pagination :: pagination(${page}, '/sistema/auditoria', ${params})}"></div>
+            <div th:replace="~{fragments/pagination :: pagination(${page}, '/sistema/auditoria', ${queryParams})}"></div>
         </div>
     </div>
 

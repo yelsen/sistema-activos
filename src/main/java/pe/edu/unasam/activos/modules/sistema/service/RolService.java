@@ -14,6 +14,7 @@ import pe.edu.unasam.activos.common.enums.EstadoRol;
 import pe.edu.unasam.activos.common.exception.NotFoundException;
 import pe.edu.unasam.activos.common.exception.BusinessException;
 import pe.edu.unasam.activos.common.exception.ReferentialIntegrityException;
+import pe.edu.unasam.activos.modules.personas.repository.UsuarioRepository;
 import pe.edu.unasam.activos.modules.sistema.domain.Accion;
 import pe.edu.unasam.activos.modules.sistema.domain.Permiso;
 import pe.edu.unasam.activos.modules.sistema.domain.Rol;
@@ -22,7 +23,6 @@ import pe.edu.unasam.activos.modules.sistema.dto.*;
 import pe.edu.unasam.activos.modules.sistema.repository.PermisoRepository;
 import pe.edu.unasam.activos.modules.sistema.repository.RolPermisoRepository;
 import pe.edu.unasam.activos.modules.sistema.repository.RolRepository;
-import pe.edu.unasam.activos.modules.sistema.repository.UsuarioRepository;
 import jakarta.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +115,7 @@ public class RolService {
 
         return convertToDtoWithPermissions(savedRol);
     }
-    
+
     @Transactional
     public RolDTO.Response update(Integer id, RolDTO.Request rolRequest) {
         Rol existingRol = rolRepository.findById(id)
@@ -130,7 +130,7 @@ public class RolService {
         if (rolRequest.getEstadoRol() != null) {
             existingRol.setEstadoRol(rolRequest.getEstadoRol());
         }
-        
+
         // Restaurar la llamada para actualizar los permisos
         updateRolPermissionsFromString(existingRol, rolRequest.getPermisosSeleccionados());
 
@@ -146,7 +146,8 @@ public class RolService {
 
         verificarPrecondicionesDeEliminacion(rol);
 
-        // 1. Eliminar físicamente todas las asignaciones de permisos para este rol (CASCADE).
+        // 1. Eliminar físicamente todas las asignaciones de permisos para este rol
+        // (CASCADE).
         log.debug("Eliminando todas las asignaciones de permisos para el rol ID: {}", id);
         rolPermisoRepository.deleteByRol_IdRol(id);
 
@@ -173,7 +174,8 @@ public class RolService {
         // PRE-CONDICIÓN 1: El rol no debe estar asignado a ningún usuario.
         long usuariosConEsteRol = usuarioRepository.countByRol(rol);
         if (usuariosConEsteRol > 0) {
-            throw new ReferentialIntegrityException("No se puede eliminar el rol '" + rol.getNombreRol() + "' porque está asignado a " + usuariosConEsteRol + " usuario(s).");
+            throw new ReferentialIntegrityException("No se puede eliminar el rol '" + rol.getNombreRol()
+                    + "' porque está asignado a " + usuariosConEsteRol + " usuario(s).");
         }
 
         // FUTURA PRE-CONDICIÓN 2: Podrías añadir más validaciones aquí.
@@ -188,7 +190,6 @@ public class RolService {
             }
         }
     }
-
 
     @Transactional(readOnly = true)
     public List<PermisoDTO.Response> getPermisosPorRol(Integer idRol) {
@@ -207,13 +208,22 @@ public class RolService {
                 .collect(Collectors.toList());
     }
 
-    private List<RolPermiso> updateRolPermissionsFromString(Rol rol, List<String> permisosSeleccionados) {
-        log.info("Iniciando actualización de permisos para el rol ID: {}. Permisos seleccionados: {}", rol.getIdRol(), permisosSeleccionados != null ? permisosSeleccionados.size() : 0);
+    @Transactional(readOnly = true)
+    public List<RolDTO.Response> findAllRolesForSelect() {
+        return rolRepository.findAll().stream()
+                .map(rol -> convertToDtoSimple(rol, 0, 0)) // Counts are not needed for select
+                .collect(Collectors.toList());
+    }
 
-        // 1. Obtener todos los RolPermiso existentes para este rol y ponerlos en un mapa para fácil acceso.
+    private List<RolPermiso> updateRolPermissionsFromString(Rol rol, List<String> permisosSeleccionados) {
+        log.info("Iniciando actualización de permisos para el rol ID: {}. Permisos seleccionados: {}", rol.getIdRol(),
+                permisosSeleccionados != null ? permisosSeleccionados.size() : 0);
+
+        // 1. Obtener todos los RolPermiso existentes para este rol y ponerlos en un
+        // mapa para fácil acceso.
         Map<Integer, RolPermiso> permisosActualesMap = rolPermisoRepository.findByRol_IdRol(rol.getIdRol()).stream()
                 .collect(Collectors.toMap(rp -> rp.getPermiso().getIdPermiso(), rp -> rp));
-                
+
         permisosActualesMap.values().forEach(rp -> rp.setPermitido(false));
         if (permisosSeleccionados == null) {
             permisosSeleccionados = new ArrayList<>();
@@ -223,34 +233,34 @@ public class RolService {
         for (String permisoStr : permisosSeleccionados) {
             try {
                 String[] ids = permisoStr.split("-");
-                    if (ids.length != 2) {
-                        log.warn("Formato de permiso inválido, se omitirá: {}", permisoStr);
-                        continue;
-                    }
-                    Integer idModulo = Integer.parseInt(ids[0]);
-                    Integer idAccion = Integer.parseInt(ids[1]);
+                if (ids.length != 2) {
+                    log.warn("Formato de permiso inválido, se omitirá: {}", permisoStr);
+                    continue;
+                }
+                Integer idModulo = Integer.parseInt(ids[0]);
+                Integer idAccion = Integer.parseInt(ids[1]);
 
-                    // 4. Buscar el permiso. Si no existe, se crea en el acto.
-                    Permiso permiso = permisoService.findOrCreatePermiso(idModulo, idAccion);
+                // 4. Buscar el permiso. Si no existe, se crea en el acto.
+                Permiso permiso = permisoService.findOrCreatePermiso(idModulo, idAccion);
 
-                    RolPermiso rolPermiso = permisosActualesMap.get(permiso.getIdPermiso());
+                RolPermiso rolPermiso = permisosActualesMap.get(permiso.getIdPermiso());
 
-                    if (rolPermiso != null) {
-                        // Si ya existía la relación, simplemente la marcamos como permitida.
-                        rolPermiso.setPermitido(true);
-                    } else {
-                        // Si no existía, creamos una nueva relación y la añadimos al mapa.
-                        RolPermiso nuevoRolPermiso = RolPermiso.builder()
-                                .rol(rol)
-                                .permiso(permiso)
-                                .permitido(true)
-                                .build();
-                        permisosActualesMap.put(permiso.getIdPermiso(), nuevoRolPermiso);
-                    }
-                } catch (NumberFormatException e) {
+                if (rolPermiso != null) {
+                    // Si ya existía la relación, simplemente la marcamos como permitida.
+                    rolPermiso.setPermitido(true);
+                } else {
+                    // Si no existía, creamos una nueva relación y la añadimos al mapa.
+                    RolPermiso nuevoRolPermiso = RolPermiso.builder()
+                            .rol(rol)
+                            .permiso(permiso)
+                            .permitido(true)
+                            .build();
+                    permisosActualesMap.put(permiso.getIdPermiso(), nuevoRolPermiso);
+                }
+            } catch (NumberFormatException e) {
                 log.error("Error al parsear IDs del permiso: {}", permisoStr, e);
             }
-        } 
+        }
 
         // 5. Guardar todos los cambios (actualizaciones y nuevas inserciones).
         List<RolPermiso> rolPermisosAGuardar = new ArrayList<>(permisosActualesMap.values());
@@ -275,9 +285,10 @@ public class RolService {
                 .permisosCount(permissionCount)
                 .build();
     }
-    
+
     private RolDTO.Response convertToDtoWithPermissions(Rol rol) {
-        // Usamos la consulta que carga todas las relaciones para evitar LazyInitializationException
+        // Usamos la consulta que carga todas las relaciones para evitar
+        // LazyInitializationException
         List<RolPermiso> rolPermisos = rolPermisoRepository.findByRolIdWithPermisos(rol.getIdRol());
 
         RolDTO.Response dto = convertToDtoSimple(rol,
@@ -305,12 +316,14 @@ public class RolService {
                             .modulo(entry.getKey())
                             .acciones(entry.getValue())
                             .build())
-                    .sorted((p1, p2) -> Integer.compare(p1.getModulo().getOrdenModulo(), p2.getModulo().getOrdenModulo()))
+                    .sorted((p1, p2) -> Integer.compare(p1.getModulo().getOrdenModulo(),
+                            p2.getModulo().getOrdenModulo()))
                     .collect(Collectors.toList());
             dto.setPermisosAgrupados(permisosAgrupados);
         }
         return dto;
     }
+
     private PermisoDTO.Response convertToFullPermisoResponse(Permiso permiso) {
         if (permiso == null)
             return null;
@@ -347,7 +360,8 @@ public class RolService {
     }
 
     private ModuloSistemaDTO.Response convertToFullModuloResponse(Permiso permiso) {
-        if (permiso == null || permiso.getModuloSistema() == null) return null;
+        if (permiso == null || permiso.getModuloSistema() == null)
+            return null;
         var modulo = permiso.getModuloSistema();
         return ModuloSistemaDTO.Response.builder()
                 .idModuloSistemas(modulo.getIdModuloSistemas())
@@ -360,7 +374,8 @@ public class RolService {
     }
 
     private AccionDTO.Response convertToFullAccionResponse(Accion accion) {
-        if (accion == null) return null;
+        if (accion == null)
+            return null;
         return AccionDTO.Response.builder()
                 .idAccion(accion.getIdAccion())
                 .nombreAccion(accion.getNombreAccion())

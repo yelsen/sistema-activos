@@ -13,11 +13,11 @@ import pe.edu.unasam.activos.common.exception.BusinessException;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.unasam.activos.common.exception.UnauthorizedException;
 import pe.edu.unasam.activos.modules.auth.dto.*;
+import pe.edu.unasam.activos.modules.personas.domain.Usuario;
+import pe.edu.unasam.activos.modules.personas.repository.UsuarioRepository;
 import pe.edu.unasam.activos.modules.sistema.domain.RolPermiso;
 import pe.edu.unasam.activos.modules.sistema.domain.ConfiguracionSistema;
-import pe.edu.unasam.activos.modules.sistema.domain.Usuario;
 import pe.edu.unasam.activos.modules.sistema.repository.ConfiguracionSistemaRepository;
-import pe.edu.unasam.activos.modules.sistema.repository.UsuarioRepository;
 import pe.edu.unasam.activos.security.JwtService;
 import pe.edu.unasam.activos.common.enums.EstadoUsuario;
 
@@ -142,8 +142,25 @@ public class AuthService {
 
         // Actualizar contraseña
         usuario.setContrasena(passwordEncoder.encode(passwordNueva));
-        usuario.setDebeCambiarPassword(false);
         usuarioRepository.save(usuario);
+    }
+
+    @Transactional
+    public void handleFailedLoginAttempt(String username) {
+        log.warn("Manejando intento de login fallido para el usuario: {}", username);
+        usuarioRepository.findByUsuario(username).ifPresent(this::registrarIntentoFallido);
+    }
+
+    @Transactional
+    public void resetFailedLoginAttempts(String username) {
+        usuarioRepository.findByUsuario(username).ifPresent(usuario -> {
+            if (usuario.getIntentosFallidos() != null && usuario.getIntentosFallidos() > 0) {
+                usuario.setIntentosFallidos(0);
+                usuario.setBloqueadoHasta(null);
+                usuarioRepository.save(usuario);
+                log.info("Intentos de login fallidos reseteados para el usuario: {}", username);
+            }
+        });
     }
 
     // ==================== MÉTODOS PRIVADOS ====================
@@ -187,7 +204,7 @@ public class AuthService {
                 : usuario.getUsuario();
 
         String email = usuario.getPersona() != null ? usuario.getPersona().getEmail() : null;
-        String documento = usuario.getPersona() != null ? usuario.getPersona().getDocumento() : null;
+        String documento = usuario.getPersona() != null ? usuario.getPersona().getNumeroDocumento() : null;
 
         return UserInfoResponse.builder()
                 .idUsuario(usuario.getIdUsuario())
@@ -197,7 +214,6 @@ public class AuthService {
                 .documento(documento)
                 .roles(roles)
                 .permisos(permisos)
-                .debeCambiarPassword(usuario.getDebeCambiarPassword())
                 .build();
     }
 
@@ -220,10 +236,9 @@ public class AuthService {
                 .usuario(usuario.getUsuario())
                 .nombreCompleto(nombreCompleto)
                 .email(usuario.getPersona().getEmail())
-                .documento(usuario.getPersona().getDocumento())
+                .documento(usuario.getPersona().getNumeroDocumento())
                 .roles(roles)
                 .permisos(permisos)
-                .debeCambiarPassword(usuario.getDebeCambiarPassword())
                 .build();
     }
 }

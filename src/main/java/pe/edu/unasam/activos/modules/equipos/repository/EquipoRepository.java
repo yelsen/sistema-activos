@@ -21,7 +21,7 @@ public interface EquipoRepository extends JpaRepository<Equipo, Integer> {
     
     List<Equipo> findByMarca_IdMarca(Integer idMarca);
     
-    @Query("SELECT e FROM Equipo e WHERE e.activo.oficina.idOficina = :idOficina")
+    @Query("SELECT e FROM Equipo e, AsignacionActivo aa WHERE aa.activo = e.activo AND aa.oficina.idOficina = :idOficina")
     List<Equipo> findByOficina(@Param("idOficina") Integer idOficina);
     
     boolean existsByCodigoEquipo(String codigoEquipo);

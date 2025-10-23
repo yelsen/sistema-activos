@@ -12,8 +12,7 @@ import pe.edu.unasam.activos.audit.domain.AuditoriaLog;
 import pe.edu.unasam.activos.audit.repository.AuditoriaLogRepository;
 import pe.edu.unasam.activos.common.enums.AccionAuditoria;
 import pe.edu.unasam.activos.modules.personas.domain.Persona;
-import pe.edu.unasam.activos.modules.sistema.domain.Usuario;
-
+import pe.edu.unasam.activos.modules.personas.domain.Usuario;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;

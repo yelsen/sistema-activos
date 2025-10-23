@@ -3,7 +3,7 @@ package pe.edu.unasam.activos.audit.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import pe.edu.unasam.activos.common.enums.AccionAuditoria;
-import pe.edu.unasam.activos.modules.sistema.domain.Usuario;
+import pe.edu.unasam.activos.modules.personas.domain.Usuario;
 
 import java.time.LocalDateTime;
 
