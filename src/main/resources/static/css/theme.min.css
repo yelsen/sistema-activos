@@ -26578,21 +26578,21 @@ input::-webkit-outer-spin-button {
 .form-control.is-valid,
 .was-validated .form-control:valid {
     border-color: var(--ds-success);
-    background-image: var(--ds-form-valid-icon-svg);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2322c55e' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
-    background-position: var(--ds-form-validation-icon-position);
-    background-size: var(--ds-form-validation-icon-size);
-    padding-right: var(--ds-form-validation-padding-right);
+    background-position: right calc(.39em + .1875rem) center;
+    background-size: calc(.78em + .375rem) calc(.78em + .375rem);
+    padding-right: calc(1.57em + .75rem);
 }
 
 .form-control.is-invalid,
 .was-validated .form-control:invalid {
     border-color: var(--ds-danger);
-    background-image: var(--ds-form-invalid-icon-svg);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23f44336'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23f44336' stroke='none'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
-    background-position: var(--ds-form-validation-icon-position);
-    background-size: var(--ds-form-validation-icon-size);
-    padding-right: var(--ds-form-validation-padding-right);
+    background-position: right calc(.39em + .1875rem) center;
+    background-size: calc(.78em + .375rem) calc(.78em + .375rem);
+    padding-right: calc(1.57em + .75rem);
 }
 
 /* Textarea specific adjustments for validation icons */
@@ -32152,29 +32152,6 @@ div.table-responsive>div.dataTables_wrapper>div.row {
     -webkit-appearance: none !important;
     -moz-appearance: none !important;
     appearance: none !important;
-}
-
-/* Choices.js Validation Icons */
-.choices.is-valid .choices__inner {
-    border-color: var(--ds-success) !important;
-    background-image: var(--ds-form-select-bg-img), var(--ds-form-valid-icon-svg) !important;
-    background-position: right 0.75rem center, right var(--ds-form-validation-padding-right) center !important;
-    background-size: 16px 12px, var(--ds-form-validation-icon-size) !important;
-    padding-right: calc(var(--ds-form-validation-padding-right) + 1.5rem) !important;
-}
-
-.choices.is-invalid .choices__inner {
-    border-color: var(--ds-danger) !important;
-    background-image: var(--ds-form-select-bg-img), var(--ds-form-invalid-icon-svg) !important;
-    background-position: right 0.75rem center, right var(--ds-form-validation-padding-right) center !important;
-    background-size: 16px 12px, var(--ds-form-validation-icon-size) !important;
-    padding-right: calc(var(--ds-form-validation-padding-right) + 1.5rem) !important;
-}
-
-/* Choices.js Focus states when valid/invalid */
-.choices.is-valid.is-focused .choices__inner,
-.choices.is-invalid.is-focused .choices__inner {
-    box-shadow: 0 0 0 0.25rem rgba(var(--ds-primary-rgb), 0.25) !important; /* Use primary focus ring */
 }
 
 /* Asegurar que el texto seleccionado tenga el color correcto */
