@@ -56,9 +56,16 @@ public class PersonaService {
         Persona persona = personaOpt.get();
         boolean tieneUsuario = usuarioRepository.existsByPersona_NumeroDocumento(numeroDocumento);
 
-        var response = new PersonaDTO.PersonaUsuarioResponse(
-                persona.getNombres(), persona.getApellidos(), persona.getEmail(), tieneUsuario
-        );
+        var response = PersonaDTO.PersonaUsuarioResponse.builder()
+                .nombres(persona.getNombres())
+                .apellidos(persona.getApellidos())
+                .email(persona.getEmail())
+                .telefono(persona.getTelefono())
+                .direccion(persona.getDireccion())
+                .genero(persona.getGenero() != null ? persona.getGenero().name() : null)
+                .tieneUsuario(tieneUsuario)
+                .build();
+        
         return Optional.of(response);
     }
 
@@ -69,7 +76,10 @@ public class PersonaService {
                 .apellidos(persona.getApellidos())
                 .tipoDocumento(persona.getTipoDocumento() != null ? persona.getTipoDocumento().getTipoDocumento() : null)
                 .email(persona.getEmail())
+                .telefono(persona.getTelefono())
+                .direccion(persona.getDireccion())
+                .genero(persona.getGenero())
+                .estadoPersona(persona.getEstadoPersona())
                 .build();
     }
-
 }

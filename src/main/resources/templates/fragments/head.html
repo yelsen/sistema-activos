@@ -12,6 +12,9 @@
     <title th:text="${pageTitle} + ' | Sistema de Activos UNASAM'"></title>
     <link rel="icon" type="image/png" th:href="@{/images/unasam.png}">
 
+    <!-- Theme CSS -->
+    <link rel="stylesheet" th:href="@{/css/theme.min.css}">
+    
     <!-- Modos de color -->
     <script th:src="@{/js/vendors/color-modes.js}"></script>
     <script>
@@ -34,29 +37,16 @@
     <link rel="stylesheet" th:href="@{/libs/swiper/swiper-bundle.min.css}" />
     <link rel="stylesheet" th:href="@{/libs/simplebar/dist/simplebar.min.css}" />
 
-    <!-- Theme CSS -->
-    <link rel="stylesheet" th:href="@{/css/theme.min.css}">
-
     <!-- Iconos -->
     <!--<link rel="stylesheet" th:href="@{/css/all.min.css}" />
     <link rel="stylesheet" th:href="@{/css/feather.css}" />-->
     <link rel="stylesheet" th:href="@{/libs/@tabler/icons-webfont/tabler-icons.min.css}" />
 
     <!-- ===== TODAS LAS LIBRERÍAS CSS ===== -->
-    
-    <!-- Choices.js - Para selectores avanzados con búsqueda -->
     <link rel="stylesheet" th:href="@{/libs/choices.js/choices.min.css}" />
-    
-    <!-- Dragula - Para funcionalidad drag & drop (puede no ser necesario en roles) -->
     <link rel="stylesheet" th:href="@{/libs/dragula/dist/dragula.min.css}" />
-    
-    <!-- Toastify - Para notificaciones toast (NECESARIO) -->
     <link rel="stylesheet" th:href="@{/libs/toastify-js/toastify.min.css}" />
-    
-    <!-- Prism - Para resaltado de sintaxis (puede no ser necesario en roles) -->
     <link rel="stylesheet" th:href="@{/libs/prismjs/themes/prism-okaidia.min.css}" />
-
-    <!--<link rel="stylesheet" th:href="@{/js/lib/dropzone/dist/dropzone.min.css}"></link>-->
 </head>
 
 </html>

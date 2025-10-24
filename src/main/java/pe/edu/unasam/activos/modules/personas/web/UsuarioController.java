@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import pe.edu.unasam.activos.common.enums.EstadoUsuario;
+import pe.edu.unasam.activos.common.enums.Genero;
 import pe.edu.unasam.activos.modules.personas.dto.UsuarioDTO;
 import pe.edu.unasam.activos.modules.personas.service.UsuarioService;
 import pe.edu.unasam.activos.modules.sistema.service.RolService;
@@ -39,11 +41,6 @@ public class UsuarioController {
     private final TipoDocumentoService tipoDocumentoService;
     private final ObjectMapper objectMapper;
 
-    /**
-     * Registra un editor de propiedades personalizado para el enum EstadoUsuario.
-     * Esto permite que Spring MVC convierta una cadena vacía a null, evitando errores
-     * cuando el parámetro 'estado' no se selecciona en el frontend.
-     */
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.registerCustomEditor(EstadoUsuario.class, new PropertyEditorSupport() {
@@ -65,10 +62,9 @@ public class UsuarioController {
             @RequestParam(required = false) String query,
             @RequestParam(required = false) EstadoUsuario estado,
             @RequestParam(required = false, defaultValue = "false") boolean fragment,
-            Pageable pageable) {
-        
+            Pageable pageable) throws JsonProcessingException {
+
         try {
-            // Obtener usuarios con filtros
             Page<UsuarioDTO.Response> usuariosPage = usuarioService.getAllUsuarios(query, estado, pageable);
             model.addAttribute("usuariosPage", usuariosPage);
             model.addAttribute("query", query);
@@ -82,38 +78,61 @@ public class UsuarioController {
             if (estado != null) {
                 queryParamsBuilder.queryParam("estado", estado.name());
             }
-            // Pasamos la cadena de consulta, no el mapa. Es más seguro para Thymeleaf.
             model.addAttribute("queryParams", queryParamsBuilder.build().getQuery());
 
-            // El mapa de colores es necesario tanto para la carga completa como para los fragmentos
             var roles = rolService.findAllRolesForSelect();
             Map<Integer, String> rolColorMap = roles.stream()
                     .collect(Collectors.toMap(
                             rol -> rol.getIdRol(),
-                            rol -> rol.getColorRol()
-                    ));
+                            rol -> rol.getColorRol()));
             model.addAttribute("rolColorMap", rolColorMap);
-
-            // Solo cargar datos adicionales si NO es una petición de fragmento
+            
             if (!fragment) {
                 model.addAttribute("roles", roles);
                 model.addAttribute("tiposDocumento", tipoDocumentoService.findAllTiposDocumento());
                 model.addAttribute("estadosUsuario", EstadoUsuario.values());
+                model.addAttribute("generos", Genero.values());
                 model.addAttribute("rolColorMapJson", objectMapper.writeValueAsString(rolColorMap));
 
-                if (!model.containsAttribute("usuario")) { // Objeto para formulario de creación
+                if (!model.containsAttribute("usuario")) {
                     model.addAttribute("usuario", new UsuarioDTO.Request());
                 }
                 return "sistema/usuarios/index";
             } else {
-                // Retornar solo el fragmento de la lista para peticiones AJAX
                 return "sistema/usuarios/usuarios-list :: usuariosList";
             }
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, 
-                "Error al cargar usuarios: " + e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al cargar usuarios: " + e.getMessage(), e);
         }
     }
+
+    @PostMapping
+    @PreAuthorize("hasAuthority('USUARIOS_CREAR')")
+    public String createUsuario(
+            @Valid @ModelAttribute("usuario") UsuarioDTO.Request request,
+            BindingResult result,
+            RedirectAttributes redirectAttributes) {
+
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.usuario", result);
+            redirectAttributes.addFlashAttribute("usuario", request);
+            redirectAttributes.addFlashAttribute("modalCrearError", true);
+            return "redirect:/seguridad/usuarios";
+        }
+
+        try {
+            usuarioService.createUsuario(request);
+            redirectAttributes.addFlashAttribute("success", "Usuario creado exitosamente");
+        } catch (BusinessException e) {
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.usuario", result);
+            redirectAttributes.addFlashAttribute("usuario", request);
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("modalCrearError", true);
+        }
+
+        return "redirect:/seguridad/usuarios";
+    }
+    
 
     @GetMapping("/editar/{id}")
     @PreAuthorize("hasAuthority('USUARIOS_EDITAR')")
@@ -124,33 +143,7 @@ public class UsuarioController {
         model.addAttribute("tiposDocumento", tipoDocumentoService.findAllTiposDocumento());
         return "sistema/usuarios/modal/EditarForm :: editForm";
     }
-
-    @PostMapping
-    @PreAuthorize("hasAuthority('USUARIOS_CREAR')")
-    public String createUsuario(
-            @Valid @ModelAttribute("usuario") UsuarioDTO.Request request,
-            BindingResult result,
-            RedirectAttributes redirectAttributes) {
-        
-        if (result.hasErrors()) {
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.usuario", result);
-            redirectAttributes.addFlashAttribute("usuario", request);
-            redirectAttributes.addFlashAttribute("modalCrearError", true);
-            return "redirect:/seguridad/usuarios";
-        }
-        
-        try {
-            usuarioService.createUsuario(request);
-            redirectAttributes.addFlashAttribute("success", "Usuario creado exitosamente");
-        } catch (BusinessException e) {
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.usuario", result);
-            redirectAttributes.addFlashAttribute("usuario", request);
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            redirectAttributes.addFlashAttribute("modalCrearError", true);
-        }
-        
-        return "redirect:/seguridad/usuarios";
-    }
+    
 
     @PostMapping("/update/{id}")
     @PreAuthorize("hasAuthority('USUARIOS_EDITAR')")
@@ -159,14 +152,14 @@ public class UsuarioController {
             @Valid @ModelAttribute("usuario") UsuarioDTO.Request request,
             BindingResult result,
             RedirectAttributes redirectAttributes) {
-        
+
         if (result.hasErrors()) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.usuario", result);
             redirectAttributes.addFlashAttribute("usuario", request);
             redirectAttributes.addFlashAttribute("errorUsuarioId", id);
             return "redirect:/seguridad/usuarios";
         }
-        
+
         try {
             usuarioService.updateUsuario(id, request);
             redirectAttributes.addFlashAttribute("success", "Usuario actualizado exitosamente");
@@ -174,7 +167,7 @@ public class UsuarioController {
             redirectAttributes.addFlashAttribute("errorUsuarioId", id);
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        
+
         return "redirect:/seguridad/usuarios";
     }
 

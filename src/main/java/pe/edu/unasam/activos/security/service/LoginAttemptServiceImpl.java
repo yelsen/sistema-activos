@@ -66,3 +66,4 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
                 .orElse(false);
     }
 }
+

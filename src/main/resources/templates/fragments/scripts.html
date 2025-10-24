@@ -3,54 +3,37 @@
 
 <body>
     <div th:fragment="scripts">
-        
+
         <!-- ===== CORE (OBLIGATORIAS) ===== -->
-        <!-- Bootstrap - Framework CSS/JS principal (NECESARIO) -->
         <script th:src="@{/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
-        
-        <!-- SimpleBar - Scrollbars personalizados (puede causar conflictos) -->
         <script th:src="@{/libs/simplebar/dist/simplebar.min.js}"></script>
-        
-        <!-- ApexCharts - Gráficos (NO necesario en roles, puede causar conflictos) -->
         <script th:src="@{/libs/apexcharts/dist/apexcharts.min.js}"></script>
-        
-        <!-- Swiper - Carruseles (NO necesario en roles) -->
         <script th:src="@{/libs/swiper/swiper-bundle.min.js}"></script>
 
         <!-- ===== THEME ===== -->
-        <!-- Theme principal (NECESARIO) -->
+         <script th:src="@{/libs/choices.js/choices.min.js}"></script>
         <script th:src="@{/js/theme.min.js}"></script>
-        
-        <!-- Toast notifications (NECESARIO para mensajes) -->
-        <script th:src="@{/js/toast-notifications.js}"></script>
-        
-        <!-- Sidebar navigation (NECESARIO) -->
         <script th:src="@{/js/vendors/sidebarnav.js}"></script>
-        
-        <!-- Chart.js (NO necesario en roles, comentado para evitar conflictos) -->
-        <!-- <script th:src="@{/js/vendors/chart.js}"></script> -->
-        
-        <!-- Swiper vendor (NO necesario en roles) -->
-        <!-- <script th:src="@{/js/vendors/swiper.js}"></script> -->
-
-        <!-- ===== LIBRERÍAS ESPECÍFICAS ===== -->
-        
-        <!-- Vector maps (NO necesario en roles, comentado) -->
-        <!-- <script th:src="@{/libs/jsvectormap/dist/js/jsvectormap.min.js}"></script> -->
-        <!-- <script th:src="@{/libs/jsvectormap/dist/maps/world.js}"></script> -->
-        
-        <!-- Choices.js (NECESARIO para selectores en roles) -->
-        <script th:src="@{/libs/choices.js/choices.min.js}"></script>
-
-        <!-- ===== VENDORS PROTEGIDOS ===== -->
         <script th:src="@{/js/vendors/choice.js}"></script>
-        
+        <script th:src="@{/js/toast-notifications.js}"></script>
+
         <!-- ===== UTILITIES JAVASCRIPT NATIVO ===== -->
         <script th:src="@{/js/vendors/modal-utils.js}"></script>
         <script th:src="@{/js/vendors/dynamic-filters.js}"></script>
         <script th:src="@{/js/vendors/form-validation.js}"></script>
 
-        <!--<script th:src="@{/js/lib/dropzone/dist/dropzone.min.js}"></script>-->
+        <!-- Inicialización de validación para modales -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Inicializar validación para todos los modales
+                const modales = document.querySelectorAll('.modal');
+                modales.forEach(modal => {
+                    if (modal.id) {
+                        setupModalFormValidation(modal.id);
+                    }
+                });
+            });
+        </script>
 
     </div>
 </body>

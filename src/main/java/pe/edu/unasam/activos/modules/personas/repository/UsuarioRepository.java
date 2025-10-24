@@ -38,8 +38,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
          */
         @Query("SELECT DISTINCT u FROM Usuario u " +
                         "LEFT JOIN FETCH u.persona p " +
-                        "LEFT JOIN FETCH p.tipoDocumento " +
-                        "LEFT JOIN FETCH u.rol " +
+                        "LEFT JOIN FETCH p.tipoDocumento " + 
+                        "LEFT JOIN FETCH u.rol r " +
                         "WHERE (:query IS NULL OR " +
                         "  LOWER(p.numeroDocumento) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
                         "  LOWER(CONCAT(p.nombres, ' ', p.apellidos)) LIKE LOWER(CONCAT('%', :query, '%')) OR " +

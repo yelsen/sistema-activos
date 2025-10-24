@@ -31,28 +31,28 @@ public class TipoDocumentoDataLoader extends AbstractDataLoader {
                 .tipoDocumento("DNI")
                 .longitudMinima("8")
                 .longitudMaxima("8")
-                .patronValidacion("^[0-9]{8}$")
+                .patronValidacion("[0-9]{8}")
                 .build(),
             
             TipoDocumento.builder()
                 .tipoDocumento("Carnet de Extranjería")
                 .longitudMinima("9")
                 .longitudMaxima("12")
-                .patronValidacion("^[A-Z0-9]{9,12}$")
+                .patronValidacion("[A-Z0-9]{9,12}")
                 .build(),
             
             TipoDocumento.builder()
                 .tipoDocumento("Pasaporte")
                 .longitudMinima("7")
                 .longitudMaxima("12")
-                .patronValidacion("^[A-Z0-9]{7,12}$")
+                .patronValidacion("[A-Z0-9]{7,12}")
                 .build(),
             
             TipoDocumento.builder()
                 .tipoDocumento("RUC")
                 .longitudMinima("11")
                 .longitudMaxima("11")
-                .patronValidacion("^[0-9]{11}$")
+                .patronValidacion("[0-9]{11}")
                 .build()
         };
         

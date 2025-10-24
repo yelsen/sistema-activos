@@ -62,12 +62,16 @@ public class PersonaDTO {
     }
 
     @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PersonaUsuarioResponse {
         private String nombres;
         private String apellidos;
         private String email;
+        private String telefono;
+        private String direccion;
+        private String genero;
         private boolean tieneUsuario;
     }
 }

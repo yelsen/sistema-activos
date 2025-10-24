@@ -3,6 +3,7 @@ package pe.edu.unasam.activos.modules.personas.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,11 +38,11 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public Page<UsuarioDTO.Response> getAllUsuarios(String query, EstadoUsuario estado, Pageable pageable) {
         try {
-            String processedQuery = StringUtils.hasText(query) ? query.trim() : null;
+            String processedQuery = StringUtils.hasText(query) ? query.trim().toLowerCase() : null;
             Page<Usuario> usuarios = usuarioRepository.findAllWithFilters(processedQuery, estado, pageable);
             return usuarios.map(this::convertToDto);
-        } catch (Exception e) {
-            throw new BusinessException("Error al obtener usuarios: " + e.getMessage());
+        } catch (DataAccessException e) {
+            throw new BusinessException("Error de acceso a datos al obtener usuarios: " + e.getMessage());
         }
     }
 

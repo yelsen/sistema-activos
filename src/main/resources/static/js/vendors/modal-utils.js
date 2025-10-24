@@ -231,3 +231,25 @@ window.setupDeleteModal = function(modalId, formId, nameElementId, urlPattern) {
         }
     });
 };
+
+/**
+ * Inicializa los formularios dentro de un modal cuando se abre
+ * @param {string} modalId - ID del modal
+ */
+window.setupModalFormValidation = function(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+
+    // Inicializar validación cuando se abre el modal
+    modal.addEventListener('shown.bs.modal', function() {
+        const forms = modal.querySelectorAll('form');
+        forms.forEach(form => {
+            if (form.id) {
+                // Reiniciar validación
+                clearFormValidation(form.id);
+                // Configurar validación en tiempo real
+                setupRealTimeValidation(form.id);
+            }
+        });
+    });
+};

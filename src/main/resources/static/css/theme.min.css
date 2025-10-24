@@ -4184,85 +4184,17 @@ textarea.form-control-lg {
     z-index: 5
 }
 
+.form-control.is-valid:focus,
+.was-validated .form-control:valid:focus {
+    box-shadow: 0 0 0 .25rem rgba(var(--ds-success-rgb), .25);
+}
+
 .is-valid~.valid-feedback,
 .is-valid~.valid-tooltip,
 .was-validated :valid~.valid-feedback,
 .was-validated :valid~.valid-tooltip {
     display: block
 }
-
-.was-validated .form-control:valid {
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='%2322c55e' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1'/%3E%3C/svg%3E");
-    background-position: right calc(.39275em + .25rem) center;
-    background-repeat: no-repeat;
-    background-size: calc(.7855em + .5rem) calc(.7855em + .5rem);
-    border-color: var(--ds-form-valid-border-color);
-}
-
-.form-control.is-valid:focus,
-.was-validated .form-control:valid:focus {
-    border-color: var(--ds-form-valid-border-color);
-    box-shadow: 0 0 0 .25rem rgba(var(--ds-success-rgb), .25)
-}
-
-.was-validated textarea.form-control:valid {
-    background-position: top calc(.39275em + .25rem) right calc(.39275em + .25rem);
-    padding-right: calc(1.571em + 1rem)
-}
-
-.was-validated .form-select:valid {
-    border-color: var(--ds-form-valid-border-color)
-}
-
-.form-select.is-valid:not([multiple]):not([size]),
-.form-select.is-valid:not([multiple])[size="1"],
-.was-validated .form-select:valid:not([multiple]):not([size]),
-.was-validated .form-select:valid:not([multiple])[size="1"] {
-    --ds-form-select-bg-icon: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='%2322c55e' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1'/%3E%3C/svg%3E");
-    background-position: right .75rem center, center right 2.25rem;
-    background-size: 16px 12px, calc(.7855em + .5rem) calc(.7855em + .5rem);
-    padding-right: 4.125rem
-}
-
-.form-select.is-valid:focus,
-.was-validated .form-select:valid:focus {
-    border-color: var(--ds-form-valid-border-color);
-    box-shadow: 0 0 0 .25rem rgba(var(--ds-success-rgb), .25)
-}
-
-.form-control-color.is-valid,
-.was-validated .form-control-color:valid {
-    width: calc(4rem + 1.571em)
-}
-
-.was-validated .form-check-input:valid {
-    border-color: var(--ds-form-valid-border-color)
-}
-
-.form-check-input.is-valid:checked,
-.was-validated .form-check-input:valid:checked {
-    background-color: var(--ds-form-valid-color)
-}
-
-.form-check-input.is-valid:focus,
-.was-validated .form-check-input:valid:focus {
-    box-shadow: 0 0 0 .25rem rgba(var(--ds-success-rgb), .25)
-}
-
-.form-check-input.is-valid~.form-check-label,
-.was-validated .form-check-input:valid~.form-check-label {
-    color: var(--ds-form-valid-color)
-}
-
-.form-check-inline .form-check-input~.valid-feedback {
-    margin-left: .5em
-}
-
-.was-validated .input-group>.form-control:not(:focus):valid,
-.was-validated .input-group>.form-select:not(:focus):valid {
-    z-index: 3
-}
-
 .invalid-feedback {
     color: var(--ds-form-invalid-color);
     display: none;
@@ -6555,35 +6487,6 @@ button.htmx-request::after {
     border-top: 2px solid currentColor;
     border-radius: 50%;
     animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-/* Mejorar validación de formularios */
-.was-validated .form-control:valid,
-.form-control.is-valid {
-    border-color: var(--ds-success);
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2322c55e' d='m2.3 6.73-.6-1.48-.27.27-.35.35.63.63L2.3 6.73zm2.54-4.02L3.14 4.4l-.35-.35L1.5 5.34l.63.63 1.7-1.7z'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right calc(0.375em + 0.1875rem) center;
-    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-}
-
-.was-validated .form-control:invalid,
-.form-control.is-invalid {
-    border-color: var(--ds-danger);
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right calc(0.375em + 0.1875rem) center;
-    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
 }
 
 .badge {
@@ -25852,22 +25755,11 @@ input::-webkit-outer-spin-button {
     color: var(--ds-gray-800);
     cursor: pointer;
     font-size: 16px;
-    line-height: 1;
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%)
 }
 
 .was-validated .form-check-input.is-valid~.form-check-label,
 .was-validated .form-check-input:valid~.form-check-label {
     color: inherit
-}
-
-.is-valid:not(:required):not(.btn),
-.was-validated :valid:not(:required):not(.btn) {
-    background-image: none;
-    border-color: var(--ds-gray-300) !important
 }
 
 .btn-ghost {
@@ -26681,6 +26573,64 @@ input::-webkit-outer-spin-button {
     background-color: rgba(0, 74, 153, var(--ds-bg-opacity)) !important;
 }
 
+/* Mejorar validación de formularios */
+/* Validation Icons and Styles for form-control */
+.form-control.is-valid,
+.was-validated .form-control:valid {
+    border-color: var(--ds-success);
+    background-image: var(--ds-form-valid-icon-svg);
+    background-repeat: no-repeat;
+    background-position: var(--ds-form-validation-icon-position);
+    background-size: var(--ds-form-validation-icon-size);
+    padding-right: var(--ds-form-validation-padding-right);
+}
+
+.form-control.is-invalid,
+.was-validated .form-control:invalid {
+    border-color: var(--ds-danger);
+    background-image: var(--ds-form-invalid-icon-svg);
+    background-repeat: no-repeat;
+    background-position: var(--ds-form-validation-icon-position);
+    background-size: var(--ds-form-validation-icon-size);
+    padding-right: var(--ds-form-validation-padding-right);
+}
+
+/* Textarea specific adjustments for validation icons */
+textarea.form-control.is-valid,
+textarea.form-control.is-invalid,
+.was-validated textarea.form-control:valid,
+.was-validated textarea.form-control:invalid {
+    background-position: top 0.75rem right 0.75rem; /* Adjust for multiline inputs */
+}
+
+/* Form Select Validation */
+.form-select.is-valid,
+.was-validated .form-select:valid {
+    border-color: var(--ds-success);
+    background-image: var(--ds-form-select-bg-img), var(--ds-form-valid-icon-svg);
+    background-position: right 0.75rem center, right var(--ds-form-validation-padding-right) center;
+    background-size: 16px 12px, var(--ds-form-validation-icon-size);
+    padding-right: calc(var(--ds-form-validation-padding-right) + 1.5rem); /* Space for both icons */
+}
+
+.form-select.is-invalid,
+.was-validated .form-select:invalid {
+    border-color: var(--ds-danger);
+    background-image: var(--ds-form-select-bg-img), var(--ds-form-invalid-icon-svg);
+    background-position: right 0.75rem center, right var(--ds-form-validation-padding-right) center;
+    background-size: 16px 12px, var(--ds-form-validation-icon-size);
+    padding-right: calc(var(--ds-form-validation-padding-right) + 1.5rem);
+}
+
+/* Choices.js Validation */
+.choices.is-valid .choices__inner { border-color: var(--ds-success) !important; }
+.choices.is-invalid .choices__inner { border-color: var(--ds-danger) !important; }
+
+/* Choices.js Focus states when valid/invalid */
+.choices.is-valid.is-focused .choices__inner,
+.choices.is-invalid.is-focused .choices__inner {
+    box-shadow: 0 0 0 0.25rem rgba(var(--ds-primary-rgb), 0.25) !important; /* Use primary focus ring */
+}
 .customTooltip {
     align-items: center;
     background-color: var(--ds-primary-bg-subtle);
@@ -31935,12 +31885,9 @@ div.table-responsive>div.dataTables_wrapper>div.row {
 }
 
 .choices[data-type*=select-one] .choices__input {
-    background-color: transparent;
-    border: none;
-    display: block;
     margin: 0;
     padding: 0;
-    width: 100%
+    width: 100%;
 }
 
 .choices[data-type*=select-one] .choices__button {
@@ -32133,9 +32080,6 @@ div.table-responsive>div.dataTables_wrapper>div.row {
     padding: 0.6rem 0.8rem;
     font-size: .875rem;
     color: var(--ds-body-color);
-    border-radius: var(--ds-border-radius-sm);
-    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
-    border-bottom: none !important;
 }
 
 /* Eliminar completamente la línea blanca del input interno */
@@ -32147,10 +32091,6 @@ div.table-responsive>div.dataTables_wrapper>div.row {
 
 /* Sobrescribir estilos de la librería Choices.js */
 .choices[data-type*=select-one] .choices__input {
-    background-color: transparent !important;
-    border: none !important;
-    border-bottom: none !important;
-    display: block;
     margin: 0;
     padding: 0;
     width: 100%;
@@ -32161,15 +32101,10 @@ div.table-responsive>div.dataTables_wrapper>div.row {
     border-bottom: none !important;
 }
 
-.choices__list--dropdown .choices__input {
-    border-bottom: none !important;
-}
-
 /* Sobrescribir completamente los estilos problemáticos de choices.min.css */
 .choices[data-type*=select-one] .choices__input {
     background-color: transparent !important;
     border: none !important;
-    border-bottom: none !important;
     padding: 0 !important;
     margin: 0 !important;
 }
@@ -32193,6 +32128,7 @@ div.table-responsive>div.dataTables_wrapper>div.row {
 }
 
 .choices__inner {
+    /* Base styles for Choices.js to mimic form-control */
     background-color: var(--ds-body-bg) !important;
     border: 1px solid var(--ds-border-color) !important;
     border-radius: var(--ds-border-radius) !important;
@@ -32218,6 +32154,29 @@ div.table-responsive>div.dataTables_wrapper>div.row {
     appearance: none !important;
 }
 
+/* Choices.js Validation Icons */
+.choices.is-valid .choices__inner {
+    border-color: var(--ds-success) !important;
+    background-image: var(--ds-form-select-bg-img), var(--ds-form-valid-icon-svg) !important;
+    background-position: right 0.75rem center, right var(--ds-form-validation-padding-right) center !important;
+    background-size: 16px 12px, var(--ds-form-validation-icon-size) !important;
+    padding-right: calc(var(--ds-form-validation-padding-right) + 1.5rem) !important;
+}
+
+.choices.is-invalid .choices__inner {
+    border-color: var(--ds-danger) !important;
+    background-image: var(--ds-form-select-bg-img), var(--ds-form-invalid-icon-svg) !important;
+    background-position: right 0.75rem center, right var(--ds-form-validation-padding-right) center !important;
+    background-size: 16px 12px, var(--ds-form-validation-icon-size) !important;
+    padding-right: calc(var(--ds-form-validation-padding-right) + 1.5rem) !important;
+}
+
+/* Choices.js Focus states when valid/invalid */
+.choices.is-valid.is-focused .choices__inner,
+.choices.is-invalid.is-focused .choices__inner {
+    box-shadow: 0 0 0 0.25rem rgba(var(--ds-primary-rgb), 0.25) !important; /* Use primary focus ring */
+}
+
 /* Asegurar que el texto seleccionado tenga el color correcto */
 .choices__list--single .choices__item {
     color: var(--ds-body-color) !important;
@@ -32225,6 +32184,10 @@ div.table-responsive>div.dataTables_wrapper>div.row {
 }
 
 .choices__list--dropdown .choices__item:last-child,
+.choices__list--dropdown .choices__item {
+    border-radius: var(--ds-border-radius-sm);
+    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
 .choices__list[aria-expanded] .choices__item:last-child {
     border-bottom: none;
 }

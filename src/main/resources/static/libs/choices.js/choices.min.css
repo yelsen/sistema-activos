@@ -392,6 +392,11 @@
     display: none !important;
 }
 
+/* Ocultar la opción del placeholder (con value="") de la lista desplegable */
+.choices__list--dropdown .choices__item[data-value=""] {
+    display: none !important;
+}
+
 [dir=rtl] .choices__list--dropdown .choices__item,
 [dir=rtl] .choices__list[aria-expanded] .choices__item {
     text-align: right;
@@ -539,20 +544,8 @@
     opacity: var(--choices-placeholder-opacity);
 }
 
-/* Estilos para cuando no hay placeholder definido */
-.choices__inner:not([data-placeholder]) .choices__placeholder {
-  display: none;
-}
 
-.choices__inner:not([data-placeholder]) .choices__list--single {
-  display: block !important;
-}
 
-/* ==== Variantes específicas: solo afectan a selects con buscador y múltiples ==== */
-
-/* ==== FIX: Select múltiple con búsqueda ==== */
-
-/* Head del dropdown para contener el input de búsqueda */
 .choices__dropdown-head {
     position: sticky;
     top: 0;

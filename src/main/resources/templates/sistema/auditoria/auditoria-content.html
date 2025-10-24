@@ -238,17 +238,14 @@
                     <div class="col-md-6 col-lg-3">
                         <label for="filtroModulo" class="form-label">Módulo</label>
                         <select id="filtroModulo" name="modulo" class="form-select" data-choices
-                            onchange="this.form.submit()">
-                            <option value="">Todos</option>
+                            onchange="this.form.submit()" placeholder="Todos los módulos">
                             <option th:each="m : ${modulos}" th:value="${m}" th:text="${m}" th:selected="${m == modulo}">
                             </option>
                         </select>
                     </div>
                     <div class="col-md-6 col-lg-3">
                         <label for="filtroAccion" class="form-label">Acción</label>
-                        <select id="filtroAccion" name="accion" class="form-select" data-choices
-                            onchange="this.form.submit()">
-                            <option value="">Todas</option>
+                        <select id="filtroAccion" name="accion" class="form-select" data-choices onchange="this.form.submit()" placeholder="Todas las acciones">
                             <option th:each="a : ${acciones}" th:value="${a.name()}"
                                 th:text="${#strings.capitalize(a.name().toLowerCase())}" th:selected="${a == accion}">
                             </option>
