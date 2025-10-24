@@ -6468,6 +6468,39 @@ Estilos Personalizados para Choices.js
     --choices-dropdown-border-color: rgba(99, 100, 129, 0.3);
 }
 
+/* Overrides de Choices para igualar .form-control (Claro) */
+.choices .choices__inner {
+    background-color: var(--ds-accordion-active-color) !important;
+    border-color: var(--ds-gray-300) !important;
+    color: var(--ds-body-color) !important;
+}
+
+.is-focused .choices__inner,
+.is-open .choices__inner {
+    border-color: #8ab4f8 !important;
+    box-shadow: 0 0 0 0.25rem rgba(var(--ds-primary-rgb), 0.25) !important;
+    outline: 0 !important;
+}
+
+.choices .choices__list--dropdown,
+.choices .choices__list[aria-expanded] {
+    background-color: var(--ds-white) !important;
+    border-color: var(--ds-gray-300) !important;
+}
+
+/* Overrides en Modo Oscuro */
+[data-bs-theme=dark] .choices .choices__inner {
+    background-color: var(--ds-white) !important;
+    border-color: var(--ds-gray-300) !important;
+    color: var(--ds-body-color) !important;
+}
+
+[data-bs-theme=dark] .choices .choices__list--dropdown,
+[data-bs-theme=dark] .choices .choices__list[aria-expanded] {
+    background-color: var(--ds-white) !important;
+    border-color: var(--ds-gray-300) !important;
+}
+
 /* Estados de botones durante peticiones HTMX */
 button.htmx-request {
     opacity: 0.7;
@@ -26607,7 +26640,7 @@ textarea.form-control.is-invalid,
 .form-select.is-valid,
 .was-validated .form-select:valid {
     border-color: var(--ds-success);
-    background-image: var(--ds-form-select-bg-img), var(--ds-form-valid-icon-svg);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2322c55e' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
     background-position: right 0.75rem center, right var(--ds-form-validation-padding-right) center;
     background-size: 16px 12px, var(--ds-form-validation-icon-size);
     padding-right: calc(var(--ds-form-validation-padding-right) + 1.5rem); /* Space for both icons */
@@ -26616,17 +26649,35 @@ textarea.form-control.is-invalid,
 .form-select.is-invalid,
 .was-validated .form-select:invalid {
     border-color: var(--ds-danger);
-    background-image: var(--ds-form-select-bg-img), var(--ds-form-invalid-icon-svg);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23f44336'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23f44336' stroke='none'/%3e%3c/svg%3e");
     background-position: right 0.75rem center, right var(--ds-form-validation-padding-right) center;
     background-size: 16px 12px, var(--ds-form-validation-icon-size);
     padding-right: calc(var(--ds-form-validation-padding-right) + 1.5rem);
 }
 
-/* Choices.js Validation */
-.choices.is-valid .choices__inner { border-color: var(--ds-success) !important; }
-.choices.is-invalid .choices__inner { border-color: var(--ds-danger) !important; }
+/* Choices.js Validation (with icons) */
+.choices.is-valid .choices__inner {
+    border-color: var(--ds-success) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%2322c55e' d='M13.485 2.515a1 1 0 010 1.414l-7.071 7.071a1 1 0 01-1.414 0L2.515 8.515a1 1 0 011.414-1.414L6.5 9.672l6.071-6.071a1 1 0 011.414 0z'/%3E%3C/svg%3E"), none;
+    background-repeat: no-repeat;
+    background-position: right 2rem center;
+    background-size: 1rem 1rem;
+    padding-right: 3rem;
+}
+.choices.is-invalid .choices__inner {
+    border-color: var(--ds-danger) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23ff5630' d='M8 1.333a6.667 6.667 0 100 13.334A6.667 6.667 0 008 1.333zm0 9.334a1 1 0 110 2 1 1 0 010-2zm1-6.667H7v6h2v-6z'/%3E%3C/svg%3E"), none;
+    background-repeat: no-repeat;
+    background-position: right 2rem center;
+    background-size: 1rem 1rem;
+    padding-right: 3rem;
+}
+/* Ocultar icono cuando el desplegable está abierto */
+.choices.is-open .choices__inner {
+    background-image: none !important;
+}
 
-/* Choices.js Focus states when valid/invalid */
+/* Choices.js Focus states cuando válido/ inválido */
 .choices.is-valid.is-focused .choices__inner,
 .choices.is-invalid.is-focused .choices__inner {
     box-shadow: 0 0 0 0.25rem rgba(var(--ds-primary-rgb), 0.25) !important; /* Use primary focus ring */

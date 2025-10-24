@@ -10,7 +10,7 @@
     /* Colores base */
     --choices-bg-color: #f9f9fa;
     --choices-bg-color-dropdown: #ffffff;
-    --choices-text-color: #333333;
+    --choices-text-color: var(--ds-body-color);
     --choices-border-color: #ddd;
     --choices-border-radius: 0.375rem;
 
