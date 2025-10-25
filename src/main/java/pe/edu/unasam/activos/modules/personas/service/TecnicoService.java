@@ -37,14 +37,14 @@ public class TecnicoService {
     }
 
     public TecnicoDTO.Response createTecnico(TecnicoDTO.Request request) {
-        if (!tecnicoRepository.findByPersona_NumeroDocumento(request.getDocumentoPersona()).isEmpty()) {
+        if (!tecnicoRepository.findByPersona_Dni(request.getDniPersona()).isEmpty()) {
             throw new BusinessException(
-                    "La persona con documento " + request.getDocumentoPersona() + " ya está registrada como técnico.");
+                    "La persona con DNI " + request.getDniPersona() + " ya está registrada como técnico.");
         }
 
-        Persona persona = personaRepository.findById(request.getDocumentoPersona())
+        Persona persona = personaRepository.findById(request.getDniPersona())
                 .orElseThrow(() -> new NotFoundException(
-                        "Persona no encontrada con documento: " + request.getDocumentoPersona()));
+                        "Persona no encontrada con documento: " + request.getDniPersona()));
         EspecialidadTecnico especialidad = especialidadRepository.findById(request.getIdEspecialidad())
                 .orElseThrow(() -> new NotFoundException(
                         "Especialidad no encontrada con ID: " + request.getIdEspecialidad()));
@@ -60,17 +60,17 @@ public class TecnicoService {
                 .orElseThrow(() -> new NotFoundException("Técnico no encontrado con ID: " + id));
 
         // Validar que la persona no esté asignada a OTRO técnico
-        tecnicoRepository.findByPersona_NumeroDocumento(request.getDocumentoPersona()).stream()
+        tecnicoRepository.findByPersona_Dni(request.getDniPersona()).stream()
                 .filter(t -> !t.getIdTecnico().equals(id))
                 .findFirst()
                 .ifPresent(t -> {
-                    throw new BusinessException("La persona con documento " + request.getDocumentoPersona()
+                    throw new BusinessException("La persona con DNI " + request.getDniPersona()
                             + " ya está registrada como otro técnico.");
                 });
 
-        Persona persona = personaRepository.findById(request.getDocumentoPersona())
+        Persona persona = personaRepository.findById(request.getDniPersona())
                 .orElseThrow(() -> new NotFoundException(
-                        "Persona no encontrada con documento: " + request.getDocumentoPersona()));
+                        "Persona no encontrada con documento: " + request.getDniPersona()));
         EspecialidadTecnico especialidad = especialidadRepository.findById(request.getIdEspecialidad())
                 .orElseThrow(() -> new NotFoundException(
                         "Especialidad no encontrada con ID: " + request.getIdEspecialidad()));
@@ -95,7 +95,7 @@ public class TecnicoService {
         return new TecnicoDTO.Response(
                 tecnico.getIdTecnico(),
                 tecnico.getPersona().getNombres() + " " + tecnico.getPersona().getApellidos(),
-                tecnico.getPersona().getNumeroDocumento(),
+                tecnico.getPersona().getDni(),
                 tecnico.getEspecialidadTecnico().getNombreEspecialidad());
     }
 }

@@ -11,6 +11,6 @@ public interface TecnicoRepository extends JpaRepository<Tecnico, Integer> {
     
     List<Tecnico> findByEspecialidadTecnico_IdEspecialidadTecnico(Integer idEspecialidad);
 
-    List<Tecnico> findByPersona_NumeroDocumento(String numeroDocumento);
+    List<Tecnico> findByPersona_Dni(String dni);
 }
 

@@ -204,7 +204,7 @@ public class AuthService {
                 : usuario.getUsuario();
 
         String email = usuario.getPersona() != null ? usuario.getPersona().getEmail() : null;
-        String documento = usuario.getPersona() != null ? usuario.getPersona().getNumeroDocumento() : null;
+        String documento = usuario.getPersona() != null ? usuario.getPersona().getDni() : null;
 
         return UserInfoResponse.builder()
                 .idUsuario(usuario.getIdUsuario())
@@ -236,7 +236,7 @@ public class AuthService {
                 .usuario(usuario.getUsuario())
                 .nombreCompleto(nombreCompleto)
                 .email(usuario.getPersona().getEmail())
-                .documento(usuario.getPersona().getNumeroDocumento())
+                .documento(usuario.getPersona().getDni())
                 .roles(roles)
                 .permisos(permisos)
                 .build();

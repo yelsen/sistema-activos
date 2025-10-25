@@ -114,20 +114,18 @@ window.validateField = function (field) {
 
     // Usar API de Constraint Validation sin disparar eventos
     const isValid = field.validity ? field.validity.valid : true;
-    const showFeedback = (typeof field.value === 'string' ? field.value.trim() !== '' : !!field.value) || field.required || !isValid;
+    const formEl = field.closest('form');
+    const hasContent = (typeof field.value === 'string' ? field.value.trim() !== '' : !!field.value);
+    // Mostrar feedback solo si hay contenido o si el formulario fue validado (submit)
+    const showFeedback = hasContent || (formEl && formEl.classList.contains('was-validated'));
 
-    if (isValid && showFeedback) {
-        field.classList.remove('is-invalid');
-        field.classList.add('is-valid');
-    } else {
-        field.classList.remove('is-valid');
-        if (!isValid) {
-            field.classList.add('is-invalid');
-        } else {
-            field.classList.remove('is-invalid');
-        }
+    // Estado visual del propio campo
+    field.classList.remove('is-valid', 'is-invalid');
+    if (showFeedback) {
+        field.classList.add(isValid ? 'is-valid' : 'is-invalid');
     }
 
+    // Sincronizar estado visual de selects con Choices
     if (field.tagName === 'SELECT') {
         let choicesContainer = field.closest('.choices');
         if (!choicesContainer) {
@@ -138,12 +136,8 @@ window.validateField = function (field) {
         }
         if (choicesContainer) {
             choicesContainer.classList.remove('is-valid', 'is-invalid');
-            if (isValid && field.value) {
-                choicesContainer.classList.add('is-valid');
-            } else {
-                if (!isValid) {
-                    choicesContainer.classList.add('is-invalid');
-                }
+            if (showFeedback) {
+                choicesContainer.classList.add((isValid && field.value) ? 'is-valid' : 'is-invalid');
             }
         }
     }

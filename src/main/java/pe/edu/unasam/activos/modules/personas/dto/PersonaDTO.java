@@ -15,7 +15,7 @@ public class PersonaDTO {
 
         @NotBlank(message = "El número de documento no puede estar en blanco")
         @Size(max = 20, message = "El número de documento no puede exceder 20 caracteres")
-        private String numeroDocumento;
+        private String dni;
 
         @NotBlank(message = "El apellido no puede estar en blanco")
         @Size(max = 100, message = "El apellido no puede exceder 100 caracteres")
@@ -40,9 +40,6 @@ public class PersonaDTO {
 
         @NotNull(message = "El estado no puede ser nulo")
         private EstadoPersona estadoPersona;
-
-        @NotNull(message = "El tipo de documento es obligatorio")
-        private Integer idTipoDocumento;
     }
 
     @Data
@@ -50,8 +47,7 @@ public class PersonaDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Response {
-        private String numeroDocumento;
-        private String tipoDocumento;
+        private String dni;
         private String apellidos;
         private String nombres;
         private String email;

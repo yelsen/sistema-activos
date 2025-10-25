@@ -19,12 +19,12 @@ public interface PersonaRepository extends JpaRepository<Persona, String>, JpaSp
     List<Persona> findByApellidosContainingIgnoreCaseOrNombresContainingIgnoreCase(
             String apellidos, String nombres);
 
-    @Query(value = "SELECT p FROM Persona p WHERE NOT EXISTS (SELECT u FROM Usuario u WHERE u.persona.numeroDocumento = p.numeroDocumento) "
+    @Query(value = "SELECT p FROM Persona p WHERE NOT EXISTS (SELECT u FROM Usuario u WHERE u.persona.dni = p.dni) "
             +
             "AND (:query IS NULL OR :query = '' OR " +
             "LOWER(p.nombres) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(p.apellidos) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR p.numeroDocumento LIKE CONCAT('%', :query, '%'))")
+            "OR p.dni LIKE CONCAT('%', :query, '%'))")
     Page<Persona> findPersonasSinUsuarioPaginado(String query, Pageable pageable);
 
     @Query("SELECT p FROM Persona p WHERE CONCAT(p.apellidos, ' ', p.nombres) LIKE %:nombreCompleto%")
@@ -32,5 +32,5 @@ public interface PersonaRepository extends JpaRepository<Persona, String>, JpaSp
 
     boolean existsByEmail(String email);
 
-    List<Persona> findByNumeroDocumentoNotIn(List<String> numeroDocumentos);
+    List<Persona> findByDniNotIn(List<String> dnis);
 }

@@ -25,23 +25,15 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
         boolean existsByPersona(Persona persona);
 
-        boolean existsByPersona_NumeroDocumento(String numeroDocumento);
+        boolean existsByPersona_Dni(String dni);
 
         long countByRol(Rol rol);
 
-        /**
-         * Búsqueda mejorada con filtros optimizados
-         * - Búsqueda insensible a mayúsculas/minúsculas
-         * - Búsqueda en múltiples campos
-         * - Filtro opcional por estado
-         * - Eager loading de relaciones para evitar N+1 queries
-         */
         @Query("SELECT DISTINCT u FROM Usuario u " +
                         "LEFT JOIN FETCH u.persona p " +
-                        "LEFT JOIN FETCH p.tipoDocumento " + 
                         "LEFT JOIN FETCH u.rol r " +
                         "WHERE (:query IS NULL OR " +
-                        "  LOWER(p.numeroDocumento) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+                        "  LOWER(p.dni) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
                         "  LOWER(CONCAT(p.nombres, ' ', p.apellidos)) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
                         "  LOWER(u.usuario) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
                         "  LOWER(p.email) LIKE LOWER(CONCAT('%', :query, '%'))) " +

@@ -25,14 +25,14 @@ public class PersonaService {
     @Transactional(readOnly = true)
     public List<PersonaDTO.Response> findPersonasSinUsuario() {
         List<String> documentosConUsuario = usuarioRepository.findAll().stream()
-                .map(usuario -> usuario.getPersona().getNumeroDocumento())
+                .map(usuario -> usuario.getPersona().getDni())
                 .collect(Collectors.toList());
 
         List<Persona> personasSinUsuario;
         if (documentosConUsuario.isEmpty()) {
             personasSinUsuario = personaRepository.findAll();
         } else {
-            personasSinUsuario = personaRepository.findByNumeroDocumentoNotIn(documentosConUsuario);
+            personasSinUsuario = personaRepository.findByDniNotIn(documentosConUsuario);
         }
 
         return personasSinUsuario.stream()
@@ -47,14 +47,14 @@ public class PersonaService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<PersonaDTO.PersonaUsuarioResponse> findPersonaParaUsuario(String numeroDocumento) {
-        Optional<Persona> personaOpt = personaRepository.findById(numeroDocumento);
+    public Optional<PersonaDTO.PersonaUsuarioResponse> findPersonaParaUsuario(String dni) {
+        Optional<Persona> personaOpt = personaRepository.findById(dni);
         if (personaOpt.isEmpty()) {
             return Optional.empty();
         }
 
         Persona persona = personaOpt.get();
-        boolean tieneUsuario = usuarioRepository.existsByPersona_NumeroDocumento(numeroDocumento);
+        boolean tieneUsuario = usuarioRepository.existsByPersona_Dni(dni);
 
         var response = PersonaDTO.PersonaUsuarioResponse.builder()
                 .nombres(persona.getNombres())
@@ -71,10 +71,9 @@ public class PersonaService {
 
     private PersonaDTO.Response convertToDto(Persona persona) {
         return PersonaDTO.Response.builder()
-                .numeroDocumento(persona.getNumeroDocumento())
+                .dni(persona.getDni())
                 .nombres(persona.getNombres())
                 .apellidos(persona.getApellidos())
-                .tipoDocumento(persona.getTipoDocumento() != null ? persona.getTipoDocumento().getTipoDocumento() : null)
                 .email(persona.getEmail())
                 .telefono(persona.getTelefono())
                 .direccion(persona.getDireccion())

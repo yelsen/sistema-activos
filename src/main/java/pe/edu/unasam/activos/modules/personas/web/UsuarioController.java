@@ -20,7 +20,6 @@ import pe.edu.unasam.activos.common.enums.Genero;
 import pe.edu.unasam.activos.modules.personas.dto.UsuarioDTO;
 import pe.edu.unasam.activos.modules.personas.service.UsuarioService;
 import pe.edu.unasam.activos.modules.sistema.service.RolService;
-import pe.edu.unasam.activos.modules.personas.service.TipoDocumentoService;
 import pe.edu.unasam.activos.common.exception.BusinessException;
 
 import java.beans.PropertyEditorSupport;
@@ -38,7 +37,6 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
     private final RolService rolService;
-    private final TipoDocumentoService tipoDocumentoService;
     private final ObjectMapper objectMapper;
 
     @InitBinder
@@ -83,13 +81,13 @@ public class UsuarioController {
             var roles = rolService.findAllRolesForSelect();
             Map<Integer, String> rolColorMap = roles.stream()
                     .collect(Collectors.toMap(
-                            rol -> rol.getIdRol(),
-                            rol -> rol.getColorRol()));
+                            rol -> rol.getIdRol(), // Key
+                            rol -> rol.getColorRol() != null ? rol.getColorRol() : "#6c757d" // Value, con fallback
+                    ));
             model.addAttribute("rolColorMap", rolColorMap);
             
             if (!fragment) {
                 model.addAttribute("roles", roles);
-                model.addAttribute("tiposDocumento", tipoDocumentoService.findAllTiposDocumento());
                 model.addAttribute("estadosUsuario", EstadoUsuario.values());
                 model.addAttribute("generos", Genero.values());
                 model.addAttribute("rolColorMapJson", objectMapper.writeValueAsString(rolColorMap));
@@ -140,7 +138,6 @@ public class UsuarioController {
         UsuarioDTO.Response usuario = usuarioService.getUsuarioById(id);
         model.addAttribute("usuario", usuario);
         model.addAttribute("roles", rolService.findAllRolesForSelect());
-        model.addAttribute("tiposDocumento", tipoDocumentoService.findAllTiposDocumento());
         return "sistema/usuarios/modal/EditarForm :: editForm";
     }
     

@@ -17,8 +17,8 @@ public class ResponsableDTO {
     @AllArgsConstructor
     public static class Request {
 
-        @NotNull(message = "El documento de la persona es obligatorio")
-        private String documentoPersona;
+        @NotNull(message = "El DNI de la persona es obligatorio")
+        private String dniPersona;
 
         @NotNull(message = "El cargo es obligatorio")
         private Integer idCargo;
@@ -41,7 +41,7 @@ public class ResponsableDTO {
     public static class Response {
         private Integer idResponsable;
         private String nombrePersona;
-        private String documentoPersona;
+        private String dniPersona;
         private String nombreCargo;
         private String nombreOficina;
         private LocalDate fechaAsignacion;

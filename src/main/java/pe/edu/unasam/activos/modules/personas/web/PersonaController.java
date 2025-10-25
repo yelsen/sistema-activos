@@ -22,9 +22,9 @@ public class PersonaController {
     @GetMapping("/buscar")
     @PreAuthorize("hasAuthority('USUARIOS_CREAR')")
     public ResponseEntity<PersonaDTO.PersonaUsuarioResponse> buscarPersonaPorDocumento(
-            @RequestParam String numeroDocumento) {
+            @RequestParam String dni) {
 
-        Optional<PersonaDTO.PersonaUsuarioResponse> personaResponse = personaService.findPersonaParaUsuario(numeroDocumento);
+        Optional<PersonaDTO.PersonaUsuarioResponse> personaResponse = personaService.findPersonaParaUsuario(dni);
 
         return personaResponse.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

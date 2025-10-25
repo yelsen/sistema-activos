@@ -15,8 +15,8 @@ public class TecnicoDTO {
     @AllArgsConstructor
     public static class Request {
 
-        @NotBlank(message = "El documento de la persona es obligatorio")
-        private String documentoPersona;
+        @NotBlank(message = "El DNI de la persona es obligatorio")
+        private String dniPersona;
 
         @NotNull(message = "La especialidad es obligatoria")
         private Integer idEspecialidad;
@@ -29,7 +29,7 @@ public class TecnicoDTO {
     public static class Response {
         private Integer idTecnico;
         private String nombrePersona;
-        private String documentoPersona;
+        private String dniPersona;
         private String nombreEspecialidad;
     }
 }

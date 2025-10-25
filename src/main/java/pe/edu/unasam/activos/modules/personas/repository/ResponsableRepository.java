@@ -20,5 +20,5 @@ public interface ResponsableRepository extends JpaRepository<Responsable, Intege
     @Query("SELECT r FROM Responsable r WHERE r.oficina.idOficina = :idOficina AND r.esResponsablePrincipal = true AND r.estadoResponsable = 'ACTIVO'")
     List<Responsable> findResponsablesPrincipalesByOficina(@Param("idOficina") Integer idOficina);
 
-    List<Responsable> findByPersona_NumeroDocumento(String numeroDocumento);
+    List<Responsable> findByPersona_Dni(String dni);
 }

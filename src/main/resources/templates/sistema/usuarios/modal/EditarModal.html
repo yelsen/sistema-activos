@@ -37,7 +37,7 @@
                                 <strong>Persona:</strong> <span th:text="${usuario.nombrePersona}"></span>
                                 <br>
                                 <small>
-                                    <strong>Documento:</strong> <span th:text="${usuario.documentoPersona}"></span>
+                                    <strong>DNI:</strong> <span th:text="${usuario.dniPersona}"></span>
                                 </small>
                             </div>
                         </div>
@@ -49,7 +49,7 @@
                             Nombre de Usuario <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control" id="editarUsuario" name="usuario" required
-                            th:value="${usuario.usuario}"
+                            th:attr="value=${usuario.usuario}"
                             th:classappend="${#fields.hasErrors('usuario')} ? 'is-invalid' : ''">
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('usuario')}" th:errors="*{usuario}">
                         </div>
@@ -79,8 +79,8 @@
                         <small class="text-muted">Mínimo 8 caracteres</small>
                     </div>
 
-                    <!-- Campo oculto para el documento de persona -->
-                    <input type="hidden" name="documentoPersona" th:value="${usuario.documentoPersona}">
+                    <!-- Campo oculto para el DNI de la persona -->
+                    <input type="hidden" name="dniPersona" th:value="${usuario.dniPersona}">
                 </div>
             </div>
             <div class="modal-footer">

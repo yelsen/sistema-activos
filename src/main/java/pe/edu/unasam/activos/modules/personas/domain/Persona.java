@@ -20,13 +20,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor 
 @AllArgsConstructor 
 @Builder
-@SQLDelete(sql = "UPDATE personas SET deleted_at = NOW(), estado = 'INACTIVO' WHERE documento = ?")
+@SQLDelete(sql = "UPDATE personas SET deleted_at = NOW(), estado_persona = 'INACTIVO' WHERE dni = ?")
 @SQLRestriction("deleted_at IS NULL")
 public class Persona {
     
     @Id
-    @Column(name = "numero_documento", length = 20)
-    private String numeroDocumento;
+    @Column(name = "dni", length = 20)
+    private String dni;
     
     @Column(name = "apellidos", length = 100, nullable = false)
     private String apellidos;
@@ -50,10 +50,6 @@ public class Persona {
     @Enumerated(EnumType.STRING)
     @Column(name = "estado_persona")
     private EstadoPersona estadoPersona;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_idtipo_documento", referencedColumnName = "idtipo_documento")
-    private TipoDocumento tipoDocumento;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)

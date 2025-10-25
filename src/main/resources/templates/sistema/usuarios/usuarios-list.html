@@ -8,7 +8,7 @@
         <table class="table table-hover align-middle">
             <thead class="table-light">
                 <tr>
-                    <th>Documento</th>
+                    <th>DNI</th>
                     <th>Nombre Completo</th>
                     <th>Usuario</th>
                     <th>Email</th>
@@ -20,19 +20,13 @@
             </thead>
             <tbody>
                 <tr th:each="usuario : ${usuariosPage.content}">
-                    <!-- Documento -->
-                    <td>
-                        <div>
-                            <span class="badge bg-secondary-subtle text-secondary-emphasis" 
-                                  th:text="${usuario.tipoDocumentoPersona}"></span>
-                            <div class="text-muted small mt-1" th:text="${usuario.documentoPersona}"></div>
-                        </div>
-                    </td>
+                    <!-- DNI -->
+                    <td th:text="${usuario.dniPersona}"></td>
                     
                     <!-- Nombre -->
                     <td>
                         <div class="fw-medium" th:text="${usuario.nombrePersona}"></div>
-                        <small class="text-muted" th:if="${usuario.generoPersona != null}" 
+                        <small class="badge bg-primary-subtle text-primary-emphasis" th:if="${usuario.generoPersona != null}" 
                                th:text="${usuario.generoPersona}"></small>
                     </td>
                     

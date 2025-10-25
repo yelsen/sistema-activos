@@ -32,9 +32,9 @@ public class UsuarioDTO {
         @NotNull(message = "El rol es obligatorio")
         private Integer idRol;
 
-        @NotBlank(message = "El documento es obligatorio")
-        @Size(max = 20, message = "El documento no puede exceder 20 caracteres")
-        private String documentoPersona;
+        @NotBlank(message = "El DNI es obligatorio")
+        @Size(max = 20, message = "El DNI no puede exceder 20 caracteres")
+        private String dniPersona;
 
         // Campos para crear persona (solo si no existe)
         private Integer idTipoDocumento;
@@ -74,9 +74,8 @@ public class UsuarioDTO {
 
         // Datos de la persona
         private String nombrePersona;
-        private String documentoPersona;
+        private String dniPersona;
         private String emailPersona;
-        private String tipoDocumentoPersona;
         private String telefonoPersona;
         private String direccionPersona;
         private Genero generoPersona;

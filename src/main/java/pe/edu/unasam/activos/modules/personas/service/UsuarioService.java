@@ -19,7 +19,7 @@ import pe.edu.unasam.activos.modules.personas.repository.PersonaRepository;
 import pe.edu.unasam.activos.modules.personas.repository.UsuarioRepository;
 import pe.edu.unasam.activos.modules.sistema.domain.Rol;
 import pe.edu.unasam.activos.modules.sistema.repository.RolRepository;
-import pe.edu.unasam.activos.modules.personas.repository.TipoDocumentoRepository;
+
 
 import java.util.Optional;
 import java.time.format.DateTimeFormatter;
@@ -32,7 +32,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PersonaRepository personaRepository;
     private final RolRepository rolRepository;
-    private final TipoDocumentoRepository tipoDocumentoRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
@@ -70,9 +70,9 @@ public class UsuarioService {
 
         Persona persona = findOrCreatePersona(request);
         // Validar que la persona no tenga ya un usuario
-        if (usuarioRepository.existsByPersona_NumeroDocumento(persona.getNumeroDocumento())) {
+        if (usuarioRepository.existsByPersona_Dni(persona.getDni())) {
             throw new BusinessException(
-                    "La persona con documento '" + persona.getNumeroDocumento() + "' ya tiene un usuario asignado.");
+                    "La persona con DNI '" + persona.getDni() + "' ya tiene un usuario asignado.");
         }
 
         // Mapear DTO a Entidad y encriptar contraseña
@@ -108,29 +108,21 @@ public class UsuarioService {
     }
 
     private Persona findOrCreatePersona(UsuarioDTO.Request request) {
-        return personaRepository.findById(request.getDocumentoPersona())
+        return personaRepository.findById(request.getDniPersona())
                 .orElseGet(() -> createNewPersona(request));
     }
 
     private Persona createNewPersona(UsuarioDTO.Request request) {
-        // Validaciones para crear una nueva persona
         if (!StringUtils.hasText(request.getNombres()) || !StringUtils.hasText(request.getApellidos())) {
             throw new BusinessException("Nombres y apellidos son requeridos para crear una nueva persona.");
         }
-        if (request.getIdTipoDocumento() == null) {
-            throw new BusinessException("El tipo de documento es requerido para crear una nueva persona.");
-        }
-
-        var tipoDoc = tipoDocumentoRepository.findById(request.getIdTipoDocumento())
-                .orElseThrow(() -> new NotFoundException("Tipo de documento no encontrado."));
 
         Persona nuevaPersona = Persona.builder()
-                .numeroDocumento(request.getDocumentoPersona())
-                .tipoDocumento(tipoDoc)
+                .dni(request.getDniPersona())
                 .nombres(request.getNombres())
                 .apellidos(request.getApellidos())
                 .email(request.getEmail())
-                .estadoPersona(EstadoPersona.ACTIVO) // Estado por defecto
+                .estadoPersona(EstadoPersona.ACTIVO)
                 .build();
         return personaRepository.save(nuevaPersona);
     }
@@ -187,15 +179,11 @@ public class UsuarioService {
 
         Optional<Persona> personaOpt = Optional.ofNullable(usuario.getPersona());
         builder.nombrePersona(personaOpt.map(p -> p.getNombres() + " " + p.getApellidos()).orElse("-"))
-                .documentoPersona(personaOpt.map(Persona::getNumeroDocumento).orElse("-"))
+                .dniPersona(personaOpt.map(Persona::getDni).orElse("-"))
                 .emailPersona(personaOpt.map(Persona::getEmail).filter(StringUtils::hasText).orElse("-"))
                 .telefonoPersona(personaOpt.map(Persona::getTelefono).filter(StringUtils::hasText).orElse("-"))
                 .direccionPersona(personaOpt.map(Persona::getDireccion).filter(StringUtils::hasText).orElse("-"))
-                .generoPersona(personaOpt.map(Persona::getGenero).orElse(null))
-                .tipoDocumentoPersona(personaOpt.map(Persona::getTipoDocumento)
-                                                .map(pe.edu.unasam.activos.modules.personas.domain.TipoDocumento::getTipoDocumento)
-                                                .filter(StringUtils::hasText)
-                                                .orElse("-"));
+                .generoPersona(personaOpt.map(Persona::getGenero).orElse(null));
 
         Optional<Rol> rolOpt = Optional.ofNullable(usuario.getRol());
         builder.nombreRol(rolOpt.map(Rol::getNombreRol).orElse("N/A"))

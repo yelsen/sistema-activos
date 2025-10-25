@@ -7,9 +7,7 @@ import pe.edu.unasam.activos.common.enums.Genero;
 import pe.edu.unasam.activos.common.enums.EstadoPersona;
 import pe.edu.unasam.activos.initialization.AbstractDataLoader;
 import pe.edu.unasam.activos.modules.personas.domain.Persona;
-import pe.edu.unasam.activos.modules.personas.domain.TipoDocumento;
 import pe.edu.unasam.activos.modules.personas.repository.PersonaRepository;
-import pe.edu.unasam.activos.modules.personas.repository.TipoDocumentoRepository;
 
 @Component
 @Order(7)
@@ -17,7 +15,6 @@ import pe.edu.unasam.activos.modules.personas.repository.TipoDocumentoRepository
 public class PersonaDataLoader extends AbstractDataLoader {
 
     private final PersonaRepository personaRepository;
-    private final TipoDocumentoRepository tipoDocumentoRepository;
     
     @Override
     protected String getLoaderName() {
@@ -31,12 +28,10 @@ public class PersonaDataLoader extends AbstractDataLoader {
     
     @Override
     protected void loadData() {
-        TipoDocumento tipoDni = tipoDocumentoRepository.findByTipoDocumento("DNI")
-                .orElseThrow(() -> new RuntimeException("Tipo DNI no encontrado"));
         
         Persona[] personas = {
             Persona.builder()
-                .numeroDocumento("12345678")
+                .dni("12345678")
                 .apellidos("Guevarra del Campo")
                 .nombres("Klisha")
                 .email("admin@unasam.edu.pe")
@@ -44,11 +39,10 @@ public class PersonaDataLoader extends AbstractDataLoader {
                 .direccion("UNASAM - Shancayan")
                 .genero(Genero.FEMENINO)
                 .estadoPersona(EstadoPersona.ACTIVO)
-                .tipoDocumento(tipoDni)
                 .build(),
             
             Persona.builder()
-                .numeroDocumento("87654321")
+                .dni("87654321")
                 .apellidos("García Pérez")
                 .nombres("Juan Carlos")
                 .email("jgarcia@unasam.edu.pe")
@@ -56,11 +50,10 @@ public class PersonaDataLoader extends AbstractDataLoader {
                 .direccion("Av. Centenario 200")
                 .genero(Genero.MASCULINO)
                 .estadoPersona(EstadoPersona.ACTIVO)
-                .tipoDocumento(tipoDni)
                 .build(),
             
             Persona.builder()
-                .numeroDocumento("11223344")
+                .dni("11223344")
                 .apellidos("Rodríguez Silva")
                 .nombres("María Elena")
                 .email("mrodriguez@unasam.edu.pe")
@@ -68,7 +61,6 @@ public class PersonaDataLoader extends AbstractDataLoader {
                 .direccion("Jr. San Martín 456")
                 .genero(Genero.FEMENINO)
                 .estadoPersona(EstadoPersona.ACTIVO)
-                .tipoDocumento(tipoDni)
                 .build()
         };
         

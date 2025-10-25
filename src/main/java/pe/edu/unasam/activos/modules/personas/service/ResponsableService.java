@@ -40,8 +40,8 @@ public class ResponsableService {
     }
 
     public ResponsableDTO.Response createResponsable(ResponsableDTO.Request request) {
-        Persona persona = personaRepository.findById(request.getDocumentoPersona())
-                .orElseThrow(() -> new NotFoundException("Persona no encontrada con documento: " + request.getDocumentoPersona()));
+        Persona persona = personaRepository.findById(request.getDniPersona())
+                .orElseThrow(() -> new NotFoundException("Persona no encontrada con DNI: " + request.getDniPersona()));
         Cargo cargo = cargoRepository.findById(request.getIdCargo())
                 .orElseThrow(() -> new NotFoundException("Cargo no encontrado con ID: " + request.getIdCargo()));
         Oficina oficina = oficinaRepository.findById(request.getIdOficina())
@@ -63,8 +63,8 @@ public class ResponsableService {
         Responsable responsable = responsableRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Responsable no encontrado con ID: " + id));
 
-        Persona persona = personaRepository.findById(request.getDocumentoPersona())
-                .orElseThrow(() -> new NotFoundException("Persona no encontrada con documento: " + request.getDocumentoPersona()));
+        Persona persona = personaRepository.findById(request.getDniPersona())
+                .orElseThrow(() -> new NotFoundException("Persona no encontrada con DNI: " + request.getDniPersona()));
         Cargo cargo = cargoRepository.findById(request.getIdCargo())
                 .orElseThrow(() -> new NotFoundException("Cargo no encontrado con ID: " + request.getIdCargo()));
         Oficina oficina = oficinaRepository.findById(request.getIdOficina())
@@ -93,7 +93,7 @@ public class ResponsableService {
         return new ResponsableDTO.Response(
                 responsable.getIdResponsable(),
                 responsable.getPersona().getNombres() + " " + responsable.getPersona().getApellidos(),
-                responsable.getPersona().getNumeroDocumento(),
+                responsable.getPersona().getDni(),
                 responsable.getCargo().getNombreCargo(),
                 responsable.getOficina().getNombreOficina(),
                 responsable.getFechaAsignacion(),

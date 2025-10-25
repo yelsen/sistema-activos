@@ -28,7 +28,7 @@ public class Tecnico {
     private Integer idTecnico;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_numero_documento", referencedColumnName = "numero_documento")
+    @JoinColumn(name = "fk_dni", referencedColumnName = "dni")
     private Persona persona;
 
     @ManyToOne(fetch = FetchType.LAZY)
