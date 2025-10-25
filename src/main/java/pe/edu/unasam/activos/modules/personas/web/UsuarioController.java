@@ -100,9 +100,9 @@ public class UsuarioController {
                 if (!model.containsAttribute("usuario")) {
                     model.addAttribute("usuario", new UsuarioDTO.Request());
                 }
-                return "sistema/usuarios/index";
+                return "seguridad/usuarios/index";
             } else {
-                return "sistema/usuarios/usuarios-list :: usuariosList";
+                return "seguridad/usuarios/usuarios-list :: usuariosList";
             }
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al cargar usuarios: " + e.getMessage(), e);
@@ -140,7 +140,7 @@ public class UsuarioController {
             model.addAttribute("usuario", usuario);
             model.addAttribute("roles", rolService.findAllRolesForSelect());
             model.addAttribute("generos", Genero.values());
-            return "sistema/usuarios/modal/EditarModal :: editarForm";
+            return "seguridad/usuarios/modal/EditarModal :: editarForm";
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         } catch (BusinessException e) {

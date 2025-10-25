@@ -20,46 +20,32 @@
             </thead>
             <tbody>
                 <tr th:each="usuario : ${usuariosPage.content}">
-                    <!-- DNI -->
                     <td th:text="${usuario.dniPersona}"></td>
-
-                    <!-- Nombre -->
                     <td>
                         <div class="fw-medium" th:text="${usuario.nombrePersona}"></div>
                         <small class="badge bg-primary-subtle text-primary-emphasis"
                             th:if="${usuario.generoPersona != null}" th:text="${usuario.generoPersona}"></small>
                     </td>
-
-                    <!-- Usuario -->
                     <td>
                         <span th:text="${usuario.usuario}"></span>
                     </td>
-
-                    <!-- Email -->
                     <td th:text="${usuario.emailPersona}"></td>
-
-                    <!-- Teléfono -->
                     <td th:text="${usuario.telefonoPersona}"></td>
-
-                    <!-- Rol -->
+                    
                     <td>
                         <span class="badge" th:text="${usuario.nombreRol}" th:style="${usuario.idRol != null and rolColorMap != null 
                                   ? 'background-color: ' + rolColorMap[usuario.idRol] + ' !important; color: white;' 
                                   : 'background-color: #6c757d !important; color: white;'}">
                         </span>
                     </td>
-
-                    <!-- Estado -->
                     <td>
-                        <span class="badge"
-                              th:classappend="${usuario.estadoUsuarios.name() == 'ACTIVO' 
+                        <span class="badge" th:classappend="${usuario.estadoUsuarios.name() == 'ACTIVO' 
                                   ? 'bg-success-subtle text-success-emphasis' 
                                   : (usuario.estadoUsuarios.name() == 'BLOQUEADO' 
                                       ? 'bg-danger-subtle text-danger-emphasis' 
                                       : (usuario.estadoUsuarios.name() == 'PENDIENTE' 
                                           ? 'bg-warning-subtle text-warning-emphasis' 
-                                          : 'bg-secondary-subtle text-secondary-emphasis'))}"
-                              th:text="${usuario.estadoUsuarios.name() == 'ACTIVO' 
+                                          : 'bg-secondary-subtle text-secondary-emphasis'))}" th:text="${usuario.estadoUsuarios.name() == 'ACTIVO' 
                                   ? 'Activo' 
                                   : (usuario.estadoUsuarios.name() == 'BLOQUEADO' 
                                       ? 'Bloqueado' 
@@ -72,9 +58,9 @@
                     <!-- Acciones -->
                     <td class="text-center">
                         <div class="dropdown dropstart">
-                            <button class="btn btn-icon btn-ghost btn-sm rounded-circle" type="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="ti ti-dots-vertical"></i>
+                            <button class="btn btn-icon btn-ghost btn-sm rounded-circle bg-secondary-subtle"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="ti ti-dots-vertical"></span>
                             </button>
                             <ul class="dropdown-menu">
                                 <li sec:authorize="hasAuthority('USUARIOS_EDITAR')">

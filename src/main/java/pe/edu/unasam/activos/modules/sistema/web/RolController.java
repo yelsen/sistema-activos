@@ -59,9 +59,9 @@ public class RolController {
                 model.addAttribute("permisosTabla", permisoService.getPermisosAsTabla());
                 model.addAttribute("acciones", permisoService.getAllAcciones());
                 if ("true".equals(request.getHeader("X-Requested-With-Fragment"))) {
-                        return "sistema/roles/roles-content :: rolesList";
+                        return "seguridad/roles/roles-content :: rolesList";
                 }
-                return "sistema/roles/index";
+                return "seguridad/roles/index";
         }
 
         @GetMapping("/{id}/json")
@@ -81,7 +81,7 @@ public class RolController {
                 model.addAttribute("acciones", permisoService.getAllAcciones());
                 model.addAttribute("rol", rol);
                 model.addAttribute("permisosSeleccionados", getPermisosSeleccionados(rol));
-                return "sistema/roles/modal/EditarModal :: contenido-editar";
+                return "seguridad/roles/modal/EditarModal :: contenido-editar";
         }
 
         @GetMapping("/detalles/{id}")
@@ -93,7 +93,7 @@ public class RolController {
                 model.addAttribute("acciones", permisoService.getAllAcciones());
                 model.addAttribute("rol", rol);
                 model.addAttribute("permisosSeleccionados", getPermisosSeleccionados(rol));
-                return "sistema/roles/modal/DetalleModal :: detalle-content";
+                return "seguridad/roles/modal/DetalleModal :: detalle-content";
         }
 
         @PostMapping

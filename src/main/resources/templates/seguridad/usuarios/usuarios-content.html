@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<div th:fragment="content">
+    <!-- Header de la página -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="mb-2 h2">Gestión de Usuarios</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="#">Seguridad</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Usuarios</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="card" id="usuarios-content-wrapper">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="card-title mb-0">Listado de Usuarios</h5>
+                <p class="mb-0 text-secondary small">Administra los usuarios, sus roles y estados en el sistema.</p>
+            </div>
+            <div sec:authorize="hasAuthority('USUARIOS_CREAR')">
+                <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+                    data-bs-target="#modalCrearUsuario">
+                    <i class="ti ti-plus me-1"></i> Nuevo Usuario
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Formulario de Búsqueda y Filtro -->
+            <form id="filterForm" th:action="@{/seguridad/usuarios}" method="get" class="row g-3 py-2">
+                <div class="col-md-8">
+                    <input type="text" class="form-control"
+                        placeholder="Buscar por documento, nombre, usuario, email o rol..." th:value="${query}"
+                        name="query" id="searchInput">
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="estado" name="estado" data-choices>
+                        <option value="">Todos los estados</option>
+                        <option th:each="e : ${estadosUsuario}" th:value="${e.name()}"
+                            th:text="${#strings.capitalize(e.name().toLowerCase())}" th:selected="${estado == e}">
+                        </option>
+                    </select>
+                </div>
+            </form>
+
+            <!-- Contenedor para la lista de usuarios que se actualizará dinámicamente -->
+            <div id="usuarios-list-container" class="pt-2">
+                <div th:replace="~{seguridad/usuarios/usuarios-list :: usuariosList}"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inclusión de Modales -->
+    <div th:replace="~{seguridad/usuarios/modal/CrearModal :: modalCrear}"></div>
+    <div th:replace="~{seguridad/usuarios/modal/EditarModal :: modalEditar}"></div>
+    <div th:replace="~{seguridad/usuarios/modal/EliminarModal :: modalEliminar}"></div>
+
+    <!-- Utilidad global reutilizable -->
+    <script th:src="@{/js/persona-search.js}"></script>
+
+    <!-- Scripts de la tabla -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const listContainer = document.getElementById('usuarios-list-container');
+            const searchInput = document.getElementById('searchInput');
+            const estadoSelect = document.getElementById('estado');
+
+            let debounceTimer;
+            let controller;
+
+            function toFragmentUrl(href) {
+                const u = new URL(href, window.location.origin);
+                u.searchParams.set('fragment', 'true');
+                return u.pathname + '?' + u.searchParams.toString();
+            }
+
+            function sanitizeUrlForHistory(href) {
+                const u = new URL(href, window.location.origin);
+                u.searchParams.delete('fragment');
+                const params = u.searchParams.toString();
+                return u.pathname + (params ? ('?' + params) : '');
+            }
+
+            function fetchUsuariosByHref(href) {
+                if (!listContainer) return;
+
+                if (controller) {
+                    controller.abort();
+                }
+                controller = new AbortController();
+
+                listContainer.classList.add('loading');
+                const fragmentUrl = toFragmentUrl(href);
+
+                return fetch(fragmentUrl, { signal: controller.signal })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error('Error ' + response.status + ': ' + response.statusText);
+                        }
+                        return response.text();
+                    })
+                    .then((html) => {
+                        listContainer.innerHTML = html;
+                        if (window.reinitializeChoices) {
+                            window.reinitializeChoices();
+                        }
+                        // Reinicializar tooltips de Bootstrap para elementos recién insertados
+                        const tooltipTriggerList = listContainer.querySelectorAll('[data-bs-toggle="tooltip"]');
+                        [...tooltipTriggerList].forEach(el => new bootstrap.Tooltip(el));
+                        history.pushState(null, '', sanitizeUrlForHistory(href));
+                    })
+                    .catch((error) => {
+                        if (error.name !== 'AbortError') {
+                            console.error('Error al cargar usuarios:', error);
+                            listContainer.innerHTML = '<div class="alert alert-danger">Error al cargar los usuarios. Por favor, recarga la página.</div>';
+                        }
+                    })
+                    .finally(() => {
+                        listContainer.classList.remove('loading');
+                    });
+            }
+
+            function buildHrefFromLocation(overrides = {}) {
+                const u = new URL(window.location.href);
+                // Aseguramos que la ruta sea la de usuarios (por si estamos en otra ruta dentro del módulo)
+                if (!u.pathname.endsWith('/seguridad/usuarios')) {
+                    u.pathname = '/seguridad/usuarios';
+                }
+
+                if (overrides.query !== undefined) {
+                    const q = (overrides.query || '').trim();
+                    if (q) u.searchParams.set('query', q);
+                    else u.searchParams.delete('query');
+                }
+
+                if (overrides.estado !== undefined) {
+                    const e = overrides.estado;
+                    if (e) u.searchParams.set('estado', e);
+                    else u.searchParams.delete('estado');
+                }
+
+                if (overrides.page !== undefined) {
+                    u.searchParams.set('page', String(overrides.page));
+                } else if (!u.searchParams.has('page')) {
+                    u.searchParams.set('page', '0');
+                }
+
+                if (overrides.size !== undefined) {
+                    u.searchParams.set('size', String(overrides.size));
+                } else if (!u.searchParams.has('size')) {
+                    const defaultSize = window.APP_CONFIG?.pagination?.defaultSize || 10;
+                    u.searchParams.set('size', String(defaultSize));
+                }
+
+                return u.href;
+            }
+
+            // Búsqueda
+            if (searchInput) {
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        const href = buildHrefFromLocation({ query: (searchInput.value || '').trim(), page: 0 });
+                        fetchUsuariosByHref(href);
+                    }, 350);
+                });
+            }
+
+            // Filtro por estado
+            if (estadoSelect) {
+                estadoSelect.addEventListener('change', () => {
+                    const href = buildHrefFromLocation({ estado: estadoSelect.value || '', page: 0 });
+                    fetchUsuariosByHref(href);
+                });
+            }
+
+            // Delegación de eventos para paginación y tamaño de página
+            if (listContainer) {
+                listContainer.addEventListener('click', (e) => {
+                    const pageLink = e.target.closest('a.page-link');
+                    if (pageLink && !pageLink.closest('.disabled')) {
+                        e.preventDefault();
+                        fetchUsuariosByHref(pageLink.href);
+                    }
+                });
+
+                listContainer.addEventListener('change', (e) => {
+                    if (e.target && e.target.id === 'pageSizeSelect') {
+                        const newSize = parseInt(e.target.value, 10);
+                        const href = buildHrefFromLocation({ size: isNaN(newSize) ? undefined : newSize, page: 0 });
+                        fetchUsuariosByHref(href);
+                    }
+                });
+            }
+
+            // API pública por si se necesita desde otros scripts
+            window.UsuariosTable = {
+                fetchByUrl: fetchUsuariosByHref,
+            };
+        });
+    </script>
+
+    <!-- Scripts de módulos de Usuarios -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Flash messages container
+            const flashContainer = document.getElementById('flash-messages');
+            if (flashContainer) {
+                // Toasts movidos a index (toasts.js); aquí solo apertura de modales programática
+
+                // Open Edit modal if error for a specific user
+                const errorUsuarioId = flashContainer.dataset.errorUsuarioId;
+                if (errorUsuarioId) {
+                    const modalEditarEl = document.getElementById('modalEditarUsuario');
+                    if (modalEditarEl) {
+                        modalEditarEl.setAttribute('data-open-usuario-id', errorUsuarioId);
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEditarEl);
+                        modalInstance.show();
+                    }
+                }
+
+                // Open Create modal if validation failed
+                const modalCrearError = flashContainer.dataset.modalCrearError;
+                if (modalCrearError) {
+                    const modalCrearEl = document.getElementById('modalCrearUsuario');
+                    if (modalCrearEl) {
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalCrearEl);
+                        modalInstance.show();
+                    }
+                }
+
+                // Open Delete modal if error for a specific user
+                const errorUsuarioDeleteId = flashContainer.dataset.errorUsuarioDeleteId;
+                const errorUsuarioDeleteNombre = flashContainer.dataset.errorUsuarioDeleteNombre;
+                if (errorUsuarioDeleteId && errorUsuarioDeleteNombre) {
+                    const modalEliminarEl = document.getElementById('modalEliminarUsuario');
+                    if (modalEliminarEl) {
+                        modalEliminarEl.setAttribute('data-open-usuario-id', errorUsuarioDeleteId);
+                        modalEliminarEl.setAttribute('data-open-usuario-nombre', errorUsuarioDeleteNombre);
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEliminarEl);
+                        modalInstance.show();
+                    }
+                }
+            }
+
+            // Crear: reinitialize choices on show and init PersonaSearch
+            const modalCrearEl = document.getElementById('modalCrearUsuario');
+            if (modalCrearEl) {
+                modalCrearEl.addEventListener('shown.bs.modal', () => {
+                    window.reinitializeChoices && window.reinitializeChoices();
+                    if (window.PersonaSearch) {
+                        window.PersonaSearch.init({
+                            modalId: 'modalCrearUsuario',
+                            formId: 'formCrearUsuario',
+                            saveButtonId: 'btnGuardarUsuario',
+                            checkField: 'tieneUsuario',
+                            checkFieldLabel: 'Usuario'
+                        });
+                    }
+                });
+            }
+
+            // Editar: dynamic content loading, supports programmatic opening via data-open-usuario-id
+            const modalEditarEl = document.getElementById('modalEditarUsuario');
+            if (modalEditarEl) {
+                const editarUsuarioContenido = document.getElementById('editar-usuario-contenido');
+                modalEditarEl.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const usuarioId = button?.getAttribute('data-usuario-id') || modalEditarEl.getAttribute('data-open-usuario-id');
+                    if (!usuarioId) return;
+
+                    editarUsuarioContenido.innerHTML = `<div class="d-flex justify-content-center p-5"><div class="spinner-border text-primary" role="status"><span class="visualmente-hidden">Cargando...</span></div></div>`;
+
+                    fetch(`/seguridad/usuarios/editar/${usuarioId}`)
+                        .then(async response => {
+                            if (!response.ok) {
+                                const status = response.status;
+                                let msg = '';
+                                if (status === 404) msg = 'Usuario no encontrado (404).';
+                                else if (status === 400) msg = 'Solicitud inválida (400).';
+                                else if (status >= 500) msg = 'Error del servidor (' + status + ').';
+                                else if (status >= 300 && status < 400) msg = 'Redirección inesperada (' + status + ').';
+                                else msg = 'Error al cargar datos (' + status + ').';
+                                window.showToast && showToast(msg, 'error');
+                                editarUsuarioContenido.innerHTML = `<div class="alert alert-danger m-3"><i class="ti ti-alert-circle me-2"></i>${msg}</div>`;
+                                throw new Error(msg);
+                            }
+                            return response.text();
+                        })
+                        .then(html => {
+                            editarUsuarioContenido.innerHTML = html;
+                            if (window.reinitializeChoices) window.reinitializeChoices(editarUsuarioContenido);
+                            // Init PersonaSearch for Edit modal after content is loaded
+                            if (window.PersonaSearch) {
+                                // Ensure form exists before init
+                                const formEditar = document.getElementById('formEditarUsuario');
+                                if (formEditar) {
+                                    window.PersonaSearch.init({
+                                        modalId: 'modalEditarUsuario',
+                                        formId: 'formEditarUsuario',
+                                        saveButtonId: 'btnActualizarUsuario',
+                                        checkField: 'tieneUsuario',
+                                        checkFieldLabel: 'Usuario'
+                                    });
+                                }
+                            }
+                            modalEditarEl.removeAttribute('data-open-usuario-id');
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            if (!editarUsuarioContenido.innerHTML || editarUsuarioContenido.innerHTML.trim() === '') {
+                                editarUsuarioContenido.innerHTML = `<div class="alert alert-danger m-3"><i class="ti ti-alert-circle me-2"></i>No se pudo cargar la información.</div>`;
+                            }
+                        });
+                });
+            }
+
+            // Eliminar: set dynamic name and form action, supports programmatic opening
+            const modalEliminarEl = document.getElementById('modalEliminarUsuario');
+            if (modalEliminarEl) {
+                modalEliminarEl.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const openId = modalEliminarEl.getAttribute('data-open-usuario-id');
+                    const openNombre = modalEliminarEl.getAttribute('data-open-usuario-nombre');
+                    const usuarioId = (button?.getAttribute('data-usuario-id')) || openId;
+                    const usuarioNombre = (button?.getAttribute('data-usuario-nombre')) || openNombre;
+                    if (!usuarioId || !usuarioNombre) return;
+
+                    modalEliminarEl.querySelector('#nombreUsuarioEliminar').textContent = usuarioNombre;
+                    modalEliminarEl.querySelector('#formEliminarUsuario').action = `/seguridad/usuarios/delete/${usuarioId}`;
+
+                    // reset programmatic attributes
+                    modalEliminarEl.removeAttribute('data-open-usuario-id');
+                    modalEliminarEl.removeAttribute('data-open-usuario-nombre');
+                });
+            }
+        });
+
+        // Optional public API
+        window.UsuariosModals = {
+            openEdit: function (usuarioId) {
+                const modalEditarEl = document.getElementById('modalEditarUsuario');
+                if (!modalEditarEl) return;
+                modalEditarEl.setAttribute('data-open-usuario-id', usuarioId);
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEditarEl);
+                modalInstance.show();
+            },
+            openDelete: function (usuarioId, nombre) {
+                const modalEliminarEl = document.getElementById('modalEliminarUsuario');
+                if (!modalEliminarEl) return;
+                modalEliminarEl.setAttribute('data-open-usuario-id', usuarioId);
+                modalEliminarEl.setAttribute('data-open-usuario-nombre', nombre);
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEliminarEl);
+                modalInstance.show();
+            },
+            openCreate: function () {
+                const modalCrearEl = document.getElementById('modalCrearUsuario');
+                if (!modalCrearEl) return;
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalCrearEl);
+                modalInstance.show();
+            }
+        };
+    </script>
+
+</div>
+
+</html>
