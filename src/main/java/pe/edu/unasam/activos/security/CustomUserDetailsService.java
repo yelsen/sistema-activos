@@ -45,7 +45,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private boolean isAccountLocked(Usuario usuario) {
         return (usuario.getBloqueadoHasta() != null && usuario.getBloqueadoHasta().isAfter(LocalDateTime.now()))
-                || usuario.getEstadoUsuarios() == pe.edu.unasam.activos.common.enums.EstadoUsuario.BLOQUEADO;
+                || usuario.getEstadoUsuarios() == pe.edu.unasam.activos.common.enums.EstadoUsuario.BLOQUEADO
+                || usuario.getEstadoUsuarios() == pe.edu.unasam.activos.common.enums.EstadoUsuario.PENDIENTE;
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(Usuario usuario) {

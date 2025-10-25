@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pe.edu.unasam.activos.common.enums.EstadoUsuario;
 import pe.edu.unasam.activos.common.enums.Genero;
-import java.time.LocalDateTime;
 
 public class UsuarioDTO {
 
@@ -26,7 +25,7 @@ public class UsuarioDTO {
         @Pattern(regexp = "^[a-zA-Z0-9._-]+$", message = "Solo puede contener letras, números, puntos, guiones y guiones bajos")
         private String usuario;
 
-        @Size(min = 8, max = 100, message = "La contraseña debe tener entre 8 y 100 caracteres")
+        @Pattern(regexp = "^$|^.{8,100}$", message = "Dejar en blanco o usar 8 a 100 caracteres")
         private String contrasena;
 
         @NotNull(message = "El rol es obligatorio")
@@ -69,10 +68,10 @@ public class UsuarioDTO {
         private String usuario;
         private String ultimoAcceso;
         private Integer intentosFallidos;
-        private LocalDateTime bloqueadoHasta;
+        private java.time.LocalDateTime bloqueadoHasta;
         private EstadoUsuario estadoUsuarios;
 
-        // Datos de la persona
+        // Datos de la persona (existentes)
         private String nombrePersona;
         private String dniPersona;
         private String emailPersona;
@@ -83,6 +82,16 @@ public class UsuarioDTO {
         // Datos del rol
         private String nombreRol;
         private Integer idRol;
+
+        // Campos adicionales para edición (coinciden con UsuarioDTO.Request)
+        private String nombres;
+        private String apellidos;
+        private String email;
+        private String telefono;
+        private String direccion;
+        private Genero genero;
+        // Campo opcional para enlace de formulario en edición
+        private String contrasena;
     }
 
     @Data

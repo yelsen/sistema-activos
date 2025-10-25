@@ -57,125 +57,15 @@
 
     <!-- Inclusión de Modales -->
     <div th:replace="~{sistema/usuarios/modal/CrearModal :: modalCrear}"></div>
-    <!--<div th:replace="~{sistema/usuarios/modal/EditarModal :: modalEditar}"></div>
-    <div th:replace="~{sistema/usuarios/modal/EliminarModal :: modalEliminar}"></div>-->
+    <div th:replace="~{sistema/usuarios/modal/EditarModal :: modalEditar}"></div>
+    <div th:replace="~{sistema/usuarios/modal/EliminarModal :: modalEliminar}"></div>
 
-    <script th:inline="javascript">
-        document.addEventListener('DOMContentLoaded', function () {
-            const listContainer = document.getElementById('usuarios-list-container');
-            const filterForm = document.getElementById('filterForm');
-            const searchInput = document.getElementById('searchInput');
-            const estadoSelect = document.getElementById('estado');
-            let debounceTimer;
 
-            function fetchUsuarios(page = 0, size = 10) {
-                const query = searchInput.value.trim();
-                const estado = estadoSelect.value;
 
-                const params = new URLSearchParams({
-                    fragment: 'true',
-                    page: page,
-                    size: size
-                });
-                if (query) params.set('query', query);
-                if (estado) params.set('estado', estado);
+    <!-- Utilidad global reutilizable -->
+    <script th:src="@{/js/persona-search.js}"></script>
 
-                const url = `/seguridad/usuarios?${params.toString()}`;
-                history.pushState(null, '', url.replace('fragment=true&', '').replace('?fragment=true', ''));
 
-                const loadingIndicator = `<div class="text-center py-3">
-                                            <div class="spinner-border text-primary" role="status">
-                                                <span class="visually-hidden">Cargando...</span>
-                                            </div>
-                                        </div>`;
-                listContainer.innerHTML = loadingIndicator;
-
-                fetch(url).then(response => {
-                    if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
-                    return response.text();
-                }).then(html => {
-                    listContainer.innerHTML = html;
-                    // Volver a inicializar Choices.js para los nuevos elementos (como el selector de paginación)
-                    if (window.reinitializeChoices) {
-                        window.reinitializeChoices();
-                    }
-                }).catch(error => {
-                    listContainer.innerHTML = `<div class="alert alert-danger">Error al cargar los usuarios. Por favor, recarga la página.</div>`;
-                    console.error("Fetch error:", error);
-                });
-            }
-
-            searchInput?.addEventListener('input', () => {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => fetchUsuarios(), 500);
-            });
-
-            estadoSelect?.addEventListener('change', () => fetchUsuarios());
-            
-            // Delegación de eventos para la paginación
-            listContainer.addEventListener('click', (e) => {
-                const pageLink = e.target.closest('.pagination a.page-link');
-                if (pageLink && !pageLink.closest('.disabled')) {
-                    e.preventDefault();
-                    const url = new URL(pageLink.href);
-                    const page = url.searchParams.get('page') || 0;
-                    const size = url.searchParams.get('size') || 10;
-                    fetchUsuarios(page, size);
-                }
-            });
-
-            // Delegación de eventos para el cambio de tamaño de página
-            listContainer.addEventListener('change', (e) => {
-                if (e.target.id === 'pageSizeSelect') {
-                    fetchUsuarios(0, e.target.value);
-                }
-            });
-
-            const modalCrearEl = document.getElementById('modalCrearUsuario');
-            if (modalCrearEl) {
-                modalCrearEl.addEventListener('shown.bs.modal', () => window.reinitializeChoices && window.reinitializeChoices());
-            }
-
-            // Modal Editar
-            const modalEditarEl = document.getElementById('modalEditarUsuario');
-            if (modalEditarEl) {
-                const editarUsuarioContenido = document.getElementById('editar-usuario-contenido');
-                modalEditarEl.addEventListener('show.bs.modal', function (event) {
-                    const button = event.relatedTarget;
-                    const usuarioId = button?.getAttribute('data-usuario-id');
-                    if (!usuarioId) return;
-
-                    editarUsuarioContenido.innerHTML = `<div class="d-flex justify-content-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>`;
-
-                    fetch(`/seguridad/usuarios/editar/${usuarioId}`)
-                        .then(response => response.ok ? response.text() : Promise.reject('Error al cargar datos.'))
-                        .then(html => {
-                            editarUsuarioContenido.innerHTML = html;
-                            // Reinicializar Choices.js para el contenido cargado dinámicamente
-                            if (window.reinitializeChoices) window.reinitializeChoices(editarUsuarioContenido);
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            editarUsuarioContenido.innerHTML = `<div class="alert alert-danger m-3"><i class="ti ti-alert-circle me-2"></i>No se pudo cargar la información.</div>`;
-                        });
-                });
-            }
-
-            // Modal Eliminar
-            const modalEliminarEl = document.getElementById('modalEliminarUsuario');
-            if (modalEliminarEl) {
-                modalEliminarEl.addEventListener('show.bs.modal', function (event) {
-                    const button = event.relatedTarget;
-                    const usuarioId = button?.getAttribute('data-usuario-id');
-                    const usuarioNombre = button?.getAttribute('data-usuario-nombre');
-                    if (!usuarioId || !usuarioNombre) return;
-
-                    modalEliminarEl.querySelector('#nombreUsuarioEliminar').textContent = usuarioNombre;
-                    modalEliminarEl.querySelector('#formEliminarUsuario').action = `/seguridad/usuarios/delete/${usuarioId}`;
-                });
-            }
-        });
-    </script>
 </div>
 
 </html>

@@ -22,21 +22,21 @@
 
     <!-- Contenedor de mensajes Flash para los toasts -->
     <div id="flash-messages" style="display: none;"
-        th:attr="data-success=${success}, data-error=${error}, data-warning=${warning}, data-info=${info}, data-error-usuario-id=${errorUsuarioId}">
+        th:attr="data-success=${success}, data-error=${error}, data-warning=${warning}, data-info=${info}, data-error-usuario-id=${errorUsuarioId}, data-modal-crear-error=${modalCrearError}, data-error-usuario-delete-id=${errorUsuarioDeleteId}, data-error-usuario-delete-nombre=${errorUsuarioDeleteNombre}">
     </div>
 
-    <!-- Script unificado para leer los mensajes y mostrar los toasts -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const flashContainer = document.getElementById('flash-messages');
-            if (flashContainer) {
-                if (flashContainer.dataset.success) showToast(flashContainer.dataset.success, 'success');
-                if (flashContainer.dataset.error) showToast(flashContainer.dataset.error, 'error');
-                if (flashContainer.dataset.warning) showToast(flashContainer.dataset.warning, 'warning');
-                if (flashContainer.dataset.info) showToast(flashContainer.dataset.info, 'info');
-            }
-        });
+    <!-- Configuración Global de Paginación para JS -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.APP_CONFIG = { pagination: { defaultSize: /*[[${defaultPageSize}]]*/ 10 } };
+        /*]]>*/
     </script>
+    <!-- Scripts comunes (toasts) -->
+    <script th:src="@{/js/common/toasts.js}"></script>
+
+    <!-- Scripts específicos del módulo de Usuarios -->
+    <script th:src="@{/js/usuarios/table.js}"></script>
+    <script th:src="@{/js/usuarios/modals.js}"></script>
 
 </body>
 

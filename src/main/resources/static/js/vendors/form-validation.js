@@ -259,7 +259,7 @@ window.autoSetupPasswordValidation = function (form) {
 
     // 2) Si no existe, crear uno nuevo e insertarlo después del último campo
     if (!strengthPanel) {
-        strengthPanel = createPasswordStrengthPanel();
+        strengthPanel = createPasswordStrengthPanel({ includeMatch: !!confirmPasswordInput });
         const insertAfter = lastPasswordInput.closest('.col-md-6, .col-12, .mb-3') || lastPasswordInput.parentElement;
         if (insertAfter && insertAfter.parentElement) {
             insertAfter.parentElement.insertBefore(strengthPanel, insertAfter.nextSibling);
@@ -274,7 +274,9 @@ window.autoSetupPasswordValidation = function (form) {
  * Crea el HTML del panel de fortaleza de contraseña
  * @returns {HTMLElement} - El elemento del panel creado
  */
-window.createPasswordStrengthPanel = function () {
+window.createPasswordStrengthPanel = function (opts) {
+    const options = opts || {};
+    const includeMatch = !!options.includeMatch;
     const panelHTML = `
         <div class="col-12 mb-3">
             <div class="card border">
@@ -282,9 +284,7 @@ window.createPasswordStrengthPanel = function () {
                     <div class="row">
                         <div class="col-md-12 mb-2">
                             <div class="d-flex align-items-center justify-content-between mb-2">
-                                <small class="text-muted fw-semibold">
-                                    Fortaleza de contraseña
-                                </small>
+                                <small class="text-muted fw-semibold">Fortaleza de contraseña</small>
                                 <span class="strength-text badge bg-secondary">Débil</span>
                             </div>
                             <div class="progress" style="height: 6px;">
@@ -294,31 +294,21 @@ window.createPasswordStrengthPanel = function () {
                         <div class="col-md-6">
                             <small class="text-muted d-block mb-2 fw-semibold">Requisitos mínimos:</small>
                             <ul class="list-unstyled small mb-0 password-requirements">
-                                <li class="req-length mb-1 text-danger">
-                                    <i class="ti ti-x text-danger me-1"></i> Mínimo 10 caracteres
-                                </li>
-                                <li class="req-uppercase mb-1 text-danger">
-                                    <i class="ti ti-x text-danger me-1"></i> Al menos una mayúscula
-                                </li>
-                                <li class="req-lowercase mb-1 text-danger">
-                                    <i class="ti ti-x text-danger me-1"></i> Al menos una minúscula
-                                </li>
-                                <li class="req-number mb-1 text-danger">
-                                    <i class="ti ti-x text-danger me-1"></i> Al menos un número
-                                </li>
-                                <li class="req-special mb-1 text-danger">
-                                    <i class="ti ti-x text-danger me-1"></i> Al menos un símbolo (!@#$%...)
-                                </li>
+                                <li class="req-length mb-1 text-danger"><i class="ti ti-x text-danger me-1"></i> Mínimo 10 caracteres</li>
+                                <li class="req-uppercase mb-1 text-danger"><i class="ti ti-x text-danger me-1"></i> Al menos una mayúscula</li>
+                                <li class="req-lowercase mb-1 text-danger"><i class="ti ti-x text-danger me-1"></i> Al menos una minúscula</li>
+                                <li class="req-number mb-1 text-danger"><i class="ti ti-x text-danger me-1"></i> Al menos un número</li>
+                                <li class="req-special mb-1 text-danger"><i class="ti ti-x text-danger me-1"></i> Al menos un símbolo (!@#$%...)</li>
                             </ul>
                         </div>
+                        ${includeMatch ? `
                         <div class="col-md-6">
                             <small class="text-muted d-block mb-2 fw-semibold">Verificación:</small>
                             <ul class="list-unstyled small mb-0">
-                                <li class="req-match mb-1 text-danger">
-                                    <i class="ti ti-x text-danger me-1"></i> Las contraseñas coinciden
-                                </li>
+                                <li class="req-match mb-1 text-danger"><i class="ti ti-x text-danger me-1"></i> Las contraseñas coinciden</li>
                             </ul>
                         </div>
+                        ` : ''}
                     </div>
                 </div>
             </div>

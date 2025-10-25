@@ -1,0 +1,295 @@
+<script>
+    /**
+ * Utilidad reutilizable para búsqueda de personas por DNI
+ * Se puede usar en cualquier modal de creación/asignación
+ * 
+ * Uso:
+ * PersonaSearch.init({
+ *   modalId: 'modalCrearUsuario',
+ *   formId: 'formCrearUsuario',
+ *   searchUrl: '/personas/buscar-usuario',
+ *   onPersonaFound: (data) => { ... },
+ *   onPersonaNotFound: () => { ... },
+ *   onPersonaYaAsignada: (data) => { ... }
+ * });
+ */
+
+    const PersonaSearch = (function () {
+
+        function renderFeedbackAlert(container, type, title, message) {
+            const iconMap = {
+                'success': 'ti-circle-check',
+                'danger': 'ti-alert-circle',
+                'warning': 'ti-alert-triangle',
+                'info': 'ti-info-circle'
+            };
+
+            const colorMap = {
+                'success': 'success',
+                'danger': 'danger',
+                'warning': 'warning',
+                'info': 'info'
+            };
+
+            const icon = iconMap[type] || 'ti-info-circle';
+            const color = colorMap[type] || 'info';
+
+            container.innerHTML = `
+            <div class="alert alert-${color} alert-dismissible fade show d-flex align-items-start" role="alert">
+                <i class="ti ${icon} fs-4 me-2 flex-shrink-0"></i>
+                <div class="flex-grow-1">
+                    <strong>${title}</strong>
+                    <p class="mb-0 mt-1">${message}</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        }
+
+        function init(config) {
+            const {
+                modalId,
+                formId,
+                searchUrl,
+                fieldMapping = {}, // Mapeo de campos: {nombres: 'nombreField', apellidos: 'apellidoField'}
+                checkField = 'tieneUsuario', // Campo que indica si ya está asignado
+                checkFieldLabel = 'Usuario', // Label para mensajes
+                onPersonaFound = null,
+                onPersonaNotFound = null,
+                onPersonaYaAsignada = null
+            } = config;
+
+            const modalEl = document.getElementById(modalId);
+            if (!modalEl) {
+                console.error(`Modal ${modalId} no encontrado`);
+                return;
+            }
+
+            const form = document.getElementById(formId);
+            const dniInput = document.getElementById('dniPersona');
+            const feedbackPanel = document.getElementById('persona-feedback');
+            const saveButton = form.querySelector('button[type="submit"]');
+
+            let debounceTimer;
+            let controller;
+            let ultimoDniBuscado = '';
+
+            // Mapeo de campos por defecto
+            const defaultFieldMapping = {
+                nombres: 'nombres',
+                apellidos: 'apellidos',
+                email: 'email',
+                telefono: 'telefono',
+                direccion: 'direccion',
+                genero: 'genero'
+            };
+
+            const finalFieldMapping = { ...defaultFieldMapping, ...fieldMapping };
+
+            const personalFields = {};
+            Object.keys(finalFieldMapping).forEach(key => {
+                const fieldId = finalFieldMapping[key];
+                personalFields[key] = document.getElementById(fieldId);
+            });
+
+            function setFieldsDisabled(disabled) {
+                Object.values(personalFields).forEach(field => {
+                    if (field && field.id !== 'genero') {
+                        field.disabled = disabled;
+                        if (disabled) {
+                            field.classList.add('bg-light');
+                        } else {
+                            field.classList.remove('bg-light');
+                        }
+                    }
+                });
+
+                const generoChoices = personalFields.genero?.choices;
+                if (generoChoices) {
+                    disabled ? generoChoices.disable() : generoChoices.enable();
+                }
+            }
+
+            function resetFormState() {
+                form.reset();
+                ultimoDniBuscado = '';
+                setFieldsDisabled(false);
+                saveButton.disabled = false;
+                feedbackPanel.innerHTML = '';
+                form.classList.remove('was-validated');
+            }
+
+            async function searchByDni(dni) {
+                if (!/^\d{8}$/.test(dni)) {
+                    if (dni.length > 0) {
+                        renderFeedbackAlert(feedbackPanel, 'info', 'DNI Incompleto',
+                            'Ingrese los 8 dígitos del DNI para realizar la búsqueda.');
+                    } else {
+                        feedbackPanel.innerHTML = '';
+                    }
+                    return;
+                }
+
+                if (dni === ultimoDniBuscado) return;
+                ultimoDniBuscado = dni;
+
+                renderFeedbackAlert(feedbackPanel, 'info', 'Buscando...',
+                    `Consultando información del DNI ${dni}. Por favor espere...`);
+
+                try {
+                    if (controller) controller.abort();
+                    controller = new AbortController();
+
+                    const url = `${searchUrl}?dni=${encodeURIComponent(dni)}`;
+                    const response = await fetch(url, { signal: controller.signal });
+
+                    if (response.ok) {
+                        const data = await response.json();
+
+                        // Autocompletar campos
+                        Object.keys(personalFields).forEach(fieldName => {
+                            const field = personalFields[fieldName];
+                            if (field && data[fieldName] !== undefined && data[fieldName] !== null) {
+                                if (fieldName === 'genero' && field.choices) {
+                                    field.choices.setChoiceByValue(data[fieldName]);
+                                } else {
+                                    field.value = data[fieldName];
+                                }
+                            }
+                        });
+
+                        // Verificar si ya está asignado
+                        const yaAsignado = data[checkField] || false;
+
+                        if (yaAsignado) {
+                            const detalleAsignacion = data.departamentoActual ||
+                                data.especialidadActual ||
+                                'otro registro';
+
+                            renderFeedbackAlert(feedbackPanel, 'danger', `${checkFieldLabel} Existente`,
+                                `Esta persona ya tiene un ${checkFieldLabel.toLowerCase()} asignado${detalleAsignacion ? ': ' + detalleAsignacion : ''}. No se puede crear otro registro.`);
+                            setFieldsDisabled(true);
+                            saveButton.disabled = true;
+
+                            if (onPersonaYaAsignada) onPersonaYaAsignada(data);
+                        } else {
+                            renderFeedbackAlert(feedbackPanel, 'success', 'Persona Encontrada',
+                                'Los datos personales han sido autocompletados. Complete la información restante del formulario.');
+                            setFieldsDisabled(true);
+                            saveButton.disabled = false;
+
+                            if (onPersonaFound) onPersonaFound(data);
+                        }
+
+                    } else if (response.status === 404) {
+                        renderFeedbackAlert(feedbackPanel, 'info', 'Persona Nueva',
+                            'No se encontró una persona registrada con este DNI. Complete todos los campos para registrarla.');
+
+                        Object.keys(personalFields).forEach(fieldName => {
+                            const field = personalFields[fieldName];
+                            if (field) {
+                                if (fieldName === 'genero' && field.choices) {
+                                    field.choices.setChoiceByValue('');
+                                } else {
+                                    field.value = '';
+                                }
+                            }
+                        });
+
+                        setFieldsDisabled(false);
+                        saveButton.disabled = false;
+
+                        if (onPersonaNotFound) onPersonaNotFound();
+                    } else {
+                        throw new Error(`Error del servidor: ${response.status}`);
+                    }
+                } catch (error) {
+                    if (error.name === 'AbortError') return;
+
+                    renderFeedbackAlert(feedbackPanel, 'danger', 'Error de Conexión',
+                        'No se pudo realizar la búsqueda. Verifique su conexión a internet.');
+                    console.error("Error en búsqueda:", error);
+
+                    setFieldsDisabled(false);
+                    saveButton.disabled = false;
+                }
+            }
+
+            dniInput.addEventListener('input', (e) => {
+                const dni = e.target.value.trim();
+                clearTimeout(debounceTimer);
+
+                if (dni.length < 8) {
+                    ultimoDniBuscado = '';
+                    if (dni.length === 0) {
+                        feedbackPanel.innerHTML = '';
+                        setFieldsDisabled(false);
+                    }
+                }
+
+                if (dni.length === 8) {
+                    debounceTimer = setTimeout(() => searchByDni(dni), 300);
+                }
+            });
+
+            modalEl.addEventListener('shown.bs.modal', () => {
+                resetFormState();
+                dniInput.focus();
+                renderFeedbackAlert(feedbackPanel, 'info', 'Búsqueda de Persona',
+                    'Ingrese un DNI de 8 dígitos. El sistema buscará automáticamente.');
+            });
+
+            modalEl.addEventListener('hidden.bs.modal', () => {
+                resetFormState();
+                if (controller) controller.abort();
+            });
+
+            console.log(`PersonaSearch inicializado para ${modalId}`);
+        }
+
+        return {
+            init: init
+        };
+    })();
+
+    // Uso para diferentes modales:
+
+    // 1. Para Usuarios
+    document.addEventListener('DOMContentLoaded', function () {
+        PersonaSearch.init({
+            modalId: 'modalCrearUsuario',
+            formId: 'formCrearUsuario',
+            searchUrl: '/personas/buscar-usuario',
+            checkField: 'tieneUsuario',
+            checkFieldLabel: 'Usuario'
+        });
+    });
+
+    // 2. Para Responsables
+    document.addEventListener('DOMContentLoaded', function () {
+        PersonaSearch.init({
+            modalId: 'modalCrearResponsable',
+            formId: 'formCrearResponsable',
+            searchUrl: '/personas/buscar-responsable',
+            checkField: 'esResponsable',
+            checkFieldLabel: 'Responsable',
+            onPersonaYaAsignada: (data) => {
+                console.log('Ya es responsable de:', data.departamentoActual);
+            }
+        });
+    });
+
+    // 3. Para Técnicos
+    document.addEventListener('DOMContentLoaded', function () {
+        PersonaSearch.init({
+            modalId: 'modalCrearTecnico',
+            formId: 'formCrearTecnico',
+            searchUrl: '/personas/buscar-tecnico',
+            checkField: 'esTecnico',
+            checkFieldLabel: 'Técnico',
+            onPersonaYaAsignada: (data) => {
+                console.log('Ya es técnico con especialidad:', data.especialidadActual);
+            }
+        });
+    });
+</script>

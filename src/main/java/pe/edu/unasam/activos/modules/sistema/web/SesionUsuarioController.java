@@ -2,7 +2,6 @@ package pe.edu.unasam.activos.modules.sistema.web;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pe.edu.unasam.activos.common.enums.EstadoSesion;
 import pe.edu.unasam.activos.modules.sistema.service.SesionUsuarioService;
+import pe.edu.unasam.activos.config.PaginationProperties;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,13 +21,14 @@ import java.util.List;
 public class SesionUsuarioController {
 
     private final SesionUsuarioService sesionUsuarioService;
+    private final PaginationProperties paginationProperties;
 
     @GetMapping
     @PreAuthorize("hasAuthority('SESIONES_LEER')")
     public String listSesiones(Model model,
                                @RequestParam(required = false) String q,
                                @RequestParam(required = false) EstadoSesion estado,
-                               @PageableDefault(size = 10, sort = "fechaInicio") Pageable pageable) {
+                               Pageable pageable) {
         
         java.util.Map<String, Object> params = new HashMap<>();
         params.put("q", q);
@@ -38,8 +39,10 @@ public class SesionUsuarioController {
         model.addAttribute("page", sesionUsuarioService.getSesiones(q, estado, pageable));
         model.addAttribute("params", params);
         model.addAttribute("estados", EstadoSesion.values());
+        model.addAttribute("pageSizes", paginationProperties.getAllowedSizes());
         return "sistema/sesiones/list";
-    } 
+    }
+
 
     @PostMapping("/cerrar/{id}")
     @PreAuthorize("hasAuthority('SESIONES_ELIMINAR')")

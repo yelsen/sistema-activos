@@ -57,6 +57,9 @@ public class PersonaDTO {
         private EstadoPersona estadoPersona;
     }
 
+    /**
+     * Response específico para búsqueda de personas en creación de usuarios
+     */
     @Data
     @Builder
     @NoArgsConstructor
@@ -69,5 +72,60 @@ public class PersonaDTO {
         private String direccion;
         private String genero;
         private boolean tieneUsuario;
+        private boolean exists;
+    }
+
+    /**
+     * Response específico para búsqueda de personas para asignar como responsables
+     */
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PersonaResponsableResponse {
+        private String nombres;
+        private String apellidos;
+        private String email;
+        private String telefono;
+        private String direccion;
+        private String genero;
+        private boolean esResponsable;
+        private String departamentoActual;
+    }
+
+    /**
+     * Response específico para búsqueda de personas para asignar como técnicos
+     */
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PersonaTecnicoResponse {
+        private String nombres;
+        private String apellidos;
+        private String email;
+        private String telefono;
+        private String direccion;
+        private String genero;
+        private boolean esTecnico;
+        private String especialidadActual;
+    }
+
+    /**
+     * Response genérico para cualquier búsqueda con estado de asignación
+     */
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PersonaBusquedaResponse {
+        private String nombres;
+        private String apellidos;
+        private String email;
+        private String telefono;
+        private String direccion;
+        private String genero;
+        private boolean yaAsignado;
+        private String detalleAsignacion;
     }
 }

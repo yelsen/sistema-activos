@@ -29,10 +29,10 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
         long countByRol(Rol rol);
 
-        @Query("SELECT DISTINCT u FROM Usuario u " +
-                        "LEFT JOIN FETCH u.persona p " +
-                        "LEFT JOIN FETCH u.rol r " +
-                        "WHERE (:query IS NULL OR " +
+        @Query("SELECT u FROM Usuario u " +
+                        "LEFT JOIN u.persona p " +
+                        "LEFT JOIN u.rol r " +
+                        "WHERE (:query IS NULL OR :query = '' OR " +
                         "  LOWER(p.dni) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
                         "  LOWER(CONCAT(p.nombres, ' ', p.apellidos)) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
                         "  LOWER(u.usuario) LIKE LOWER(CONCAT('%', :query, '%')) OR " +

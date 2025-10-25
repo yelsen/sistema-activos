@@ -253,3 +253,23 @@ window.setupModalFormValidation = function(modalId) {
         });
     });
 };
+
+// Renderiza un panel de feedback reutilizable usando Bootstrap Alerts
+window.renderFeedbackAlert = function(containerEl, type, title, message) {
+    if (!containerEl) return;
+    const map = {
+        success: { cls: 'alert-success', icon: 'ti ti-check' },
+        warning: { cls: 'alert-warning', icon: 'ti ti-alert-triangle' },
+        info: { cls: 'alert-info', icon: 'ti ti-info-circle' },
+        danger: { cls: 'alert-danger', icon: 'ti ti-alert-circle' }
+    };
+    const m = map[type] || map.info;
+    containerEl.innerHTML = `
+        <div class="alert ${m.cls} d-flex align-items-start gap-2 shadow-sm rounded-3 mb-2" role="status" aria-live="polite">
+            <i class="${m.icon} mt-1"></i>
+            <div>
+                <div class="fw-semibold">${title || ''}</div>
+                <div class="small">${message || ''}</div>
+            </div>
+        </div>`;
+};

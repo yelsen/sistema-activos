@@ -92,6 +92,8 @@ function initializeChoices() {
       closeDropdownOnSelect: !isMultiple,
       ...getSpanishTexts(element),
     });
+    // ADJUNTAR INSTANCIA PARA CONTROLAR ENABLE/DISABLE DESDE LA UI
+    element.choices = instance;
     if (hasSearch) {
       unifySearchInputBehavior(element, instance);
     }
@@ -108,7 +110,7 @@ function initializeChoicesWithColors() {
     const removeButton = element.dataset.choicesRemoveitembutton === 'true';
     const placeholder = element.getAttribute('placeholder') || 'Selecciona una opción';
 
-    new Choices(element, {
+    const instance = new Choices(element, {
       allowHTML: true,
       removeItemButton: removeButton,
       searchEnabled: false,
@@ -142,6 +144,8 @@ function initializeChoicesWithColors() {
         };
       },
     });
+    // ADJUNTAR INSTANCIA TAMBIÉN EN SELECTS CON COLORES
+    element.choices = instance;
   });
 }
 

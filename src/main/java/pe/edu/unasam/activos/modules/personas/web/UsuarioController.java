@@ -20,14 +20,16 @@ import pe.edu.unasam.activos.common.enums.Genero;
 import pe.edu.unasam.activos.modules.personas.dto.UsuarioDTO;
 import pe.edu.unasam.activos.modules.personas.service.UsuarioService;
 import pe.edu.unasam.activos.modules.sistema.service.RolService;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+import pe.edu.unasam.activos.common.exception.NotFoundException;
 import pe.edu.unasam.activos.common.exception.BusinessException;
+import pe.edu.unasam.activos.config.PaginationProperties;
 
 import java.beans.PropertyEditorSupport;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 @Controller
 @RequiredArgsConstructor
@@ -38,6 +40,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
     private final RolService rolService;
     private final ObjectMapper objectMapper;
+    private final PaginationProperties paginationProperties;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -67,6 +70,7 @@ public class UsuarioController {
             model.addAttribute("usuariosPage", usuariosPage);
             model.addAttribute("query", query);
             model.addAttribute("estado", estado);
+            model.addAttribute("pageSizes", paginationProperties.getAllowedSizes());
 
             // Construir queryParams para paginación
             UriComponentsBuilder queryParamsBuilder = UriComponentsBuilder.newInstance();
@@ -91,6 +95,7 @@ public class UsuarioController {
                 model.addAttribute("estadosUsuario", EstadoUsuario.values());
                 model.addAttribute("generos", Genero.values());
                 model.addAttribute("rolColorMapJson", objectMapper.writeValueAsString(rolColorMap));
+                model.addAttribute("defaultPageSize", paginationProperties.getDefaultSize());
 
                 if (!model.containsAttribute("usuario")) {
                     model.addAttribute("usuario", new UsuarioDTO.Request());
@@ -112,35 +117,38 @@ public class UsuarioController {
             RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.usuario", result);
-            redirectAttributes.addFlashAttribute("usuario", request);
-            redirectAttributes.addFlashAttribute("modalCrearError", true);
-            return "redirect:/seguridad/usuarios";
+            return handleCreateError(request, result, redirectAttributes, buildErrorMessage(result));
         }
 
         try {
             usuarioService.createUsuario(request);
             redirectAttributes.addFlashAttribute("success", "Usuario creado exitosamente");
         } catch (BusinessException e) {
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.usuario", result);
-            redirectAttributes.addFlashAttribute("usuario", request);
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            redirectAttributes.addFlashAttribute("modalCrearError", true);
+            return handleCreateError(request, result, redirectAttributes, e.getMessage());
+        } catch (Exception e) {
+            return handleCreateError(request, result, redirectAttributes, "Error al crear usuario: " + e.getMessage());
         }
 
         return "redirect:/seguridad/usuarios";
     }
-    
 
     @GetMapping("/editar/{id}")
     @PreAuthorize("hasAuthority('USUARIOS_EDITAR')")
     public String getEditUsuarioForm(@PathVariable Integer id, Model model) {
-        UsuarioDTO.Response usuario = usuarioService.getUsuarioById(id);
-        model.addAttribute("usuario", usuario);
-        model.addAttribute("roles", rolService.findAllRolesForSelect());
-        return "sistema/usuarios/modal/EditarForm :: editForm";
+        try {
+            UsuarioDTO.Response usuario = usuarioService.getUsuarioById(id);
+            model.addAttribute("usuario", usuario);
+            model.addAttribute("roles", rolService.findAllRolesForSelect());
+            model.addAttribute("generos", Genero.values());
+            return "sistema/usuarios/modal/EditarModal :: editarForm";
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        } catch (BusinessException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al cargar usuario: " + e.getMessage(), e);
+        }
     }
-    
 
     @PostMapping("/update/{id}")
     @PreAuthorize("hasAuthority('USUARIOS_EDITAR')")
@@ -151,18 +159,16 @@ public class UsuarioController {
             RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.usuario", result);
-            redirectAttributes.addFlashAttribute("usuario", request);
-            redirectAttributes.addFlashAttribute("errorUsuarioId", id);
-            return "redirect:/seguridad/usuarios";
+            return handleEditError(id, request, result, redirectAttributes, buildErrorMessage(result));
         }
 
         try {
             usuarioService.updateUsuario(id, request);
             redirectAttributes.addFlashAttribute("success", "Usuario actualizado exitosamente");
         } catch (BusinessException e) {
-            redirectAttributes.addFlashAttribute("errorUsuarioId", id);
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return handleEditError(id, request, result, redirectAttributes, e.getMessage());
+        } catch (Exception e) {
+            return handleEditError(id, request, result, redirectAttributes, "Error al actualizar usuario: " + e.getMessage());
         }
 
         return "redirect:/seguridad/usuarios";
@@ -184,11 +190,78 @@ public class UsuarioController {
     @PreAuthorize("hasAuthority('USUARIOS_ELIMINAR')")
     public String deleteUsuario(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         try {
-            usuarioService.deleteUsuario(id);
+            usuarioService.deleteUsuarioSafely(id);
             redirectAttributes.addFlashAttribute("success", "Usuario eliminado exitosamente");
+        } catch (NotFoundException e) {
+            redirectAttributes.addFlashAttribute("error", "Usuario no encontrado: " + e.getMessage());
+        } catch (BusinessException e) {
+            addDeleteErrorFlash(id, redirectAttributes, e.getMessage());
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al eliminar usuario: " + e.getMessage());
+            addDeleteErrorFlash(id, redirectAttributes, "Error al eliminar usuario: " + e.getMessage());
         }
         return "redirect:/seguridad/usuarios";
+    }
+    
+    private String getFriendlyFieldName(String field) {
+        return switch (field) {
+            case "usuario" -> "Usuario";
+            case "contrasena" -> "Contraseña";
+            case "idRol" -> "Rol";
+            case "dniPersona" -> "DNI";
+            case "nombres" -> "Nombres";
+            case "apellidos" -> "Apellidos";
+            case "email" -> "Email";
+            case "telefono" -> "Teléfono";
+            case "direccion" -> "Dirección";
+            case "genero" -> "Género";
+            case "estadoUsuarios" -> "Estado";
+            default -> field;
+        };
+    }
+
+    private String buildErrorMessage(BindingResult result) {
+        String fieldErrors = result.getFieldErrors().stream()
+                .map(fe -> "• " + getFriendlyFieldName(fe.getField()) + ": " + fe.getDefaultMessage())
+                .distinct()
+                .collect(Collectors.joining("\n"));
+        String globalErrors = result.getGlobalErrors().stream()
+                .map(ge -> "• " + ge.getDefaultMessage())
+                .distinct()
+                .collect(Collectors.joining("\n"));
+        if (fieldErrors.isBlank() && globalErrors.isBlank()) {
+            return "Se encontraron errores de validación. Por favor, revisa el formulario.";
+        }
+        String header = "Corrige los siguientes errores:";
+        if (!globalErrors.isBlank())
+            return header + "\n" + (fieldErrors.isBlank() ? "" : fieldErrors + "\n") + globalErrors;
+        else
+            return header + "\n" + fieldErrors;
+    }
+
+    private String handleCreateError(UsuarioDTO.Request request, BindingResult result,
+                                     RedirectAttributes redirectAttributes, String errorMsg) {
+        redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.usuario", result);
+        redirectAttributes.addFlashAttribute("usuario", request);
+        redirectAttributes.addFlashAttribute("error", errorMsg);
+        redirectAttributes.addFlashAttribute("modalCrearError", true);
+        return "redirect:/seguridad/usuarios";
+    }
+
+    private String handleEditError(Integer id, UsuarioDTO.Request request, BindingResult result,
+                                   RedirectAttributes redirectAttributes, String errorMsg) {
+        redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.usuario", result);
+        redirectAttributes.addFlashAttribute("usuario", request);
+        redirectAttributes.addFlashAttribute("errorUsuarioId", id);
+        redirectAttributes.addFlashAttribute("error", errorMsg);
+        return "redirect:/seguridad/usuarios";
+    }
+
+    private void addDeleteErrorFlash(Integer id, RedirectAttributes redirectAttributes, String errorMsg) {
+        redirectAttributes.addFlashAttribute("error", errorMsg);
+        try {
+            UsuarioDTO.Response usuarioResp = usuarioService.getUsuarioById(id);
+            redirectAttributes.addFlashAttribute("errorUsuarioDeleteNombre", usuarioResp.getUsuario());
+        } catch (Exception ignored) {}
+        redirectAttributes.addFlashAttribute("errorUsuarioDeleteId", id);
     }
 }

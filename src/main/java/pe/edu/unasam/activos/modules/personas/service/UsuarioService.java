@@ -9,17 +9,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import pe.edu.unasam.activos.common.enums.EstadoUsuario;
-import pe.edu.unasam.activos.common.enums.EstadoPersona;
 import pe.edu.unasam.activos.common.exception.BusinessException;
 import pe.edu.unasam.activos.common.exception.NotFoundException;
 import pe.edu.unasam.activos.modules.personas.domain.Persona;
 import pe.edu.unasam.activos.modules.personas.domain.Usuario;
 import pe.edu.unasam.activos.modules.personas.dto.UsuarioDTO;
-import pe.edu.unasam.activos.modules.personas.repository.PersonaRepository;
 import pe.edu.unasam.activos.modules.personas.repository.UsuarioRepository;
 import pe.edu.unasam.activos.modules.sistema.domain.Rol;
 import pe.edu.unasam.activos.modules.sistema.repository.RolRepository;
-
+import pe.edu.unasam.activos.modules.sistema.repository.SesionUsuarioRepository;
+import pe.edu.unasam.activos.common.enums.EstadoSesion;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
 import java.time.format.DateTimeFormatter;
@@ -30,10 +31,10 @@ import java.time.format.DateTimeFormatter;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
-    private final PersonaRepository personaRepository;
     private final RolRepository rolRepository;
-
+    private final PersonaService personaService;
     private final PasswordEncoder passwordEncoder;
+    private final SesionUsuarioRepository sesionUsuarioRepository;
 
     @Transactional(readOnly = true)
     public Page<UsuarioDTO.Response> getAllUsuarios(String query, EstadoUsuario estado, Pageable pageable) {
@@ -68,7 +69,7 @@ public class UsuarioService {
             throw new BusinessException("El nombre de usuario '" + request.getUsuario() + "' ya está en uso.");
         }
 
-        Persona persona = findOrCreatePersona(request);
+        Persona persona = personaService.findOrCreatePersona(request);
         // Validar que la persona no tenga ya un usuario
         if (usuarioRepository.existsByPersona_Dni(persona.getDni())) {
             throw new BusinessException(
@@ -96,8 +97,22 @@ public class UsuarioService {
 
         validateUniqueUsernameOnUpdate(request.getUsuario(), id);
 
+        // Actualizar datos personales asociados
+        Persona persona = usuario.getPersona();
+        if (persona == null) {
+            persona = personaService.findOrCreatePersona(request);
+            usuario.setPersona(persona);
+        } else {
+            persona.setNombres(request.getNombres());
+            persona.setApellidos(request.getApellidos());
+            persona.setEmail(request.getEmail());
+            persona.setTelefono(request.getTelefono());
+            persona.setDireccion(request.getDireccion());
+            persona.setGenero(request.getGenero());
+        }
+
         // Mapear DTO a Entidad y encriptar contraseña si se proporciona una nueva
-        mapToEntity(usuario, request, usuario.getPersona(), rol); // Reutilizamos el mapeo
+        mapToEntity(usuario, request, persona, rol); // Reutilizamos el mapeo
         if (request.getContrasena() != null && !request.getContrasena().isBlank()) {
             usuario.setContrasena(passwordEncoder.encode(request.getContrasena()));
         }
@@ -105,26 +120,6 @@ public class UsuarioService {
         // Guardar y convertir a DTO de respuesta
         Usuario updatedUsuario = usuarioRepository.save(usuario);
         return convertToDto(updatedUsuario);
-    }
-
-    private Persona findOrCreatePersona(UsuarioDTO.Request request) {
-        return personaRepository.findById(request.getDniPersona())
-                .orElseGet(() -> createNewPersona(request));
-    }
-
-    private Persona createNewPersona(UsuarioDTO.Request request) {
-        if (!StringUtils.hasText(request.getNombres()) || !StringUtils.hasText(request.getApellidos())) {
-            throw new BusinessException("Nombres y apellidos son requeridos para crear una nueva persona.");
-        }
-
-        Persona nuevaPersona = Persona.builder()
-                .dni(request.getDniPersona())
-                .nombres(request.getNombres())
-                .apellidos(request.getApellidos())
-                .email(request.getEmail())
-                .estadoPersona(EstadoPersona.ACTIVO)
-                .build();
-        return personaRepository.save(nuevaPersona);
     }
 
     public void deleteUsuario(Integer id) {
@@ -135,14 +130,57 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
+    public void deleteUsuarioSafely(Integer id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado con ID: " + id));
+
+        // 1) Prevenir auto-eliminación del usuario autenticado
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            String currentUsername = authentication.getName();
+            usuarioRepository.findByUsuario(currentUsername).ifPresent(currentUser -> {
+                if (currentUser.getIdUsuario().equals(id)) {
+                    throw new BusinessException("No puede eliminar su propia cuenta.");
+                }
+            });
+        }
+
+        // 2) Evitar eliminar el último administrador
+        rolRepository.findByNombreRol("ADMIN_GENERAL").ifPresent(adminRol -> {
+            if (usuario.getRol() != null && adminRol.getIdRol().equals(usuario.getRol().getIdRol())) {
+                long totalAdmins = usuarioRepository.countByRol(adminRol);
+                if (totalAdmins <= 1) {
+                    throw new BusinessException("No se puede eliminar el último administrador del sistema.");
+                }
+            }
+        });
+
+        // 3) Bloquear eliminación si hay sesiones activas asociadas
+        var sesionesActivas = sesionUsuarioRepository
+                .findByUsuario_IdUsuarioAndEstadoSesion(id, EstadoSesion.ACTIVA);
+        if (!sesionesActivas.isEmpty()) {
+            throw new BusinessException("El usuario tiene sesiones activas. Cierre las sesiones antes de eliminar.");
+        }
+
+        // 4) Soft delete mediante @SQLDelete
+        usuarioRepository.delete(usuario);
+    }
+
     @Transactional
     public void toggleStatus(Integer id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Usuario no encontrado con ID: " + id));
 
-        EstadoUsuario nuevoEstado = (usuario.getEstadoUsuarios() == EstadoUsuario.ACTIVO) ? EstadoUsuario.INACTIVO
-                : EstadoUsuario.ACTIVO;
-        usuario.setEstadoUsuarios(nuevoEstado);
+        if (usuario.getEstadoUsuarios() == EstadoUsuario.ACTIVO) {
+            usuario.setEstadoUsuarios(EstadoUsuario.BLOQUEADO);
+        } else if (usuario.getEstadoUsuarios() == EstadoUsuario.BLOQUEADO) {
+            usuario.setEstadoUsuarios(EstadoUsuario.PENDIENTE);
+        } else {
+            // De PENDIENTE (u otros) a ACTIVO
+            usuario.setEstadoUsuarios(EstadoUsuario.ACTIVO);
+            usuario.setIntentosFallidos(0);
+            usuario.setBloqueadoHasta(null);
+        }
 
         usuarioRepository.save(usuario);
     }
@@ -157,7 +195,11 @@ public class UsuarioService {
 
     private void mapToEntity(Usuario usuario, UsuarioDTO.Request dto, Persona persona, Rol rol) {
         usuario.setUsuario(dto.getUsuario());
-        usuario.setEstadoUsuarios(dto.getEstadoUsuarios());
+        if (dto.getEstadoUsuarios() != null) {
+            usuario.setEstadoUsuarios(dto.getEstadoUsuarios());
+        } else if (usuario.getEstadoUsuarios() == null) {
+            usuario.setEstadoUsuarios(EstadoUsuario.ACTIVO);
+        }
         usuario.setPersona(persona);
         usuario.setRol(rol);
     }
@@ -166,7 +208,7 @@ public class UsuarioService {
         if (usuario == null) {
             return null;
         }
-        
+
         UsuarioDTO.Response.ResponseBuilder builder = UsuarioDTO.Response.builder()
                 .idUsuario(usuario.getIdUsuario())
                 .usuario(usuario.getUsuario())
@@ -183,12 +225,49 @@ public class UsuarioService {
                 .emailPersona(personaOpt.map(Persona::getEmail).filter(StringUtils::hasText).orElse("-"))
                 .telefonoPersona(personaOpt.map(Persona::getTelefono).filter(StringUtils::hasText).orElse("-"))
                 .direccionPersona(personaOpt.map(Persona::getDireccion).filter(StringUtils::hasText).orElse("-"))
-                .generoPersona(personaOpt.map(Persona::getGenero).orElse(null));
+                .generoPersona(personaOpt.map(Persona::getGenero).orElse(null))
+                // Campos extra para edición (coinciden con Request)
+                .nombres(personaOpt.map(Persona::getNombres).orElse(null))
+                .apellidos(personaOpt.map(Persona::getApellidos).orElse(null))
+                .email(personaOpt.map(Persona::getEmail).orElse(null))
+                .telefono(personaOpt.map(Persona::getTelefono).orElse(null))
+                .direccion(personaOpt.map(Persona::getDireccion).orElse(null))
+                .genero(personaOpt.map(Persona::getGenero).orElse(null));
 
         Optional<Rol> rolOpt = Optional.ofNullable(usuario.getRol());
         builder.nombreRol(rolOpt.map(Rol::getNombreRol).orElse("N/A"))
-               .idRol(rolOpt.map(Rol::getIdRol).orElse(null));
+                .idRol(rolOpt.map(Rol::getIdRol).orElse(null));
 
         return builder.build();
+    }
+
+    // esto de aqui abajo nose si deve ir
+    public String generateTemporaryPassword(Integer id) {
+        usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado con ID: " + id));
+        return generateRandomPassword(12);
+    }
+
+    private String generateRandomPassword(int length) {
+        String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lower = upper.toLowerCase();
+        String digits = "0123456789";
+        String specials = "!@#$%^&*()-_=+[]{}|;:,.<>/?";
+        String all = upper + lower + digits + specials;
+
+        java.security.SecureRandom random = new java.security.SecureRandom();
+        StringBuilder sb = new StringBuilder(length);
+
+        // Garantizar al menos un carácter de cada tipo
+        sb.append(upper.charAt(random.nextInt(upper.length())));
+        sb.append(lower.charAt(random.nextInt(lower.length())));
+        sb.append(digits.charAt(random.nextInt(digits.length())));
+        sb.append(specials.charAt(random.nextInt(specials.length())));
+
+        for (int i = sb.length(); i < length; i++) {
+            sb.append(all.charAt(random.nextInt(all.length())));
+        }
+
+        return sb.toString();
     }
 }
