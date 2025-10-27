@@ -28,7 +28,6 @@ public class ResponsableDTO {
 
         private LocalDate fechaAsignacion;
         private LocalDate fechaFinAsignacion;
-        private Boolean esResponsablePrincipal;
 
         @NotNull(message = "El estado es obligatorio")
         private EstadoResponsable estadoResponsable;
@@ -46,7 +45,6 @@ public class ResponsableDTO {
         private String nombreOficina;
         private LocalDate fechaAsignacion;
         private LocalDate fechaFinAsignacion;
-        private Boolean esResponsablePrincipal;
         private EstadoResponsable estadoResponsable;
     }
 }

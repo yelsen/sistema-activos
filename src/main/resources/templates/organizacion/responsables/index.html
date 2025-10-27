@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments/head :: head(pageTitle='Gestión de Responsables')}"></head>
+
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Contenido Principal -->
+    <main id="content">
+        <div th:replace="~{fragments/header :: header}"></div>
+        <div th:replace="~{fragments/search-modal :: searchModal}"></div>
+        <div th:replace="~{fragments/notification-panel :: notificationPanel}"></div>
+
+        <div class="custom-container flex-grow-1 d-flex flex-column pb-4">
+            <div th:replace="~{organizacion/responsables/responsables-content :: content}"></div>
+        </div>
+
+        <!-- Contenedor de mensajes Flash para los toasts -->
+        <div id="flash-messages" style="display: none;" th:attr="data-success = ${success}, data-error = ${error}, data-warning = ${warning}, data-info = ${info}, 
+            data-error-responsable-id = ${errorResponsableId}, 
+            data-modal-crear-error = ${modalCrearError}, 
+            data-error-responsable-delete-id = ${errorResponsableDeleteId}, 
+            data-error-responsable-delete-nombre = ${errorResponsableDeleteNombre}">
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
+</body>
+
+</html>

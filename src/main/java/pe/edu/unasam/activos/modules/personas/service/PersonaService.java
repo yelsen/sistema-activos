@@ -80,7 +80,7 @@ public class PersonaService {
         Persona persona = personaOpt.get();
 
         boolean esResponsable = false; // Ajustar si cuentas con ResponsableRepository
-        String departamento = null;    // Ajustar para traer el departamento actual
+        String departamento = null; // Ajustar para traer el departamento actual
 
         var response = PersonaDTO.PersonaResponsableResponse.builder()
                 .nombres(persona.getNombres())
@@ -121,7 +121,7 @@ public class PersonaService {
 
         Persona persona = personaOpt.get();
 
-        boolean esTecnico = false;    
+        boolean esTecnico = false;
         String especialidad = null;
 
         var response = PersonaDTO.PersonaTecnicoResponse.builder()
@@ -185,5 +185,12 @@ public class PersonaService {
                 .genero(persona.getGenero())
                 .estadoPersona(persona.getEstadoPersona())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PersonaDTO.Response> getAllPersonas(String query, Pageable pageable) {
+        String processedQuery = (query != null && !query.trim().isEmpty()) ? query.trim().toLowerCase() : null;
+        return personaRepository.findAllWithFilters(processedQuery, pageable)
+                .map(this::convertToDto);
     }
 }

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="modalCrear" class="modal fade" id="modalCrearResponsable" tabindex="-1"
+        aria-labelledby="modalCrearResponsableLabel" aria-hidden="true"
+        th:attr="data-search-url=@{/personas/buscar-responsables}">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
+                    <div class="d-flex align-items-center gap-3 position-relative">
+                        <i class="ti ti-user-star fs-2"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Crear Nuevo Responsable</h5>
+                            <p class="fs-10 mb-0 text-white-50">Registra un nuevo responsable.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+
+                <form th:action="@{/organizacion/responsables}" th:object="${responsable}" method="post"
+                    id="formCrearResponsable" class="needs-validation" novalidate>
+                    <div class="modal-body p-4">
+                        <div class="row g-3">
+                            <!-- Sección de Responsable -->
+                            <div class="col-12">
+                                <h6 class="text-primary border-bottom pb-2 fw-semibold">
+                                    <i class="ti ti-user-group me-2"></i>Información del Responsable
+                                </h6>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="dniPersona" class="form-label">
+                                    DNI <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group has-validation">
+                                    <span class="input-group-text">
+                                        <i class="ti ti-id"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="dniPersona" th:field="*{dniPersona}"
+                                        placeholder="Ingrese número de DNI... " maxlength="8" pattern="[0-9]{8}"
+                                        autocomplete="off">
+                                    <div class="invalid-feedback">Debe ser un DNI de 8 dígitos.</div>
+                                </div>
+                                <!-- Panel de feedback justo debajo del DNI -->
+                                <div class="col-12">
+                                    <div id="persona-feedback" aria-live="polite"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="nombres" class="form-label">
+                                    Nombres <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="nombres" th:field="*{nombres}"
+                                    data-search-field="nombres" required placeholder="Ingrese nombres">
+                                <div class="invalid-feedback">Los nombres son requeridos.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="apellidos" class="form-label">
+                                    Apellidos <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="apellidos" th:field="*{apellidos}"
+                                    data-search-field="apellidos" required placeholder="Ingrese apellidos">
+                                <div class="invalid-feedback">Los apellidos son requeridos.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">
+                                    Email <span class="text-danger">*</span>
+                                </label>
+                                <input type="email" class="form-control" id="email" th:field="*{email}"
+                                    data-search-field="email" required placeholder="ejemplo@correo.com">
+                                <div class="invalid-feedback">Ingrese un email válido.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input type="text" class="form-control" id="telefono" th:field="*{telefono}"
+                                    data-search-field="telefono" placeholder="Opcional">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="direccion" class="form-label">Dirección</label>
+                                <input type="text" class="form-control" id="direccion" th:field="*{direccion}"
+                                    data-search-field="direccion" placeholder="Opcional">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="genero" class="form-label">
+                                    Género <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="genero" th:field="*{genero}" data-search-field="genero"
+                                    data-choices required>
+                                    <option value="">Seleccione un género</option>
+                                    <option th:each="g : ${generos}" th:value="${g.name()}"
+                                        th:text="${#strings.capitalize(g.name().toLowerCase())}"></option>
+                                </select>
+                                <div class="invalid-feedback">Seleccione un género.</div>
+                            </div>
+
+                            <!-- Sección de Cuenta -->
+                            <div class="col-12 mt-4">
+                                <h6 class="text-primary border-bottom pb-2 fw-semibold">
+                                    <i class="ti ti-user-group me-2"></i>Asignación de responsabilidad
+                                </h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="idCargo" class="form-label">
+                                    Cargo <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="idCargo" th:field="*{idCargo}" data-search-field="cargo"
+                                    data-choices required>
+                                    <option value="">Seleccione un cargo</option>
+                                    <option th:each="c : ${cargos}" th:value="${c.idCargo}" th:text="${c.nombreCargo}">
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback">Seleccione un cargo.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="idOficina" class="form-label">Oficina (Opcional)</label>
+                                <select class="form-select" id="idOficina" th:field="*{idOficina}"
+                                    data-search-field="oficina" data-choices>
+                                    <option value="">Seleccione una oficina</option>
+                                    <option th:each="o : ${oficinas}" th:value="${o.idOficina}"
+                                        th:text="${o.nombreOficina}"></option>
+                                </select>
+                                <div class="invalid-feedback">Seleccione una oficina.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="btnGuardarResponsable">
+                            <i class="ti ti-device-floppy me-1"></i>Guardar Responsable
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

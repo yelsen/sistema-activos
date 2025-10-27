@@ -2,6 +2,8 @@ package pe.edu.unasam.activos.modules.personas.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import pe.edu.unasam.activos.common.enums.EstadoTecnico;
+
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedDate;
@@ -34,6 +36,10 @@ public class Tecnico {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_idespecialidad_tecnico", referencedColumnName = "idespecialidad_tecnico")
     private EspecialidadTecnico especialidadTecnico;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado_tecnico")
+    private EstadoTecnico estadoTecnico;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)

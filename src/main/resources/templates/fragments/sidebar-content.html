@@ -178,19 +178,19 @@
                 </a>
                 <ul class="dropdown-menu flex-column">
                     <li class="nav-item" sec:authorize="hasAuthority('PERSONAL_ACCEDER')">
-                        <a class='nav-link' th:href="@{/personas}">Personal</a>
+                        <a class='nav-link' th:href="@{/organizacion/personal}">Personal</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('RESPONSABLES_ACCEDER')">
-                        <a class='nav-link' th:href="@{/personas/responsables}">Responsables</a>
+                        <a class='nav-link' th:href="@{/organizacion/responsables}">Responsables</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('CARGOS_ACCEDER')">
-                        <a class='nav-link' th:href="@{/personas/cargos}">Cargos</a>
+                        <a class='nav-link' th:href="@{/organizacion/cargos}">Cargos</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('OFICINAS_ACCEDER')">
-                        <a class='nav-link' th:href="@{/ubicaciones/oficinas}">Oficinas</a>
+                        <a class='nav-link' th:href="@{/organizacion/oficinas}">Oficinas</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('DEPARTAMENTOS_ACCEDER')">
-                        <a class='nav-link' th:href="@{/ubicaciones/departamentos}">Departamentos</a>
+                        <a class='nav-link' th:href="@{/organizacion/departamentos}">Departamentos</a>
                     </li>
                 </ul>
             </li>

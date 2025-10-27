@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pe.edu.unasam.activos.common.enums.EstadoTecnico;
 
 public class TecnicoDTO {
 
@@ -20,6 +21,9 @@ public class TecnicoDTO {
 
         @NotNull(message = "La especialidad es obligatoria")
         private Integer idEspecialidad;
+
+        @NotNull(message = "El estado es obligatorio")
+        private EstadoTecnico estadoTecnico;
     }
 
     @Data
@@ -28,8 +32,8 @@ public class TecnicoDTO {
     @AllArgsConstructor
     public static class Response {
         private Integer idTecnico;
-        private String nombrePersona;
         private String dniPersona;
         private String nombreEspecialidad;
+        private EstadoTecnico estadoTecnico;
     }
 }

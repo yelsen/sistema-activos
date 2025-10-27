@@ -30,9 +30,6 @@ public class Departamento {
     @Column(name = "nombre_departamento", length = 255, nullable = false)
     private String nombreDepartamento;
     
-    @Column(name = "direccion_departamento", length = 255)
-    private String direccionDepartamento;
-
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

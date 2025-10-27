@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pe.edu.unasam.activos.common.exception.BusinessException;
 import pe.edu.unasam.activos.common.exception.NotFoundException;
 import pe.edu.unasam.activos.modules.personas.domain.Cargo;
 import pe.edu.unasam.activos.modules.personas.domain.Persona;
@@ -47,12 +46,6 @@ public class ResponsableService {
         Oficina oficina = oficinaRepository.findById(request.getIdOficina())
                 .orElseThrow(() -> new NotFoundException("Oficina no encontrada con ID: " + request.getIdOficina()));
 
-        if (Boolean.TRUE.equals(request.getEsResponsablePrincipal())) {
-            responsableRepository.findResponsablesPrincipalesByOficina(request.getIdOficina()).forEach(r -> {
-                throw new BusinessException("Ya existe un responsable principal para la oficina " + oficina.getNombreOficina());
-            });
-        }
-
         Responsable responsable = new Responsable();
         mapToEntity(responsable, request, persona, cargo, oficina);
 
@@ -85,7 +78,6 @@ public class ResponsableService {
         responsable.setOficina(oficina);
         responsable.setFechaAsignacion(request.getFechaAsignacion());
         responsable.setFechaFinAsignacion(request.getFechaFinAsignacion());
-        responsable.setEsResponsablePrincipal(request.getEsResponsablePrincipal());
         responsable.setEstadoResponsable(request.getEstadoResponsable());
     }
 
@@ -98,7 +90,6 @@ public class ResponsableService {
                 responsable.getOficina().getNombreOficina(),
                 responsable.getFechaAsignacion(),
                 responsable.getFechaFinAsignacion(),
-                responsable.getEsResponsablePrincipal(),
                 responsable.getEstadoResponsable()
         );
     }

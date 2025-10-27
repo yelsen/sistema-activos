@@ -17,4 +17,6 @@ public interface OficinaRepository extends JpaRepository<Oficina, Integer> {
     List<Oficina> findByTipoOficina_IdTipoOficina(Integer idTipoOficina);
     
     List<Oficina> findByNombreOficinaContainingIgnoreCase(String nombreOficina);
+
+    boolean existsByNombreOficina(String nombreOficina);
 }

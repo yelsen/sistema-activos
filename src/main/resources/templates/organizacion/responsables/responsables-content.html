@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body th:fragment="content">
+    <!-- Header de la página -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="mb-2 h2">Gestión de Personal</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/home}">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="#">Organización</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Responsables</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="card" id="tecnico-content-wrapper">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="card-title mb-0">Listado de Responsables</h5>
+                <p class="mb-0 text-secondary small">Administra los responsables.</p>
+            </div>
+            <div sec:authorize="hasAuthority('RESPONSABLES_CREAR')">
+                <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+                    data-bs-target="#modalCrearResponsable">
+                    <i class="ti ti-plus me-1"></i> Nuevo Responsable
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Formulario de Búsqueda y Filtro -->
+            <form id="filterForm" th:action="@{/organizacion/responsables}" method="get" class="row g-3 py-2">
+                <div class="col-md-8">
+                    <input type="text" class="form-control"
+                        placeholder="Buscar por dni, nombres, cargo, oficina..." th:value="${query}"
+                        name="query" id="searchInput">
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="estado" name="estado" data-choices>
+                        <option value="">Todos los estados</option>
+                        <option th:each="e : ${estadoResponsables}" th:value="${e.name()}"
+                            th:text="${#strings.capitalize(e.name().toLowerCase())}" th:selected="${estado == e}">
+                        </option>
+                    </select>
+                </div>
+            </form>
+
+            <!-- Contenedor para la lista de responsables que se actualizará dinámicamente -->
+            <div id="responsable-list-container" class="pt-2">
+                <div th:replace="~{organizacion/responsables/responsables-list :: responsableList}"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inclusión de Modales -->
+    <div th:replace="~{organizacion/responsables/modal/CrearModal :: modalCrear}"></div>
+    <div th:replace="~{organizacion/responsables/modal/EditarModal :: modalEditar}"></div>
+    <div th:replace="~{organizacion/responsables/modal/EliminarModal :: modalEliminar}"></div>
+
+    <!-- Utilidad global reutilizable -->
+    <script th:src="@{/js/persona-search.js}"></script>
+
+</body>
+
+</html>

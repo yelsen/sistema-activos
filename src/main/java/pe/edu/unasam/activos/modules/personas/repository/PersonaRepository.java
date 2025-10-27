@@ -52,8 +52,11 @@ public interface PersonaRepository extends JpaRepository<Persona, String>, JpaSp
                         "OR p.dni LIKE CONCAT('%', :query, '%'))")
         Page<Persona> findPersonasSinTecnicoPaginado(@Param("query") String query, Pageable pageable);
 
-        @Query("SELECT p FROM Persona p WHERE CONCAT(p.apellidos, ' ', p.nombres) LIKE %:nombreCompleto%")
-        List<Persona> buscarPorNombreCompleto(@Param("nombreCompleto") String nombreCompleto);
+        @Query("SELECT p FROM Persona p WHERE (:query IS NULL OR :query = '' OR LOWER(p.dni) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(CONCAT(p.nombres, ' ', p.apellidos)) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(p.email) LIKE LOWER(CONCAT('%', :query, '%'))) ")
+        Page<Persona> findAllWithFilters(@Param("query") String query, Pageable pageable);
+
+        @Query("SELECT p FROM Persona p WHERE LOWER(CONCAT(p.nombres, ' ', p.apellidos)) LIKE LOWER(CONCAT('%', :nombreCompleto, '%'))")
+        List<Persona> findByNombreCompletoContainingIgnoreCase(@Param("nombreCompleto") String nombreCompleto);
 
         boolean existsByEmail(String email);
 

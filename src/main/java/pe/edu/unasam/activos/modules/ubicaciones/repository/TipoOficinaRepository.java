@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface TipoOficinaRepository extends JpaRepository<TipoOficina, Integer> {
     
     Optional<TipoOficina> findByTipoOficina(String tipoOficina);
+
+    boolean existsByTipoOficina(String tipoOficina);
 }

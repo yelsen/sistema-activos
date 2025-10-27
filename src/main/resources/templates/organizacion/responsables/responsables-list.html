@@ -1,55 +1,53 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<div th:fragment="usuariosList" id="usuarios-list-fragment">
+<div th:fragment="responsableList" id="responsable-list-fragment">
 
-    <!-- Tabla de Usuarios -->
+    <!-- Tabla de Responsables -->
     <div class="table-responsive">
         <table class="table table-hover align-middle">
             <thead class="table-light">
                 <tr>
                     <th>DNI</th>
                     <th>Nombre Completo</th>
-                    <th>Usuario</th>
-                    <th>Email</th>
-                    <th>Teléfono</th>
-                    <th>Rol</th>
+                    <th>Cargo</th>
+                    <th>Oficina</th>
+                    <th>Fecha Asignación</th>
+                    <th>Fecha Fin</th>
                     <th>Estado</th>
                     <th class="text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="usuario : ${usuariosPage.content}">
-                    <td th:text="${usuario.dniPersona}"></td>
+                <tr th:each="responsable : ${responsablePage.content}">
+                    <td th:text="${responsable.dniPersona}"></td>
                     <td>
-                        <div class="fw-medium" th:text="${usuario.nombrePersona}"></div>
+                        <div class="fw-medium" th:text="${responsable.nombrePersona}"></div>
                         <small class="badge bg-primary-subtle text-primary-emphasis"
-                            th:if="${usuario.generoPersona != null}" th:text="${usuario.generoPersona}"></small>
+                            th:if="${responsable.generoPersona != null}" th:text="${responsable.generoPersona}"></small>
                     </td>
-                    <td th:text="${usuario.usuario}"></td>
-                    <td th:text="${usuario.emailPersona}"></td>
-                    <td th:text="${usuario.telefonoPersona}"></td>
-                    
-                    <td>
-                        <span class="badge" th:text="${usuario.nombreRol}" th:style="${usuario.idRol != null and rolColorMap != null 
-                                  ? 'background-color: ' + rolColorMap[usuario.idRol] + ' !important; color: white;' 
-                                  : 'background-color: #6c757d !important; color: white;'}">
-                        </span>
+                    <td th:text="${responsable.cargoResponsable}"></td>
+                    <td th:text="${responsable.oficinaResponsable}"></td>
+                    <td
+                        th:text="${responsable.fechaFinAsignacion != null ? #temporals.format(responsable.fechaFinAsignacion, 'dd/MM/yyyy') : '-'}">
                     </td>
+                    <td class="badge"
+                        th:classappend="${responsable.estadoResponsable} ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis'"
+                        th:text="${responsable.estadoResponsable} ? 'Activo' : 'Bloqueado'"></td>
+
                     <td>
-                        <span class="badge" th:classappend="${usuario.estadoUsuarios.name() == 'ACTIVO' 
-                                  ? 'bg-success-subtle text-success-emphasis' 
-                                  : (usuario.estadoUsuarios.name() == 'BLOQUEADO' 
+                        <span class="badge" th:classappend="${responsable.estadoResponsable} ? 'bg-success-subtle text-success-emphasis' 
+                                  : (responsable.estadoResponsable == 'BLOQUEADO' 
                                       ? 'bg-danger-subtle text-danger-emphasis' 
-                                      : (usuario.estadoUsuarios.name() == 'PENDIENTE' 
+                                      : (responsable.estadoResponsable == 'FINALIZADO' 
                                           ? 'bg-warning-subtle text-warning-emphasis' 
-                                          : 'bg-secondary-subtle text-secondary-emphasis'))}" th:text="${usuario.estadoUsuarios.name() == 'ACTIVO' 
+                                          : 'bg-secondary-subtle text-secondary-emphasis'))}" th:text="${responsable.estadoResponsable == 'ACTIVO' 
                                   ? 'Activo' 
-                                  : (usuario.estadoUsuarios.name() == 'BLOQUEADO' 
+                                  : (responsable.estadoResponsable == 'BLOQUEADO' 
                                       ? 'Bloqueado' 
-                                      : (usuario.estadoUsuarios.name() == 'PENDIENTE' 
-                                          ? 'Pendiente' 
-                                          : 'Inactivo'))}">
+                                      : (responsable.estadoResponsable == 'FINALIZADO' 
+                                          ? 'Finalizado' 
+                                          : 'Bloqueado'))}">
                         </span>
                     </td>
 
@@ -61,15 +59,15 @@
                                 <span class="ti ti-dots-vertical"></span>
                             </button>
                             <ul class="dropdown-menu">
-                                <li sec:authorize="hasAuthority('USUARIOS_EDITAR')">
+                                <li sec:authorize="hasAuthority('RESPONSABLES_EDITAR')">
                                     <button class="dropdown-item" type="button" data-bs-toggle="modal"
-                                        data-bs-target="#modalEditarUsuario" th:data-usuario-id="${usuario.idUsuario}">
+                                        data-bs-target="#modalEditarResponsable" th:data-usuario-id="${responsable.idResponsable}">
                                         <i class="ti ti-pencil me-2"></i>Editar
                                     </button>
                                 </li>
-                                <li sec:authorize="hasAuthority('USUARIOS_EDITAR')">
+                                <li sec:authorize="hasAuthority('RESPONSABLES_EDITAR')">
                                     <form
-                                        th:action="@{/seguridad/usuarios/{id}/cambiar-estado(id=${usuario.idUsuario})}"
+                                        th:action="@{/seguridad/responsables/{id}/cambiar-estado(id=${responsable.idResponsable})}"
                                         method="post" class="d-inline">
                                         <button class="dropdown-item" type="submit">
                                             <i class="ti ti-repeat me-2"></i>Cambiar estado
@@ -79,10 +77,10 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li sec:authorize="hasAuthority('USUARIOS_ELIMINAR')">
+                                <li sec:authorize="hasAuthority('RESPONSABLES_ELIMINAR')">
                                     <button class="dropdown-item text-danger" type="button" data-bs-toggle="modal"
-                                        data-bs-target="#modalEliminarUsuario" th:data-usuario-id="${usuario.idUsuario}"
-                                        th:data-usuario-nombre="${usuario.usuario}">
+                                        data-bs-target="#modalEliminarResponsable" th:data-usuario-id="${responsable.idResponsable}"
+                                        th:data-usuario-nombre="${responsable.nombrePersona}">
                                         <i class="ti ti-trash me-2"></i>Eliminar
                                     </button>
                                 </li>
@@ -92,11 +90,11 @@
                 </tr>
 
                 <!-- Mensaje cuando no hay resultados -->
-                <tr th:if="${usuariosPage.empty}">
+                <tr th:if="${responsablePage.empty}">
                     <td colspan="8" class="text-center py-5">
                         <div class="d-flex flex-column align-items-center">
                             <i class="ti ti-users-off fs-1 text-muted mb-3"></i>
-                            <p class="text-muted mb-0">No se encontraron usuarios</p>
+                            <p class="text-muted mb-0">No se encontraron responsables</p>
                             <small class="text-muted">Intenta ajustar los filtros de búsqueda</small>
                         </div>
                     </td>
@@ -106,9 +104,9 @@
     </div>
 
     <!-- Paginación -->
-    <div class="card-footer" th:if="${!usuariosPage.empty}">
+    <div class="card-footer" th:if="${!responsablePage.empty}">
         <div
-            th:replace="~{fragments/pagination :: pagination(page=${usuariosPage}, url='/seguridad/usuarios', query=${query}, estado=${estado})}">
+            th:replace="~{fragments/pagination :: pagination(page=${responsablePage}, url='/seguridad/responsables', query=${query}, estado=${estado})}">
         </div>
     </div>
 </div>

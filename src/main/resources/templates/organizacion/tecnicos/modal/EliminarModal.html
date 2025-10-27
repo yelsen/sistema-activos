@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="modalEliminar" class="modal fade" id="modalEliminarTecnico" tabindex="-1"
+        aria-labelledby="modalEliminarTecnicoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-danger text-white position-relative modal-shape-header">
+                    <div class="d-flex align-items-center gap-3 position-relative">
+                        <i class="ti ti-users-group fs-2"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Eliminar Técnico</h5>
+                            <p class="fs-10 mb-0 text-white-50">Esta acción no se puede deshacer.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+                <form id="formEliminarTecnico" method="post" th:action="@{/organizacion/tecnicos/delete/__ID__}">
+                    <div class="modal-body p-4">
+                        <p>
+                            ¿Está seguro de eliminar al técnico <strong id="nombreTecnicoEliminar">[tecnico]</strong>?
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="ti ti-trash me-1"></i>Eliminar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

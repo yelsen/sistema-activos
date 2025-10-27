@@ -47,9 +47,9 @@ public class Responsable {
     @Column(name = "fecha_fin_asignacion")
     private LocalDate fechaFinAsignacion;
     
-    @Column(name = "es_responsable_principal", columnDefinition = "TINYINT(1)")
-    private Boolean esResponsablePrincipal;
-    
+    @Column(name = "es_responsable_principal")
+    private boolean esResponsablePrincipal;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "estado_responsable")
     private EstadoResponsable estadoResponsable;
