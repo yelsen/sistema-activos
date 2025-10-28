@@ -1,5 +1,7 @@
 package pe.edu.unasam.activos.modules.personas.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,12 +15,29 @@ import java.util.List;
 @Repository
 public interface ResponsableRepository extends JpaRepository<Responsable, Integer> {
 
-    List<Responsable> findByOficina_IdOficina(Integer idOficina);
+  List<Responsable> findByOficina_IdOficina(Integer idOficina);
 
-    List<Responsable> findByEstadoResponsable(EstadoResponsable estadoResponsable);
+  List<Responsable> findByEstadoResponsable(EstadoResponsable estadoResponsable);
 
-    @Query("SELECT r FROM Responsable r WHERE r.oficina.idOficina = :idOficina AND r.esResponsablePrincipal = true AND r.estadoResponsable = 'ACTIVO'")
-    List<Responsable> findResponsablesPrincipalesByOficina(@Param("idOficina") Integer idOficina);
 
-    List<Responsable> findByPersona_Dni(String dni);
+  List<Responsable> findByPersona_Dni(String dni);
+
+  @Query("""
+          SELECT r FROM Responsable r
+          LEFT JOIN r.persona p
+          LEFT JOIN r.cargo c
+          LEFT JOIN r.oficina o
+          WHERE (:estado IS NULL OR r.estadoResponsable = :estado)
+            AND (
+                  :q IS NULL OR :q = '' OR
+                  LOWER(CONCAT(p.nombres, ' ', p.apellidos)) LIKE LOWER(CONCAT('%', :q, '%')) OR
+                  p.dni LIKE CONCAT('%', :q, '%') OR
+                  LOWER(c.nombreCargo) LIKE LOWER(CONCAT('%', :q, '%')) OR
+                  LOWER(o.nombreOficina) LIKE LOWER(CONCAT('%', :q, '%'))
+                )
+          ORDER BY r.createdAt DESC
+      """)
+  Page<Responsable> findAllWithFilters(@Param("q") String query,
+      @Param("estado") EstadoResponsable estado,
+      Pageable pageable);
 }

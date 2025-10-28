@@ -5,7 +5,7 @@
     <!-- Header de la página -->
     <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
-            <h1 class="mb-2 h2">Gestión de Personal</h1>
+            <h1 class="mb-2 h2">Gestión de Responsables</h1>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a th:href="@{/home}">Inicio</a></li>
@@ -34,9 +34,8 @@
             <!-- Formulario de Búsqueda y Filtro -->
             <form id="filterForm" th:action="@{/organizacion/responsables}" method="get" class="row g-3 py-2">
                 <div class="col-md-8">
-                    <input type="text" class="form-control"
-                        placeholder="Buscar por dni, nombres, cargo, oficina..." th:value="${query}"
-                        name="query" id="searchInput">
+                    <input type="text" class="form-control" placeholder="Buscar por dni, nombres, cargo, oficina..."
+                        th:value="${query}" name="query" id="searchInput">
                 </div>
                 <div class="col-md-4">
                     <select class="form-select" id="estado" name="estado" data-choices>
@@ -57,11 +56,327 @@
 
     <!-- Inclusión de Modales -->
     <div th:replace="~{organizacion/responsables/modal/CrearModal :: modalCrear}"></div>
-    <div th:replace="~{organizacion/responsables/modal/EditarModal :: modalEditar}"></div>
+    <div th:replace="~{organizacion/responsables/modal/EditarModal :: modalEditarResponsable}"></div>
     <div th:replace="~{organizacion/responsables/modal/EliminarModal :: modalEliminar}"></div>
+
 
     <!-- Utilidad global reutilizable -->
     <script th:src="@{/js/persona-search.js}"></script>
+
+    <!-- Scripts de la tabla -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const listContainer = document.getElementById('responsable-list-container');
+            const searchInput = document.getElementById('searchInput');
+            const estadoSelect = document.getElementById('estado');
+
+            let debounceTimer;
+            let controller;
+
+            function toFragmentUrl(href) {
+                const u = new URL(href, window.location.origin);
+                u.searchParams.set('fragment', 'true');
+                return u.pathname + '?' + u.searchParams.toString();
+            }
+
+            function sanitizeUrlForHistory(href) {
+                const u = new URL(href, window.location.origin);
+                u.searchParams.delete('fragment');
+                const params = u.searchParams.toString();
+                return u.pathname + (params ? ('?' + params) : '');
+            }
+
+            function fetchResponsablesByHref(href) {
+                if (!listContainer) return;
+
+                if (controller) {
+                    controller.abort();
+                }
+                controller = new AbortController();
+
+                listContainer.classList.add('loading');
+                const fragmentUrl = toFragmentUrl(href);
+
+                return fetch(fragmentUrl, {
+                    signal: controller.signal,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(async (response) => {
+                        if (!response.ok) {
+                            const serverText = await response.text();
+                            throw new Error(serverText || ('Error ' + response.status + ': ' + response.statusText));
+                        }
+                        return response.text();
+                    })
+                    .then((html) => {
+                        listContainer.innerHTML = html;
+                        if (window.reinitializeChoices) {
+                            window.reinitializeChoices();
+                        }
+                        // Reinicializar tooltips de Bootstrap para elementos recién insertados
+                        const tooltipTriggerList = listContainer.querySelectorAll('[data-bs-toggle="tooltip"]');
+                        [...tooltipTriggerList].forEach(el => new bootstrap.Tooltip(el));
+                        history.pushState(null, '', sanitizeUrlForHistory(href));
+                    })
+                    .catch((error) => {
+                        if (error.name !== 'AbortError') {
+                            console.error('Error al cargar responsables:', error);
+                            listContainer.innerHTML = '<div class="alert alert-danger">Error al cargar los responsables. Por favor, recarga la página.</div>';
+                        }
+                    })
+                    .finally(() => {
+                        listContainer.classList.remove('loading');
+                    });
+            }
+
+            function buildHrefFromLocation(overrides = {}) {
+                const u = new URL(window.location.href);
+                // Aseguramos que la ruta sea la de responsables (por si estamos en otra ruta dentro del módulo)
+                if (!u.pathname.endsWith('/organizacion/responsables')) {
+                    u.pathname = '/organizacion/responsables';
+                }
+
+                if (overrides.query !== undefined) {
+                    const q = (overrides.query || '').trim();
+                    if (q) u.searchParams.set('query', q);
+                    else u.searchParams.delete('query');
+                }
+
+                if (overrides.estado !== undefined) {
+                    const e = overrides.estado;
+                    if (e) u.searchParams.set('estado', e);
+                    else u.searchParams.delete('estado');
+                }
+
+                if (overrides.page !== undefined) {
+                    u.searchParams.set('page', String(overrides.page));
+                } else if (!u.searchParams.has('page')) {
+                    u.searchParams.set('page', '0');
+                }
+
+                if (overrides.size !== undefined) {
+                    u.searchParams.set('size', String(overrides.size));
+                } else if (!u.searchParams.has('size')) {
+                    const defaultSize = window.APP_CONFIG?.pagination?.defaultSize || 10;
+                    u.searchParams.set('size', String(defaultSize));
+                }
+
+                return u.href;
+            }
+
+            // Búsqueda
+            if (searchInput) {
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        const href = buildHrefFromLocation({ query: (searchInput.value || '').trim(), page: 0 });
+                        fetchResponsablesByHref(href);
+                    }, 350);
+                });
+            }
+
+            // Filtro por estado
+            if (estadoSelect) {
+                estadoSelect.addEventListener('change', () => {
+                    const href = buildHrefFromLocation({ estado: estadoSelect.value || '', page: 0 });
+                    fetchResponsablesByHref(href);
+                });
+            }
+
+            // Delegación de eventos para paginación y tamaño de página
+            if (listContainer) {
+                listContainer.addEventListener('click', (e) => {
+                    const pageLink = e.target.closest('a.page-link');
+                    if (pageLink && !pageLink.closest('.disabled')) {
+                        e.preventDefault();
+                        fetchResponsablesByHref(pageLink.href);
+                    }
+                });
+
+                listContainer.addEventListener('change', (e) => {
+                    if (e.target && e.target.id === 'pageSizeSelect') {
+                        const newSize = parseInt(e.target.value, 10);
+                        const href = buildHrefFromLocation({ size: isNaN(newSize) ? undefined : newSize, page: 0 });
+                        fetchResponsablesByHref(href);
+                    }
+                });
+            }
+
+            // API pública por si se necesita desde otros scripts
+            window.ResponsablesTable = {
+                fetchByUrl: fetchResponsablesByHref,
+            };
+        });
+    </script>
+
+    <!-- Scripts de módulos de Responsables -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Flash messages container
+            const flashContainer = document.getElementById('flash-messages');
+            if (flashContainer) {
+                // Toasts movidos a index (toasts.js); aquí solo apertura de modales programática
+
+                // Abrir modal Editar si hay error para un responsable específico
+                const errorResponsableId = flashContainer.dataset.errorResponsableId;
+                if (errorResponsableId) {
+                    const modalEditarEl = document.getElementById('modalEditarResponsable');
+                    if (modalEditarEl) {
+                        modalEditarEl.setAttribute('data-open-responsable-id', errorResponsableId);
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEditarEl);
+                        modalInstance.show();
+                    }
+                }
+
+                // Abrir modal Crear si falló validación
+                const modalCrearError = flashContainer.dataset.modalCrearError;
+                if (modalCrearError) {
+                    const modalCrearEl = document.getElementById('modalCrearResponsable');
+                    if (modalCrearEl) {
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalCrearEl);
+                        modalInstance.show();
+                    }
+                }
+
+                // Abrir modal Eliminar si hay error para un responsable específico
+                const errorResponsableDeleteId = flashContainer.dataset.errorResponsableDeleteId;
+                const errorResponsableDeleteNombre = flashContainer.dataset.errorResponsableDeleteNombre;
+                if (errorResponsableDeleteId && errorResponsableDeleteNombre) {
+                    const modalEliminarEl = document.getElementById('modalEliminarResponsable');
+                    if (modalEliminarEl) {
+                        modalEliminarEl.setAttribute('data-open-responsable-id', errorResponsableDeleteId);
+                        modalEliminarEl.setAttribute('data-open-responsable-nombre', errorResponsableDeleteNombre);
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEliminarEl);
+                        modalInstance.show();
+                    }
+                }
+            }
+
+            // Crear: reinitialize choices on show and init PersonaSearch
+            const modalCrearEl = document.getElementById('modalCrearResponsable');
+            if (modalCrearEl) {
+                modalCrearEl.addEventListener('shown.bs.modal', () => {
+                    window.reinitializeChoices && window.reinitializeChoices();
+                    if (window.PersonaSearch) {
+                        window.PersonaSearch.init({
+                            modalId: 'modalCrearResponsable',
+                            formId: 'formCrearResponsable',
+                            saveButtonId: 'btnGuardarResponsable',
+                            checkField: 'esResponsable',
+                            checkFieldLabel: 'Responsable',
+                            lockOnFound: false
+                        });
+                    }
+                });
+            }
+
+            // Editar: carga dinámica de contenido; soporta apertura programática via data-open-responsable-id
+            const modalEditarEl = document.getElementById('modalEditarResponsable');
+            if (modalEditarEl) {
+                const editarResponsableContenido = document.getElementById('editar-responsable-contenido');
+                modalEditarEl.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const responsableId = button?.getAttribute('data-responsable-id') || modalEditarEl.getAttribute('data-open-responsable-id');
+                    if (!responsableId) return;
+
+                    editarResponsableContenido.innerHTML = `<div class="d-flex justify-content-center p-5"><div class="spinner-border text-primary" role="status"><span class="visualmente-hidden">Cargando...</span></div></div>`;
+
+                    fetch(`/organizacion/responsables/editar/${responsableId}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                        .then(async response => {
+                            if (!response.ok) {
+                                const status = response.status;
+                                const serverText = await response.text();
+                                let msg = serverText || '';
+                                if (!msg) {
+                                    if (status === 404) msg = 'Responsable no encontrado (404).';
+                                    else if (status === 400) msg = 'Solicitud inválida (400).';
+                                    else if (status >= 500) msg = 'Error del servidor (' + status + ').';
+                                    else if (status >= 300 && status < 400) msg = 'Redirección inesperada (' + status + ').';
+                                    else msg = 'Error al cargar datos (' + status + ').';
+                                }
+                                window.showToast && (window.showToast ? window.showToast(msg, 'error') : showToast(msg, 'error'));
+                                editarResponsableContenido.innerHTML = `<div class="alert alert-danger m-3"><i class="ti ti-alert-circle me-2"></i>${msg}</div>`;
+                                throw new Error(msg);
+                            }
+                            return response.text();
+                        })
+                        .then(html => {
+                            editarResponsableContenido.innerHTML = html;
+                            if (window.reinitializeChoices) window.reinitializeChoices(editarResponsableContenido);
+                            // Init PersonaSearch for Edit modal after content is loaded
+                            if (window.PersonaSearch) {
+                                // Ensure form exists before init
+                                const formEditar = document.getElementById('formEditarResponsable');
+                                if (formEditar) {
+                                    window.PersonaSearch.init({
+                                        modalId: 'modalEditarResponsable',
+                                        formId: 'formEditarResponsable',
+                                        saveButtonId: 'btnActualizarResponsable',
+                                        checkField: 'esResponsable',
+                                        checkFieldLabel: 'Responsable',
+                                        lockOnFound: false
+                                    });
+                                }
+                            }
+                            modalEditarEl.removeAttribute('data-open-responsable-id');
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            if (!editarResponsableContenido.innerHTML || editarResponsableContenido.innerHTML.trim() === '') {
+                                editarResponsableContenido.innerHTML = `<div class="alert alert-danger m-3"><i class="ti ti-alert-circle me-2"></i>No se pudo cargar la información.</div>`;
+                            }
+                        });
+                });
+            }
+
+            // Eliminar: asigna nombre dinámico y action del form; soporta apertura programática
+            const modalEliminarEl = document.getElementById('modalEliminarResponsable');
+            if (modalEliminarEl) {
+                modalEliminarEl.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const openId = modalEliminarEl.getAttribute('data-open-responsable-id');
+                    const openNombre = modalEliminarEl.getAttribute('data-open-responsable-nombre');
+                    const responsableId = (button?.getAttribute('data-responsable-id')) || openId;
+                    const responsableNombre = (button?.getAttribute('data-responsable-nombre')) || openNombre;
+                    if (!responsableId || !responsableNombre) return;
+
+                    modalEliminarEl.querySelector('#nombreResponsableEliminar').textContent = responsableNombre;
+                    modalEliminarEl.querySelector('#formEliminarResponsable').action = `/organizacion/responsables/delete/${responsableId}`;
+
+                    // reset programmatic attributes
+                    modalEliminarEl.removeAttribute('data-open-responsable-id');
+                    modalEliminarEl.removeAttribute('data-open-responsable-nombre');
+                });
+            }
+        });
+
+        // Optional public API
+        window.ResponsablesModals = {
+            openEdit: function (responsableId) {
+                const modalEditarEl = document.getElementById('modalEditarResponsable');
+                if (!modalEditarEl) return;
+                modalEditarEl.setAttribute('data-open-responsable-id', responsableId);
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEditarEl);
+                modalInstance.show();
+            },
+            openDelete: function (responsableId, nombre) {
+                const modalEliminarEl = document.getElementById('modalEliminarResponsable');
+                if (!modalEliminarEl) return;
+                modalEliminarEl.setAttribute('data-open-responsable-id', responsableId);
+                modalEliminarEl.setAttribute('data-open-responsable-nombre', nombre);
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEliminarEl);
+                modalInstance.show();
+            },
+            openCreate: function () {
+                const modalCrearEl = document.getElementById('modalCrearResponsable');
+                if (!modalCrearEl) return;
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalCrearEl);
+                modalInstance.show();
+            }
+        };
+    </script>
 
 </body>
 

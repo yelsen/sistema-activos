@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import pe.edu.unasam.activos.common.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -112,6 +113,33 @@ public class GlobalExceptionHandler {
                 .path(request.getDescription(false))
                 .build();
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public Object handleNoResourceFound(NoResourceFoundException ex, WebRequest request, HttpServletRequest httpRequest) {
+        String acceptHeader = httpRequest.getHeader("Accept");
+        boolean wantsHtml = acceptHeader != null && acceptHeader.contains("text/html");
+        boolean isAjax = "XMLHttpRequest".equals(httpRequest.getHeader("X-Requested-With"));
+
+        if (wantsHtml && !isAjax) {
+            ModelAndView modelAndView = new ModelAndView("error/404");
+            modelAndView.addObject("timestamp", LocalDateTime.now());
+            modelAndView.addObject("status", HttpStatus.NOT_FOUND.value());
+            modelAndView.addObject("error", "Not Found");
+            modelAndView.addObject("message", ex.getMessage());
+            modelAndView.addObject("path", request.getDescription(false));
+            modelAndView.setStatus(HttpStatus.NOT_FOUND);
+            return modelAndView;
+        } else {
+            ErrorResponse errorResponse = ErrorResponse.builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.NOT_FOUND.value())
+                    .error("Not Found")
+                    .message(ex.getMessage())
+                    .path(request.getDescription(false))
+                    .build();
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
     }
 
     @ExceptionHandler(Exception.class)

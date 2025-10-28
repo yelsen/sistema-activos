@@ -4,7 +4,7 @@
 <body>
     <div th:fragment="modalCrear" class="modal fade" id="modalCrearResponsable" tabindex="-1"
         aria-labelledby="modalCrearResponsableLabel" aria-hidden="true"
-        th:attr="data-search-url=@{/personas/buscar-responsables}">
+        th:attr="data-search-url=@{/personas/buscar-responsable}">
         <div class="modal-dialog modal-lg">
             <div class="modal-content shadow-lg">
                 <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
@@ -53,7 +53,7 @@
                                 <label for="nombres" class="form-label">
                                     Nombres <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control" id="nombres" th:field="*{nombres}"
+                                <input type="text" class="form-control" id="nombres" name="nombres"
                                     data-search-field="nombres" required placeholder="Ingrese nombres">
                                 <div class="invalid-feedback">Los nombres son requeridos.</div>
                             </div>
@@ -61,7 +61,7 @@
                                 <label for="apellidos" class="form-label">
                                     Apellidos <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control" id="apellidos" th:field="*{apellidos}"
+                                <input type="text" class="form-control" id="apellidos" name="apellidos"
                                     data-search-field="apellidos" required placeholder="Ingrese apellidos">
                                 <div class="invalid-feedback">Los apellidos son requeridos.</div>
                             </div>
@@ -69,25 +69,25 @@
                                 <label for="email" class="form-label">
                                     Email <span class="text-danger">*</span>
                                 </label>
-                                <input type="email" class="form-control" id="email" th:field="*{email}"
+                                <input type="email" class="form-control" id="email" name="email"
                                     data-search-field="email" required placeholder="ejemplo@correo.com">
                                 <div class="invalid-feedback">Ingrese un email válido.</div>
                             </div>
                             <div class="col-md-6">
                                 <label for="telefono" class="form-label">Teléfono</label>
-                                <input type="text" class="form-control" id="telefono" th:field="*{telefono}"
+                                <input type="text" class="form-control" id="telefono" name="telefono"
                                     data-search-field="telefono" placeholder="Opcional">
                             </div>
                             <div class="col-md-6">
                                 <label for="direccion" class="form-label">Dirección</label>
-                                <input type="text" class="form-control" id="direccion" th:field="*{direccion}"
+                                <input type="text" class="form-control" id="direccion" name="direccion"
                                     data-search-field="direccion" placeholder="Opcional">
                             </div>
                             <div class="col-md-6">
                                 <label for="genero" class="form-label">
                                     Género <span class="text-danger">*</span>
                                 </label>
-                                <select class="form-select" id="genero" th:field="*{genero}" data-search-field="genero"
+                                <select class="form-select" id="genero" name="genero" data-search-field="genero"
                                     data-choices required>
                                     <option value="">Seleccione un género</option>
                                     <option th:each="g : ${generos}" th:value="${g.name()}"
@@ -103,7 +103,7 @@
                                 </h6>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="idCargo" class="form-label">
                                     Cargo <span class="text-danger">*</span>
                                 </label>
@@ -115,10 +115,10 @@
                                 </select>
                                 <div class="invalid-feedback">Seleccione un cargo.</div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <label for="idOficina" class="form-label">Oficina (Opcional)</label>
                                 <select class="form-select" id="idOficina" th:field="*{idOficina}"
-                                    data-search-field="oficina" data-choices>
+                                    data-search-field="oficina" data-choices data-choices-search>
                                     <option value="">Seleccione una oficina</option>
                                     <option th:each="o : ${oficinas}" th:value="${o.idOficina}"
                                         th:text="${o.nombreOficina}"></option>

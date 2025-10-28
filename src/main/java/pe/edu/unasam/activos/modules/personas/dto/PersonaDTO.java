@@ -90,7 +90,8 @@ public class PersonaDTO {
         private String direccion;
         private String genero;
         private boolean esResponsable;
-        private String departamentoActual;
+        private String oficinaActual;
+        private boolean exists;
     }
 
     /**
@@ -109,6 +110,7 @@ public class PersonaDTO {
         private String genero;
         private boolean esTecnico;
         private String especialidadActual;
+        private boolean exists;
     }
 
     /**

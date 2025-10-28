@@ -14,7 +14,7 @@ import pe.edu.unasam.activos.modules.personas.service.EspecialidadTecnicoService
 import java.util.List;
 
 @RestController
-@RequestMapping("/personas/especialidades")
+@RequestMapping({"/mantenimientos/especialidades", "/personas/especialidades"})
 @RequiredArgsConstructor
 @PreAuthorize("isAuthenticated()")
 public class EspecialidadTecnicoController {

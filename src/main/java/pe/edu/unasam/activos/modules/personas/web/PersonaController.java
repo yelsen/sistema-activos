@@ -3,7 +3,6 @@ package pe.edu.unasam.activos.modules.personas.web;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +40,18 @@ public class PersonaController {
             @RequestParam("dni") String dni) {
         return personaService.findPersonaParaResponsable(dni)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+                .orElseGet(() -> ResponseEntity.ok(
+                        PersonaDTO.PersonaResponsableResponse.builder()
+                                .nombres("")
+                                .apellidos("")
+                                .email("")
+                                .telefono("")
+                                .direccion("")
+                                .genero("")
+                                .esResponsable(false)
+                                .oficinaActual("")
+                                .exists(false)
+                                .build()));
     }
 
     @GetMapping(value = "/buscar-tecnico", params = "dni")
@@ -49,7 +59,18 @@ public class PersonaController {
             @RequestParam("dni") String dni) {
         return personaService.findPersonaParaTecnico(dni)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+                .orElseGet(() -> ResponseEntity.ok(
+                        PersonaDTO.PersonaTecnicoResponse.builder()
+                                .nombres("")
+                                .apellidos("")
+                                .email("")
+                                .telefono("")
+                                .direccion("")
+                                .genero("")
+                                .esTecnico(false)
+                                .especialidadActual("")
+                                .exists(false)
+                                .build()));
     }
 
     @GetMapping(value = "/buscar-usuario", params = "!dni")

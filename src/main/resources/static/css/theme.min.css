@@ -6417,24 +6417,29 @@ Estilos Personalizados para Choices.js
     --choices-border-color: var(--ds-border-color);
     --choices-border-color-focus: #86b7fe;
     --choices-border-radius: var(--ds-border-radius);
-    
-    --choices-search-bg: var(--ds-gray-100);
+
+    /* Input de búsqueda del dropdown */
+    --choices-search-bg: var(--ds-white);
     --choices-search-bg-focus: var(--ds-white);
     --choices-search-border: var(--ds-border-color);
     --choices-search-border-focus: #8ab4f8;
     --choices-search-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
     --choices-search-shadow-focus: inset 0 1px 2px rgba(0, 0, 0, 0.075), 0 0 0 0.2rem rgba(var(--ds-primary-rgb), 0.15);
-    
+
     --choices-option-bg-hover: var(--ds-primary);
     --choices-option-text-hover: #ffffff;
-    
+
     --choices-chip-bg: var(--ds-primary);
     --choices-chip-border: var(--ds-primary);
     --choices-chip-text: #ffffff;
-    
+
     --choices-placeholder-opacity: 0.5;
+    --choices-placeholder-color: var(--ds-gray-500);
     --choices-disabled-bg: var(--ds-gray-300);
-    
+
+    /* Ícono de búsqueda (modo claro) */
+    --choices-search-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+
     /* Borde discreto del dropdown */
     --choices-dropdown-border-color: var(--ds-gray-300);
 }
@@ -6446,24 +6451,28 @@ Estilos Personalizados para Choices.js
     --choices-text-color: var(--ds-gray-200);
     --choices-border-color: var(--ds-border-color);
     --choices-border-color-focus: #86b7fe;
-    
-    --choices-search-bg: rgba(0, 0, 0, 0.2);
-    --choices-search-bg-focus: var(--ds-gray-800);
+
+    --choices-search-bg: var(--ds-body-bg);
+    --choices-search-bg-focus: var(--ds-body-bg);
     --choices-search-border: var(--ds-border-color);
     --choices-search-border-focus: #8ab4f8;
     --choices-search-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
     --choices-search-shadow-focus: inset 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 0.2rem rgba(var(--ds-primary-rgb), 0.15);
-    
+
     --choices-option-bg-hover: var(--ds-primary);
     --choices-option-text-hover: #ffffff;
-    
+
     --choices-chip-bg: var(--ds-primary);
     --choices-chip-border: var(--ds-primary);
-    --choices-chip-text: #000000;
-    
+    --choices-chip-text: #ffffff;
+
     --choices-placeholder-opacity: 0.5;
+    --choices-placeholder-color: var(--ds-gray-300);
     --choices-disabled-bg: var(--ds-gray-700);
-    
+
+    /* Ícono de búsqueda (modo oscuro) */
+    --choices-search-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%239aa4ae'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+
     /* Borde discreto del dropdown - gris oscuro que se asemeja al fondo */
     --choices-dropdown-border-color: rgba(99, 100, 129, 0.3);
 }
@@ -32018,6 +32027,11 @@ div.table-responsive>div.dataTables_wrapper>div.row {
     border-top: none;
 }
 
+/* Modo oscuro: usa el caret nativo de Choices y solo ajusta el color */
+[data-bs-theme=dark] .choices[data-type*=select-one]::after {
+    border-color: #ffffff transparent transparent transparent !important;
+}
+
 .choices__list {
     list-style: none;
     margin: 0;
@@ -32135,9 +32149,26 @@ div.table-responsive>div.dataTables_wrapper>div.row {
 
 /* Eliminar completamente la línea blanca del input interno */
 .choices__list--dropdown .choices__input--cloned {
-    border: none !important;
-    border-bottom: none !important;
-    background: transparent !important;
+    background-color: var(--choices-search-bg) !important;
+    color: var(--choices-text-color) !important;
+    border: 1px solid var(--choices-search-border) !important;
+    background-image: var(--choices-search-icon) !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 1rem 1rem !important;
+    box-shadow: var(--choices-search-shadow) !important;
+}
+
+.choices__list--dropdown .choices__input--cloned::placeholder {
+    color: var(--choices-placeholder-color) !important;
+    opacity: var(--choices-placeholder-opacity) !important;
+}
+
+.choices__list--dropdown .choices__input--cloned:focus {
+    background-color: var(--choices-search-bg-focus) !important;
+    border-color: var(--choices-search-border-focus) !important;
+    box-shadow: var(--choices-search-shadow-focus) !important;
+    outline: 0 !important;
 }
 
 /* Sobrescribir estilos de la librería Choices.js */
@@ -32166,8 +32197,8 @@ div.table-responsive>div.dataTables_wrapper>div.row {
 }
 
 .choices__list--dropdown .choices__input--cloned {
-    background-color: transparent !important;
-    border: none !important;
+    background-color: var(--choices-search-bg) !important;
+    border: 1px solid var(--choices-search-border) !important;
     padding: 0.5rem !important;
     margin: 0.25rem !important;
 }
@@ -32339,7 +32370,8 @@ div.table-responsive>div.dataTables_wrapper>div.row {
 }
 
 .choices__placeholder {
-    opacity: 1
+    opacity: 1;
+    color: var(--choices-placeholder-color) !important
 }
 
 @keyframes blink {
@@ -33087,7 +33119,7 @@ html.collapsed .brand-logo .logo-collapsed {
 [data-bs-theme="dark"] .choices__list--dropdown,
 [data-bs-theme="dark"] .choices__list[aria-expanded] {
     background-color: var(--ds-body-bg);
-    border-color: var(--ds-border-color);
+    border-color: var(--ds-body-bg);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
@@ -33382,3 +33414,20 @@ html.collapsed .brand-logo .logo-collapsed {
     cursor: pointer;
     accent-color: var(--ds-primary);
 }
+
+/* Modo oscuro: texto y placeholder del buscador claramente visibles */
+[data-bs-theme=dark] .choices__list--dropdown .choices__input--cloned {
+    color: #ffffff !important;
+}
+
+[data-bs-theme=dark] .choices__list--dropdown .choices__input--cloned::placeholder {
+    color: var(--choices-placeholder-color) !important;
+    opacity: var(--choices-placeholder-opacity) !important;
+}
+
+/* Modo oscuro: placeholder del select cerrado */
+[data-bs-theme=dark] .choices__list--single .choices__item--placeholder,
+[data-bs-theme=dark] .choices__placeholder {
+    color: var(--choices-placeholder-color) !important;
+}
+

@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor 
 @AllArgsConstructor 
 @Builder
-@SQLDelete(sql = "UPDATE tecnicos SET deleted_at = NOW() WHERE idtecnico = ?")
+@SQLDelete(sql = "UPDATE tecnicos SET deleted_at = NOW(), estado_tecnico = 'BLOQUEADO' WHERE idtecnico = ?")
 @SQLRestriction("deleted_at IS NULL")
 public class Tecnico {
         

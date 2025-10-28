@@ -55,6 +55,16 @@ public interface PersonaRepository extends JpaRepository<Persona, String>, JpaSp
         @Query("SELECT p FROM Persona p WHERE (:query IS NULL OR :query = '' OR LOWER(p.dni) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(CONCAT(p.nombres, ' ', p.apellidos)) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(p.email) LIKE LOWER(CONCAT('%', :query, '%'))) ")
         Page<Persona> findAllWithFilters(@Param("query") String query, Pageable pageable);
 
+        /**
+         * Búsqueda general con filtro opcional por estado
+         */
+        @Query("SELECT p FROM Persona p WHERE "+
+                "(:query IS NULL OR :query = '' OR LOWER(p.dni) LIKE LOWER(CONCAT('%', :query, '%')) " +
+                "OR LOWER(CONCAT(p.nombres, ' ', p.apellidos)) LIKE LOWER(CONCAT('%', :query, '%')) " +
+                "OR LOWER(p.email) LIKE LOWER(CONCAT('%', :query, '%'))) " +
+                "AND (:estado IS NULL OR p.estadoPersona = :estado)")
+        Page<Persona> findAllWithFilters(@Param("query") String query, @Param("estado") pe.edu.unasam.activos.common.enums.EstadoPersona estado, Pageable pageable);
+
         @Query("SELECT p FROM Persona p WHERE LOWER(CONCAT(p.nombres, ' ', p.apellidos)) LIKE LOWER(CONCAT('%', :nombreCompleto, '%'))")
         List<Persona> findByNombreCompletoContainingIgnoreCase(@Param("nombreCompleto") String nombreCompleto);
 

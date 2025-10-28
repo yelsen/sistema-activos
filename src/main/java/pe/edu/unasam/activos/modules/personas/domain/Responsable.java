@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor 
 @AllArgsConstructor 
 @Builder
-@SQLDelete(sql = "UPDATE responsables SET deleted_at = NOW(), estado_responsable = 'INACTIVO' WHERE idresponsable = ?")
+@SQLDelete(sql = "UPDATE responsables SET deleted_at = NOW(), estado_responsable = 'BLOQUEADO' WHERE idresponsable = ?")
 @SQLRestriction("deleted_at IS NULL")
 public class Responsable {
 
@@ -46,9 +46,6 @@ public class Responsable {
     
     @Column(name = "fecha_fin_asignacion")
     private LocalDate fechaFinAsignacion;
-    
-    @Column(name = "es_responsable_principal")
-    private boolean esResponsablePrincipal;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado_responsable")
@@ -61,7 +58,7 @@ public class Responsable {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
+    
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 }

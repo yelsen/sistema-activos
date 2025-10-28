@@ -86,7 +86,7 @@ public class UsuarioController {
             Map<Integer, String> rolColorMap = roles.stream()
                     .collect(Collectors.toMap(
                             rol -> rol.getIdRol(), // Key
-                            rol -> rol.getColorRol() != null ? rol.getColorRol() : "#6c757d" // Value, con fallback
+                            rol -> rol.getColorRol() != null ? rol.getColorRol() : "#6c757d"
                     ));
             model.addAttribute("rolColorMap", rolColorMap);
             

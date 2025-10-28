@@ -4,7 +4,8 @@
 <body>
     <!-- Modal Contenedor (dinámico) -->
     <div th:fragment="modalEditarResponsable" class="modal fade" id="modalEditarResponsable" tabindex="-1"
-        aria-labelledby="modalEditarResponsableLabel" aria-hidden="true">
+        aria-labelledby="modalEditarResponsableLabel" aria-hidden="true"
+        th:attr="data-search-url=@{/personas/buscar-responsable}">
         <div class="modal-dialog modal-lg">
             <div class="modal-content shadow-lg">
                 <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
@@ -29,7 +30,7 @@
 
     <!-- Fragmento del formulario de edición (cargado dinámicamente) -->
     <div th:fragment="editarForm">
-        <form th:action="@{/seguridad/responsables/update/{id}(id=${responsable.idResponsable})}"
+        <form th:action="@{/organizacion/responsables/update/{id}(id=${responsable.idResponsable})}"
             th:object="${responsable}" method="post" id="formEditarResponsable" class="needs-validation" novalidate>
             <div class="modal-body p-4">
                 <div class="row g-3">
@@ -110,25 +111,12 @@
                     <!-- Sección de Cuenta -->
                     <div class="col-12 mt-4">
                         <h6 class="text-primary border-bottom pb-2 fw-semibold">
-                            i class="ti ti-user-group me-2"></i>Asignación de responsabilidad
+                            <i class="ti ti-user-group me-2"></i>Asignación de responsabilidad
                         </h6>
                     </div>
 
-                    <div class="col-md-12">
-                        <label for="idEspecialidad" class="form-label">
-                            Especialidad Técnica <span class="text-danger">*</span>
-                        </label>
-                        <select id="idEspecialidad" th:field="*{idEspecialidad}" class="form-select" data-choices
-                            required>
-                            <option value="">Seleccione una especialidad</option>
-                            <option th:each="especialidad : ${especialidades}" th:value="${especialidad.idEspecialidad}"
-                                th:text="${especialidad.nombreEspecialidad}"></option>
-                        </select>
-                        <div class="invalid-feedback">Seleccione una especialidad.</div>
-                    </div>
 
-
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label for="idCargo" class="form-label">
                             Cargo <span class="text-danger">*</span>
                         </label>
@@ -139,17 +127,16 @@
                         </select>
                         <div class="invalid-feedback">Seleccione un cargo.</div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <label for="idOficina" class="form-label">Oficina (Opcional)</label>
                         <select class="form-select" id="idOficina" th:field="*{idOficina}" data-search-field="oficina"
-                            data-choices>
+                            data-choices data-choices-search>
                             <option value="">Seleccione una oficina</option>
                             <option th:each="o : ${oficinas}" th:value="${o.idOficina}" th:text="${o.nombreOficina}">
                             </option>
                         </select>
                         <div class="invalid-feedback">Seleccione una oficina.</div>
                     </div>
-
                 </div>
             </div>
             <div class="modal-footer">

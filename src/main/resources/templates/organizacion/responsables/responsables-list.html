@@ -23,31 +23,30 @@
                     <td th:text="${responsable.dniPersona}"></td>
                     <td>
                         <div class="fw-medium" th:text="${responsable.nombrePersona}"></div>
-                        <small class="badge bg-primary-subtle text-primary-emphasis"
-                            th:if="${responsable.generoPersona != null}" th:text="${responsable.generoPersona}"></small>
+                        <!-- ResponsableDTO.Response no incluye generoPersona -->
                     </td>
-                    <td th:text="${responsable.cargoResponsable}"></td>
-                    <td th:text="${responsable.oficinaResponsable}"></td>
+                    <td th:text="${responsable.nombreCargo}"></td>
+                    <td th:text="${responsable.nombreOficina != null ? responsable.nombreOficina : 'No Asignado'}"></td>
+                    <td
+                        th:text="${responsable.fechaAsignacion != null ? #temporals.format(responsable.fechaAsignacion, 'dd/MM/yyyy') : '-'}">
+                    </td>
                     <td
                         th:text="${responsable.fechaFinAsignacion != null ? #temporals.format(responsable.fechaFinAsignacion, 'dd/MM/yyyy') : '-'}">
                     </td>
-                    <td class="badge"
-                        th:classappend="${responsable.estadoResponsable} ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis'"
-                        th:text="${responsable.estadoResponsable} ? 'Activo' : 'Bloqueado'"></td>
-
                     <td>
-                        <span class="badge" th:classappend="${responsable.estadoResponsable} ? 'bg-success-subtle text-success-emphasis' 
-                                  : (responsable.estadoResponsable == 'BLOQUEADO' 
+                        <span class="badge" th:classappend="${responsable.estadoResponsable.name() == 'ACTIVO' 
+                                  ? 'bg-success-subtle text-success-emphasis' 
+                                  : (responsable.estadoResponsable.name() == 'BLOQUEADO' 
                                       ? 'bg-danger-subtle text-danger-emphasis' 
-                                      : (responsable.estadoResponsable == 'FINALIZADO' 
+                                      : (responsable.estadoResponsable.name() == 'FINALIZADO' 
                                           ? 'bg-warning-subtle text-warning-emphasis' 
-                                          : 'bg-secondary-subtle text-secondary-emphasis'))}" th:text="${responsable.estadoResponsable == 'ACTIVO' 
+                                          : 'bg-secondary-subtle text-secondary-emphasis'))}" th:text="${responsable.estadoResponsable.name() == 'ACTIVO' 
                                   ? 'Activo' 
-                                  : (responsable.estadoResponsable == 'BLOQUEADO' 
+                                  : (responsable.estadoResponsable.name() == 'BLOQUEADO' 
                                       ? 'Bloqueado' 
-                                      : (responsable.estadoResponsable == 'FINALIZADO' 
+                                      : (responsable.estadoResponsable.name() == 'FINALIZADO' 
                                           ? 'Finalizado' 
-                                          : 'Bloqueado'))}">
+                                          : 'Inactivo'))}">
                         </span>
                     </td>
 
@@ -61,13 +60,14 @@
                             <ul class="dropdown-menu">
                                 <li sec:authorize="hasAuthority('RESPONSABLES_EDITAR')">
                                     <button class="dropdown-item" type="button" data-bs-toggle="modal"
-                                        data-bs-target="#modalEditarResponsable" th:data-usuario-id="${responsable.idResponsable}">
+                                        data-bs-target="#modalEditarResponsable"
+                                        th:data-responsable-id="${responsable.idResponsable}">
                                         <i class="ti ti-pencil me-2"></i>Editar
                                     </button>
                                 </li>
                                 <li sec:authorize="hasAuthority('RESPONSABLES_EDITAR')">
                                     <form
-                                        th:action="@{/seguridad/responsables/{id}/cambiar-estado(id=${responsable.idResponsable})}"
+                                        th:action="@{/organizacion/responsables/{id}/cambiar-estado(id=${responsable.idResponsable})}"
                                         method="post" class="d-inline">
                                         <button class="dropdown-item" type="submit">
                                             <i class="ti ti-repeat me-2"></i>Cambiar estado
@@ -79,8 +79,9 @@
                                 </li>
                                 <li sec:authorize="hasAuthority('RESPONSABLES_ELIMINAR')">
                                     <button class="dropdown-item text-danger" type="button" data-bs-toggle="modal"
-                                        data-bs-target="#modalEliminarResponsable" th:data-usuario-id="${responsable.idResponsable}"
-                                        th:data-usuario-nombre="${responsable.nombrePersona}">
+                                        data-bs-target="#modalEliminarResponsable"
+                                        th:data-responsable-id="${responsable.idResponsable}"
+                                        th:data-responsable-nombre="${responsable.nombrePersona}">
                                         <i class="ti ti-trash me-2"></i>Eliminar
                                     </button>
                                 </li>
@@ -106,7 +107,7 @@
     <!-- Paginación -->
     <div class="card-footer" th:if="${!responsablePage.empty}">
         <div
-            th:replace="~{fragments/pagination :: pagination(page=${responsablePage}, url='/seguridad/responsables', query=${query}, estado=${estado})}">
+            th:replace="~{fragments/pagination :: pagination(page=${responsablePage}, url='/organizacion/responsables', query=${query}, estado=${estado})}">
         </div>
     </div>
 </div>

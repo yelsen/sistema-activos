@@ -138,6 +138,7 @@
             checkFieldLabel, // ej: 'Usuario' | 'Responsable' | 'Técnico'
             saveButtonId,
             debounceMs = DEFAULT_DEBOUNCE_MS,
+            lockOnFound = true,
             onPersonaFound,
             onPersonaNotFound,
             onPersonaYaAsignada,
@@ -219,7 +220,8 @@
                             renderFeedback(feedbackEl, 'danger', `${label} existente`, 'Esta persona ya está asignada.');
                             onPersonaYaAsignada && onPersonaYaAsignada(data, helpers);
                         } else {
-                            helpers.setFieldsDisabled(true);
+                            // Si la persona existe pero no está asignada, respetar la preferencia de bloqueo
+                            helpers.setFieldsDisabled(!!lockOnFound);
                             helpers.setSaveEnabled(true);
                             renderFeedback(feedbackEl, 'info', 'Persona encontrada', 'Datos autocompletados, complete las credenciales.');
                             onPersonaFound && onPersonaFound(data, helpers);
