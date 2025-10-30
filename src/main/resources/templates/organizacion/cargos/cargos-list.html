@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body th:fragment="cargoList">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th class="text-nowrap" style="width: 80px;">ID</th>
+                    <th>Nombre del Cargo</th>
+                    <th class="text-center" style="width: 140px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="cargo : ${cargoPage.content}">
+                    <td class="text-muted" th:text="${cargo.idCargo}"></td>
+                    <td th:text="${cargo.nombreCargo}"></td>
+                    <td class="text-center">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-sm btn-warning" type="button" data-bs-toggle="modal"
+                                data-bs-target="#modalEditarCargo" th:attr="data-cargo-id=${cargo.idCargo}"
+                                sec:authorize="hasAuthority('CARGOS_EDITAR')">
+                                <i class="ti ti-edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" type="button" data-bs-toggle="modal"
+                                data-bs-target="#modalEliminarCargo"
+                                th:attr="data-cargo-id=${cargo.idCargo}, data-cargo-nombre=${cargo.nombreCargo}"
+                                sec:authorize="hasAuthority('CARGOS_ELIMINAR')">
+                                <i class="ti ti-trash" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${cargoPage.empty}">
+                    <td colspan="3" class="text-center">No se encontraron cargos con los criterios seleccionados.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="card-footer" th:if="${!cargoPage.empty}">
+        <div th:replace="~{fragments/pagination :: pagination(page=${cargoPage}, url='/organizacion/cargos', query=${query}, estado=${null})}"></div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<div th:fragment="oficinaList">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 80px;">N°</th>
+                    <th>Nombre de la Oficina</th>
+                    <th style="width: 160px;">Teléfono</th>
+                    <th style="width: 150px;">Estado</th>
+                    <th class="text-center" style="width: 120px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="oficina, iter : ${oficinaPage.content}">
+                    <td th:text="${(oficinaPage.number * oficinaPage.size) + iter.index + 1}"></td>
+                    <td th:text="${oficina.nombreOficina}"></td>
+                    <td th:text="${oficina.telefonoOficina}"></td>
+                    <td>
+                        <span class="badge" th:classappend="${oficina.estadoOficina.name() == 'ACTIVO' 
+                                  ? 'bg-success-subtle text-success-emphasis' 
+                                  : (oficina.estadoOficina.name() == 'EN_REMODELACION' 
+                                      ? 'bg-warning-subtle text-warning-emphasis' 
+                                      : 'bg-secondary-subtle text-secondary-emphasis')}" th:text="${oficina.estadoOficina.name() == 'ACTIVO' 
+                                  ? 'Activo' 
+                                  : (oficina.estadoOficina.name() == 'EN_REMODELACION' 
+                                      ? 'En remodelación' 
+                                      : 'Inactivo')}">
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <div class="dropdown dropstart">
+                            <button class="btn btn-icon btn-ghost btn-sm rounded-circle bg-secondary-subtle"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="ti ti-dots-vertical"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li sec:authorize="hasAuthority('OFICINAS_EDITAR')">
+                                    <button class="dropdown-item btn-edit" type="button"
+                                        th:attr="data-id=${oficina.idOficina}">
+                                        <i class="ti ti-pencil me-2"></i>Editar
+                                    </button>
+                                </li>
+                                <li sec:authorize="hasAuthority('OFICINAS_EDITAR')">
+                                    <form
+                                        th:action="@{/organizacion/oficinas/{id}/cambiar-estado(id=${oficina.idOficina})}"
+                                        method="post" class="d-inline">
+                                        <button class="dropdown-item" type="submit">
+                                            <i class="ti ti-repeat me-2"></i>Cambiar estado
+                                        </button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li sec:authorize="hasAuthority('OFICINAS_ELIMINAR')">
+                                    <button class="dropdown-item text-danger btn-delete" type="button"
+                                        th:attr="data-id=${oficina.idOficina},data-nombre=${oficina.nombreOficina}">
+                                        <i class="ti ti-trash me-2"></i>Eliminar
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Mensaje cuando no hay resultados -->
+                <tr th:if="${oficinaPage.empty}">
+                    <td colspan="5" class="text-center py-5">
+                        <div class="d-flex flex-column align-items-center">
+                            <i class="ti ti-building-off fs-1 text-muted mb-3"></i>
+                            <p class="text-muted mb-0">No se encontraron oficinas</p>
+                            <small class="text-muted">Intenta ajustar los filtros de búsqueda</small>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="card-footer" th:if="${!oficinaPage.empty}">
+        <div th:replace="~{fragments/pagination :: pagination(page=${oficinaPage}, url=${url}, query=${query}, estado=${estado})}">
+        </div>
+    </div>
+</div>
+
+</html>

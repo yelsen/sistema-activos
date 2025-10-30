@@ -25,18 +25,7 @@
         th:attr="data-success=${success}, data-error=${error}, data-warning=${warning}, data-info=${info}">
     </div>
 
-    <!-- Script unificado para leer los mensajes y mostrar los toasts -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const flashContainer = document.getElementById('flash-messages');
-            if (flashContainer) {
-                if (flashContainer.dataset.success) showToast(flashContainer.dataset.success, 'success');
-                if (flashContainer.dataset.error) showToast(flashContainer.dataset.error, 'error');
-                if (flashContainer.dataset.warning) showToast(flashContainer.dataset.warning, 'warning');
-                if (flashContainer.dataset.info) showToast(flashContainer.dataset.info, 'info');
-            }
-        });
-    </script>
+    <!-- Los toasts se gestionan de forma centralizada en js/common/toasts.js -->
 </body>
 
 </html>

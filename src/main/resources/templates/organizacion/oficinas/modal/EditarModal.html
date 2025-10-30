@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+    <div class="modal fade" id="modalEditarOficina" th:fragment="editarModal" tabindex="-1" aria-labelledby="modalEditarOficinaLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
+                    <div class="d-flex align-items-center gap-3 position-relative">
+                        <i class="ti ti-building-cog fs-2"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Editar Oficina</h5>
+                            <p class="fs-10 mb-0 text-white-50">Actualiza la información de la oficina.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="editarOficinaContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fragmento del formulario de edición -->
+    <div th:fragment="editarForm">
+        <form th:action="@{/organizacion/oficinas/update/{id}(id=${oficina.idOficina})}" th:object="${oficina}"
+            method="post" id="formEditarOficina" class="needs-validation" novalidate>
+            <div class="modal-body p-4">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label for="editNombreOficina" class="form-label">Nombre de la oficina <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="editNombreOficina" th:field="*{nombreOficina}"
+                            required placeholder="Ej. Oficina General de Planificación">
+                        <div class="invalid-feedback">El nombre es requerido.</div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('nombreOficina')}"
+                            th:errors="*{nombreOficina}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="editTelefonoOficina" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="editTelefonoOficina" th:field="*{telefonoOficina}"
+                            placeholder="Ej. 160">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="editDireccionOficina" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="editDireccionOficina" th:field="*{direccionOficina}"
+                            placeholder="Ej. Av. Centenario N.º 200, Independencia - Huaraz">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="btnActualizarOficina">
+                    <i class="ti ti-device-floppy me-1"></i>Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

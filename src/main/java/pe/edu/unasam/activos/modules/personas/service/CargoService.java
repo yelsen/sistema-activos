@@ -27,6 +27,16 @@ public class CargoService {
     }
 
     @Transactional(readOnly = true)
+    public Page<CargoDTO.Response> getAllCargos(String query, Pageable pageable) {
+        if (query != null && !query.isBlank()) {
+            return cargoRepository
+                    .findByNombreCargoContainingIgnoreCase(query.trim(), pageable)
+                    .map(this::convertToDto);
+        }
+        return cargoRepository.findAll(pageable).map(this::convertToDto);
+    }
+
+    @Transactional(readOnly = true)
     public List<CargoDTO.Response> getAllCargosAsList() {
         return cargoRepository.findAll().stream().map(this::convertToDto).collect(Collectors.toList());
     }

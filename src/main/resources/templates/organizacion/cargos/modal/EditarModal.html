@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+    <!-- Modal contenedor; el formulario de edición se carga dinámicamente -->
+    <div th:fragment="modalEditarCargo" class="modal fade" id="modalEditarCargo" tabindex="-1" aria-labelledby="modalEditarCargoLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
+                    <div class="d-flex align-items-center gap-3 position-relative">
+                        <i class="ti ti-edit fs-2"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Editar Cargo</h5>
+                            <p class="fs-10 mb-0 text-white-50">Actualiza el nombre del cargo.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+
+                <!-- Contenedor donde se insertará el formulario dinámico -->
+                <div id="editar-cargo-contenido"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fragmento del formulario de edición (cargado dinámicamente) -->
+    <div th:fragment="editarForm">
+        <form th:action="@{/organizacion/cargos/update/{id}(id=${idCargo})}" th:object="${cargo}" method="post"
+            id="formEditarCargo" class="needs-validation" novalidate>
+            <div class="modal-body p-4">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label for="nombreCargoEditar" class="form-label">
+                            Nombre del Cargo <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="nombreCargoEditar" th:field="*{nombreCargo}"
+                            maxlength="60" required placeholder="Ingrese el nombre del cargo">
+                        <div class="invalid-feedback">El nombre del cargo es obligatorio.</div>
+                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('nombreCargo')}"
+                            th:errors="*{nombreCargo}"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="ti ti-device-floppy me-1"></i>Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+
+ </body>
+
+</html>

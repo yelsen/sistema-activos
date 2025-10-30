@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body th:fragment="modalEditarDepartamento">
+    <div class="modal fade" id="modalEditarDepartamento" tabindex="-1"
+        aria-labelledby="modalEditarDepartamentoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
+                    <div class="d-flex align-items-center gap-3 position-relative">
+                        <i class="ti ti-building fs-2"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Editar Departamento</h5>
+                            <p class="fs-10 mb-0 text-white-50">Actualiza la información del departamento.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+                <div id="editar-departamento-contenido"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<!-- Fragmento del formulario (cargado dinámicamente) -->
+<th:block th:fragment="editarForm">
+    <form th:action="@{/organizacion/departamentos/update/{id}(id=${departamento.idDepartamento})}"
+        th:object="${departamento}" method="post" id="formEditarDepartamento" class="needs-validation"
+        novalidate>
+        <div class="modal-body p-4">
+            <div class="row g-3">
+                <div class="col-12">
+                    <h6 class="text-primary border-bottom pb-2 fw-semibold">
+                        <i class="ti ti-building-bank me-2"></i>Información del Departamento
+                    </h6>
+                </div>
+                <div class="col-12">
+                    <label for="editarNombreDepartamento" class="form-label">
+                        Nombre del Departamento <span class="text-danger">*</span>
+                    </label>
+                    <input id="editarNombreDepartamento" type="text" class="form-control"
+                        th:field="*{nombreDepartamento}" required maxlength="255" autocomplete="off"
+                        placeholder="Ingrese nombre del departamento" />
+                    <div class="invalid-feedback">El nombre es obligatorio.</div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary" id="btnActualizarDepartamento"
+                sec:authorize="hasAuthority('DEPARTAMENTOS_EDITAR')">
+                <i class="ti ti-device-floppy me-1"></i>Guardar Cambios
+            </button>
+        </div>
+    </form>
+</th:block>
+
+</html>

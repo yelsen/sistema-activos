@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body th:fragment="content">
+    <!-- Header de la página -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="mb-2 h2">Gestión de Departamentos</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/home}">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="#">Organización</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Departamentos</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="card" id="departamento-content-wrapper">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="card-title mb-0">Listado de Departamentos</h5>
+                <p class="mb-0 text-secondary small">Administra los departamentos.</p>
+            </div>
+            <div sec:authorize="hasAuthority('DEPARTAMENTOS_CREAR')">
+                <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+                    data-bs-target="#modalCrearDepartamento">
+                    <i class="ti ti-plus me-1"></i> Nuevo Departamento
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Formulario de Búsqueda -->
+            <form id="filterForm" th:action="@{/organizacion/departamentos}" method="get" class="row g-3 py-2">
+                <div class="col-12">
+                    <input type="text" class="form-control" placeholder="Buscar por nombre de departamento..."
+                        th:value="${query}" name="query" id="searchInput">
+                </div>
+            </form>
+
+            <!-- Contenedor para la lista que se actualizará dinámicamente -->
+            <div id="departamento-list-container" class="pt-2">
+                <div th:replace="~{organizacion/departamentos/departamentos-list :: departamentoList}"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inclusión de Modales -->
+    <div th:replace="~{organizacion/departamentos/modal/CrearModal :: modalCrear}"></div>
+    <div th:replace="~{organizacion/departamentos/modal/EditarModal :: modalEditarDepartamento}"></div>
+    <div th:replace="~{organizacion/departamentos/modal/EliminarModal :: modalEliminar}"></div>
+
+    <!-- Scripts de la tabla -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const listContainer = document.getElementById('departamento-list-container');
+            const searchInput = document.getElementById('searchInput');
+
+            let debounceTimer;
+            let controller;
+
+            function toFragmentUrl(href) {
+                const u = new URL(href, window.location.origin);
+                u.searchParams.set('fragment', 'true');
+                return u.pathname + '?' + u.searchParams.toString();
+            }
+
+            function sanitizeUrlForHistory(href) {
+                const u = new URL(href, window.location.origin);
+                u.searchParams.delete('fragment');
+                const params = u.searchParams.toString();
+                return u.pathname + (params ? ('?' + params) : '');
+            }
+
+            function fetchDepartamentosByHref(href) {
+                if (!listContainer) return;
+
+                if (controller) {
+                    controller.abort();
+                }
+                controller = new AbortController();
+
+                listContainer.classList.add('loading');
+                const fragmentUrl = toFragmentUrl(href);
+
+                return fetch(fragmentUrl, {
+                    signal: controller.signal,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(async (response) => {
+                        if (!response.ok) {
+                            const serverText = await response.text();
+                            throw new Error(serverText || ('Error ' + response.status + ': ' + response.statusText));
+                        }
+                        return response.text();
+                    })
+                    .then((html) => {
+                        listContainer.innerHTML = html;
+                        if (window.reinitializeChoices) {
+                            window.reinitializeChoices();
+                        }
+                        const tooltipTriggerList = listContainer.querySelectorAll('[data-bs-toggle="tooltip"]');
+                        [...tooltipTriggerList].forEach(el => new bootstrap.Tooltip(el));
+                        history.pushState(null, '', sanitizeUrlForHistory(href));
+                    })
+                    .catch((error) => {
+                        if (error.name !== 'AbortError') {
+                            console.error('Error al cargar departamentos:', error);
+                            listContainer.innerHTML = '<div class="alert alert-danger">Error al cargar los departamentos. Por favor, recarga la página.</div>';
+                        }
+                    })
+                    .finally(() => {
+                        listContainer.classList.remove('loading');
+                    });
+            }
+
+            function buildHrefFromLocation(overrides = {}) {
+                const u = new URL(window.location.href);
+                if (!u.pathname.endsWith('/organizacion/departamentos')) {
+                    u.pathname = '/organizacion/departamentos';
+                }
+
+                if (overrides.query !== undefined) {
+                    const q = (overrides.query || '').trim();
+                    if (q) u.searchParams.set('query', q);
+                    else u.searchParams.delete('query');
+                }
+
+                if (overrides.page !== undefined) {
+                    u.searchParams.set('page', String(overrides.page));
+                } else if (!u.searchParams.has('page')) {
+                    u.searchParams.set('page', '0');
+                }
+
+                if (overrides.size !== undefined) {
+                    u.searchParams.set('size', String(overrides.size));
+                } else if (!u.searchParams.has('size')) {
+                    const defaultSize = window.APP_CONFIG?.pagination?.defaultSize || 10;
+                    u.searchParams.set('size', String(defaultSize));
+                }
+
+                return u.href;
+            }
+
+            // Búsqueda
+            if (searchInput) {
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        const href = buildHrefFromLocation({ query: (searchInput.value || '').trim(), page: 0 });
+                        fetchDepartamentosByHref(href);
+                    }, 350);
+                });
+            }
+
+            // Delegación de eventos para paginación y tamaño de página
+            if (listContainer) {
+                listContainer.addEventListener('click', (e) => {
+                    const pageLink = e.target.closest('a.page-link');
+                    if (pageLink && !pageLink.closest('.disabled')) {
+                        e.preventDefault();
+                        fetchDepartamentosByHref(pageLink.href);
+                    }
+                });
+
+                listContainer.addEventListener('change', (e) => {
+                    if (e.target && e.target.id === 'pageSizeSelect') {
+                        const newSize = parseInt(e.target.value, 10);
+                        const href = buildHrefFromLocation({ size: isNaN(newSize) ? undefined : newSize, page: 0 });
+                        fetchDepartamentosByHref(href);
+                    }
+                });
+            }
+
+            window.DepartamentosTable = {
+                fetchByUrl: fetchDepartamentosByHref,
+            };
+        });
+    </script>
+
+    <!-- Scripts de modales -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const flashContainer = document.getElementById('flash-messages');
+            if (flashContainer) {
+                const errorDepartamentoId = flashContainer.dataset.errorDepartamentoId;
+                if (errorDepartamentoId) {
+                    const modalEditarEl = document.getElementById('modalEditarDepartamento');
+                    if (modalEditarEl) {
+                        modalEditarEl.setAttribute('data-open-departamento-id', errorDepartamentoId);
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEditarEl);
+                        modalInstance.show();
+                    }
+                }
+
+                const modalCrearError = flashContainer.dataset.modalCrearError;
+                if (modalCrearError) {
+                    const modalCrearEl = document.getElementById('modalCrearDepartamento');
+                    if (modalCrearEl) {
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalCrearEl);
+                        modalInstance.show();
+                    }
+                }
+
+                const errorDepartamentoDeleteId = flashContainer.dataset.errorDepartamentoDeleteId;
+                const errorDepartamentoDeleteNombre = flashContainer.dataset.errorDepartamentoDeleteNombre;
+                if (errorDepartamentoDeleteId && errorDepartamentoDeleteNombre) {
+                    const modalEliminarEl = document.getElementById('modalEliminarDepartamento');
+                    if (modalEliminarEl) {
+                        modalEliminarEl.setAttribute('data-open-departamento-id', errorDepartamentoDeleteId);
+                        modalEliminarEl.setAttribute('data-open-departamento-nombre', errorDepartamentoDeleteNombre);
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEliminarEl);
+                        modalInstance.show();
+                    }
+                }
+            }
+
+            const modalEditarEl = document.getElementById('modalEditarDepartamento');
+            if (modalEditarEl) {
+                const editarContenido = document.getElementById('editar-departamento-contenido');
+                modalEditarEl.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const departamentoId = button?.getAttribute('data-departamento-id') || modalEditarEl.getAttribute('data-open-departamento-id');
+                    if (!departamentoId) return;
+
+                    editarContenido.innerHTML = `<div class="d-flex justify-content-center p-5"><div class="spinner-border text-primary" role="status"><span class="visualmente-hidden">Cargando...</span></div></div>`;
+
+                    fetch(`/organizacion/departamentos/editar/${departamentoId}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                        .then(async response => {
+                            if (!response.ok) {
+                                const status = response.status;
+                                const serverText = await response.text();
+                                let msg = serverText || '';
+                                if (!msg) {
+                                    if (status === 404) msg = 'Departamento no encontrado (404).';
+                                    else if (status === 400) msg = 'Solicitud inválida (400).';
+                                    else if (status >= 500) msg = 'Error del servidor (' + status + ').';
+                                    else if (status >= 300 && status < 400) msg = 'Redirección inesperada (' + status + ').';
+                                    else msg = 'Error al cargar datos (' + status + ').';
+                                }
+                                window.showToast && (window.showToast ? window.showToast(msg, 'error') : showToast(msg, 'error'));
+                                editarContenido.innerHTML = `<div class="alert alert-danger m-3"><i class="ti ti-alert-circle me-2"></i>${msg}</div>`;
+                                throw new Error(msg);
+                            }
+                            return response.text();
+                        })
+                        .then(html => {
+                            editarContenido.innerHTML = html;
+                            if (window.reinitializeChoices) window.reinitializeChoices(editarContenido);
+                            modalEditarEl.removeAttribute('data-open-departamento-id');
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            if (!editarContenido.innerHTML || editarContenido.innerHTML.trim() === '') {
+                                editarContenido.innerHTML = `<div class="alert alert-danger m-3"><i class="ti ti-alert-circle me-2"></i>No se pudo cargar la información.</div>`;
+                            }
+                        });
+                });
+            }
+
+            const modalEliminarEl = document.getElementById('modalEliminarDepartamento');
+            if (modalEliminarEl) {
+                modalEliminarEl.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const openId = modalEliminarEl.getAttribute('data-open-departamento-id');
+                    const openNombre = modalEliminarEl.getAttribute('data-open-departamento-nombre');
+                    const departamentoId = (button?.getAttribute('data-departamento-id')) || openId;
+                    const departamentoNombre = (button?.getAttribute('data-departamento-nombre')) || openNombre;
+                    if (!departamentoId || !departamentoNombre) return;
+
+                    modalEliminarEl.querySelector('#nombreDepartamentoEliminar').textContent = departamentoNombre;
+                    modalEliminarEl.querySelector('#formEliminarDepartamento').action = `/organizacion/departamentos/delete/${departamentoId}`;
+
+                    modalEliminarEl.removeAttribute('data-open-departamento-id');
+                    modalEliminarEl.removeAttribute('data-open-departamento-nombre');
+                });
+            }
+        });
+
+        window.DepartamentosModals = {
+            openEdit: function (departamentoId) {
+                const modalEditarEl = document.getElementById('modalEditarDepartamento');
+                if (!modalEditarEl) return;
+                modalEditarEl.setAttribute('data-open-departamento-id', departamentoId);
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEditarEl);
+                modalInstance.show();
+            },
+            openDelete: function (departamentoId, nombre) {
+                const modalEliminarEl = document.getElementById('modalEliminarDepartamento');
+                if (!modalEliminarEl) return;
+                modalEliminarEl.setAttribute('data-open-departamento-id', departamentoId);
+                modalEliminarEl.setAttribute('data-open-departamento-nombre', nombre);
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEliminarEl);
+                modalInstance.show();
+            },
+            openCreate: function () {
+                const modalCrearEl = document.getElementById('modalCrearDepartamento');
+                if (!modalCrearEl) return;
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalCrearEl);
+                modalInstance.show();
+            }
+        };
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body th:fragment="departamentoList">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th class="text-nowrap" style="width: 80px;">ID</th>
+                    <th>Nombre del Departamento</th>
+                    <th class="text-center" style="width: 140px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="dep : ${departamentoPage.content}">
+                    <td class="text-muted" th:text="${dep.idDepartamento}"></td>
+                    <td th:text="${dep.nombreDepartamento}"></td>
+                    <td class="text-center">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-sm btn-warning" type="button" data-bs-toggle="modal"
+                                data-bs-target="#modalEditarDepartamento" th:attr="data-departamento-id=${dep.idDepartamento}"
+                                sec:authorize="hasAuthority('DEPARTAMENTOS_EDITAR')">
+                                <i class="ti ti-edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" type="button" data-bs-toggle="modal"
+                                data-bs-target="#modalEliminarDepartamento"
+                                th:attr="data-departamento-id=${dep.idDepartamento}, data-departamento-nombre=${dep.nombreDepartamento}"
+                                sec:authorize="hasAuthority('DEPARTAMENTOS_ELIMINAR')">
+                                <i class="ti ti-trash" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${departamentoPage.empty}">
+                    <td colspan="3" class="text-center">No se encontraron departamentos con los criterios seleccionados.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="card-footer" th:if="${!departamentoPage.empty}">
+        <div th:replace="~{fragments/pagination :: pagination(page=${departamentoPage}, url='/organizacion/departamentos', query=${query}, estado=${null})}"></div>
+    </div>
+</body>
+
+</html>

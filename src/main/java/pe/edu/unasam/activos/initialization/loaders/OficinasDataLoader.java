@@ -962,7 +962,7 @@ public class OficinasDataLoader extends AbstractDataLoader {
                 .nombreOficina(nombre)
                 .direccionOficina(direccion)
                 .telefonoOficina(telefono)
-                .estadoOficina(EstadoOficina.ACTIVA)
+                .estadoOficina(EstadoOficina.ACTIVO)
                 .departamento(depto)
                 .tipoOficina(tipo)
                 .build();

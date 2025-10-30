@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body th:fragment="content">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="mb-2 h2">Gestión de Oficinas</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/home}">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="#">Organización</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Oficinas</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="card" id="oficina-content-wrapper">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="card-title mb-0">Listado de Oficinas</h5>
+                <p class="mb-0 text-secondary small">Administra las oficinas.</p>
+            </div>
+            <div sec:authorize="hasAuthority('OFICINAS_CREAR')">
+                <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+                    data-bs-target="#modalCrearOficina">
+                    <i class="ti ti-plus me-1"></i> Nueva Oficina
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Filtros / Búsqueda -->
+            <form id="filterForm" th:action="@{/organizacion/oficinas}" method="get" class="row g-3 py-2">
+                <div class="col-md-8">
+                    <input type="text" class="form-control" placeholder="Buscar por nombre..." th:value="${query}"
+                        name="query" id="searchInput">
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="estado" name="estado" data-choices>
+                        <option value="">Todos los estados</option>
+                        <option th:each="e : ${estadoOficina}" th:value="${e.name()}"
+                            th:text="${#strings.capitalize(e.name().toLowerCase())}" th:selected="${estado == e}">
+                        </option>
+                    </select>
+                </div>
+            </form>
+
+            <!-- Contenedor de lista -->
+            <div id="oficina-list-container" class="pt-2">
+                <div th:replace="~{organizacion/oficinas/oficinas-list :: oficinaList}"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modales -->
+    <div th:replace="~{organizacion/oficinas/modal/CrearModal :: crearModal}"></div>
+    <div th:replace="~{organizacion/oficinas/modal/EditarModal :: editarModal}"></div>
+    <div th:replace="~{organizacion/oficinas/modal/EliminarModal :: eliminarModal}"></div>
+
+    <!-- Script del módulo Oficinas -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const listContainer = document.getElementById('oficina-list-container');
+            const searchInput = document.getElementById('searchInput');
+            const estadoSelect = document.getElementById('estado');
+
+            let debounceTimer;
+            let controller;
+
+            function toFragmentUrl(href) {
+                const u = new URL(href, window.location.origin);
+                u.searchParams.set('fragment', 'true');
+                return u.pathname + (u.searchParams.size ? ('?' + u.searchParams.toString()) : '');
+            }
+
+            function sanitizeUrlForHistory(href) {
+                const u = new URL(href, window.location.origin);
+                u.searchParams.delete('fragment');
+                const params = u.searchParams.toString();
+                return u.pathname + (params ? ('?' + params) : '');
+            }
+
+            function buildHrefFromLocation(overrides = {}) {
+                const u = new URL(window.location.href);
+                if (!u.pathname.endsWith('/organizacion/oficinas')) {
+                    u.pathname = '/organizacion/oficinas';
+                }
+
+                if (overrides.query !== undefined) {
+                    const q = (overrides.query || '').trim();
+                    if (q) u.searchParams.set('query', q);
+                    else u.searchParams.delete('query');
+                }
+
+                if (overrides.page !== undefined) {
+                    u.searchParams.set('page', String(overrides.page));
+                } else if (!u.searchParams.has('page')) {
+                    u.searchParams.set('page', '0');
+                }
+
+                if (overrides.size !== undefined) {
+                    u.searchParams.set('size', String(overrides.size));
+                } else if (!u.searchParams.has('size')) {
+                    const defaultSize = window.APP_CONFIG?.pagination?.defaultSize || 10;
+                    u.searchParams.set('size', String(defaultSize));
+                }
+
+                if (overrides.estado !== undefined) {
+                    const est = (overrides.estado || '').trim();
+                    if (est) u.searchParams.set('estado', est);
+                    else u.searchParams.delete('estado');
+                } else if (!u.searchParams.has('estado') && estadoSelect && estadoSelect.value) {
+                    u.searchParams.set('estado', estadoSelect.value);
+                }
+
+                return u.href;
+            }
+
+            function fetchOficinasByHref(href) {
+                if (!listContainer) return;
+
+                if (controller) controller.abort();
+                controller = new AbortController();
+
+                listContainer.classList.add('loading');
+                const fragmentUrl = toFragmentUrl(href);
+
+                return fetch(fragmentUrl, {
+                    signal: controller.signal,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(async (response) => {
+                        if (!response.ok) {
+                            const serverText = await response.text();
+                            throw new Error(serverText || ('Error ' + response.status + ': ' + response.statusText));
+                        }
+                        return response.text();
+                    })
+                    .then((html) => {
+                        listContainer.innerHTML = html;
+                        if (window.reinitializeChoices) window.reinitializeChoices();
+                        const tooltipTriggerList = listContainer.querySelectorAll('[data-bs-toggle="tooltip"]');
+                        [...tooltipTriggerList].forEach(el => new bootstrap.Tooltip(el));
+                        history.pushState(null, '', sanitizeUrlForHistory(href));
+                        bindListEvents();
+                    })
+                    .catch((error) => {
+                        const aborted = (error.name === 'AbortError') || (controller?.signal?.aborted);
+                        const isChunked = (typeof error.message === 'string' && error.message.toLowerCase().includes('chunked'));
+                        if (!aborted && !isChunked) {
+                            console.error('Error al cargar oficinas:', error);
+                            listContainer.innerHTML = '<div class="alert alert-danger">Error al cargar las oficinas. Por favor, recarga la página.</div>';
+                        }
+                    })
+                    .finally(() => {
+                        listContainer.classList.remove('loading');
+                    });
+            }
+
+            function bindListEvents() {
+                // Paginación
+                listContainer.querySelectorAll('a.page-link[href]')?.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        fetchOficinasByHref(link.href);
+                    });
+                });
+
+                // Tamaño de página
+                listContainer.querySelector('#pageSizeSelect')?.addEventListener('change', (e) => {
+                    const newSize = parseInt(e.target.value, 10);
+                    const href = buildHrefFromLocation({ size: isNaN(newSize) ? undefined : newSize, page: 0 });
+                    fetchOficinasByHref(href);
+                });
+
+                // Editar
+                listContainer.querySelectorAll('.btn-edit[data-id]')?.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = btn.getAttribute('data-id');
+                        const modal = new bootstrap.Modal(document.getElementById('modalEditarOficina'));
+                        const content = document.getElementById('editarOficinaContent');
+                        fetch(`/organizacion/oficinas/editar/${id}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                            .then(resp => resp.text())
+                            .then(html => {
+                                content.innerHTML = html;
+                                modal.show();
+                            })
+                            .catch(err => console.error('Error al cargar formulario de edición:', err));
+                    });
+                });
+
+                // Eliminar
+                listContainer.querySelectorAll('.btn-delete[data-id][data-nombre]')?.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = btn.getAttribute('data-id');
+                        const nombre = btn.getAttribute('data-nombre');
+                        document.getElementById('eliminarOficinaNombre').textContent = nombre;
+                        const form = document.getElementById('eliminarOficinaForm');
+                        form.setAttribute('action', `/organizacion/oficinas/delete/${id}`);
+                        const modal = new bootstrap.Modal(document.getElementById('modalEliminarOficina'));
+                        modal.show();
+                    });
+                });
+            }
+
+            // Búsqueda
+            if (searchInput) {
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        const href = buildHrefFromLocation({ query: (searchInput.value || '').trim(), page: 0 });
+                        fetchOficinasByHref(href);
+                    }, 350);
+                });
+            }
+
+            if (estadoSelect) {
+                estadoSelect.addEventListener('change', () => {
+                    const href = buildHrefFromLocation({ estado: (estadoSelect.value || '').trim(), page: 0 });
+                    fetchOficinasByHref(href);
+                });
+            }
+
+            // Abrir modales según flash messages
+            (function handleFlashModals() {
+                const flashContainer = document.getElementById('flash-messages');
+                if (!flashContainer) return;
+
+                const errorOficinaId = flashContainer.dataset.errorOficinaId;
+                const modalCrearError = flashContainer.dataset.modalCrearError;
+                const errorOficinaDeleteId = flashContainer.dataset.errorOficinaDeleteId;
+                const errorOficinaDeleteNombre = flashContainer.dataset.errorOficinaDeleteNombre;
+
+                // Crear
+                if (modalCrearError) {
+                    const modalCrearEl = document.getElementById('modalCrearOficina');
+                    if (modalCrearEl) {
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalCrearEl);
+                        modalInstance.show();
+                    }
+                }
+
+                // Editar
+                if (errorOficinaId) {
+                    const modalEditarEl = document.getElementById('modalEditarOficina');
+                    if (modalEditarEl) {
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEditarEl);
+                        const content = document.getElementById('editarOficinaContent');
+                        fetch(`/organizacion/oficinas/editar/${errorOficinaId}`, {
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        })
+                            .then(resp => resp.text())
+                            .then(html => {
+                                content.innerHTML = html;
+                                modalInstance.show();
+                            })
+                            .catch(err => console.error('Error al recargar formulario de edición:', err));
+                    }
+                }
+
+                // Eliminar
+                if (errorOficinaDeleteId && errorOficinaDeleteNombre) {
+                    const modalEliminarEl = document.getElementById('modalEliminarOficina');
+                    if (modalEliminarEl) {
+                        modalEliminarEl.setAttribute('data-open-oficina-id', errorOficinaDeleteId);
+                        modalEliminarEl.setAttribute('data-open-oficina-nombre', errorOficinaDeleteNombre);
+                        const nombreEl = document.getElementById('eliminarOficinaNombre');
+                        if (nombreEl) nombreEl.textContent = errorOficinaDeleteNombre;
+                        const form = document.getElementById('eliminarOficinaForm');
+                        if (form) form.action = `/organizacion/oficinas/delete/${errorOficinaDeleteId}`;
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEliminarEl);
+                        modalInstance.show();
+                    }
+                }
+            })();
+
+            // Cargar lista inicial
+            fetchOficinasByHref(buildHrefFromLocation());
+        });
+    </script>
+</body>
+
+</html>
