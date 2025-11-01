@@ -1,6 +1,7 @@
 package pe.edu.unasam.activos.modules.sistema.dto;
 
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ public class AccionDTO {
     @AllArgsConstructor
     public static class Request {
 
+        @NotBlank(message = "El nombre de la acción es obligatorio")
         @Size(max = 45, message = "El nombre no puede exceder 45 caracteres")
         private String nombreAccion;
 

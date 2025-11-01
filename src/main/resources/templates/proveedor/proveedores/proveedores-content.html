@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body th:fragment="content">
+    <!-- Header de la página -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="mb-2 h2">Gestión de Proveedores</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/home}">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="#">Proveedor</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Proveedores</li>
+                </ol>
+            </nav>
+        </div>
+        <div sec:authorize="hasAuthority('PROVEEDORES_CREAR')">
+            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalCrearProveedor">
+                <i class="ti ti-plus me-1"></i> Nuevo Proveedor
+            </button>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="card" id="proveedor-content-wrapper">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="card-title mb-0">Listado de Proveedores</h5>
+                <p class="mb-0 text-secondary small">Administra los proveedores.</p>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Formulario de Búsqueda -->
+            <form id="filterForm" th:action="@{/proveedores}" method="get" class="row g-3 py-2">
+                <div class="col-md-12">
+                    <input type="text" class="form-control" placeholder="Buscar por nombre o RUC..."
+                           th:value="${query}" name="query" id="searchInput">
+                </div>
+            </form>
+
+            <!-- Contenedor para la lista que se actualizará dinámicamente -->
+            <div id="proveedor-list-container" class="pt-2">
+                <div th:replace="~{proveedor/proveedores/proveedores-list :: proveedorList}"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inclusión de Modales -->
+    <div th:replace="~{proveedor/proveedores/modal/CrearModal :: modalCrearProveedor}"></div>
+    <div th:replace="~{proveedor/proveedores/modal/EditarModal :: modalEditarProveedor}"></div>
+    <div th:replace="~{proveedor/proveedores/modal/EliminarModal :: modalEliminarProveedor}"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const listContainer = document.getElementById('proveedor-list-container');
+            const searchInput = document.getElementById('searchInput');
+            let debounceTimer;
+            let controller;
+
+            // Inicializar tooltips en el contenido inicial
+            const initialTooltips = document.querySelectorAll('[data-tooltip="true"]');
+            [...initialTooltips].forEach(el => new bootstrap.Tooltip(el));
+
+            function toFragmentUrl(href) {
+                const u = new URL(href, window.location.origin);
+                u.searchParams.set('fragment', 'true');
+                const params = u.searchParams.toString();
+                return u.pathname + (params ? ('?' + params) : '');
+            }
+
+            function sanitizeUrlForHistory(href) {
+                const u = new URL(href, window.location.origin);
+                u.searchParams.delete('fragment');
+                const params = u.searchParams.toString();
+                return u.pathname + (params ? ('?' + params) : '');
+            }
+
+            function buildHrefFromLocation(overrides = {}) {
+                const u = new URL(window.location.href);
+                if (!u.pathname.endsWith('/proveedores')) {
+                    u.pathname = '/proveedores';
+                }
+
+                // Query
+                if (overrides.query !== undefined) {
+                    const q = (overrides.query || '').trim();
+                    if (q) u.searchParams.set('query', q);
+                    else u.searchParams.delete('query');
+                }
+
+                // Página
+                if (overrides.page !== undefined) {
+                    const p = parseInt(overrides.page, 10);
+                    u.searchParams.set('page', isNaN(p) || p < 0 ? '0' : String(p));
+                } else if (!u.searchParams.has('page')) {
+                    u.searchParams.set('page', '0');
+                }
+
+                // Tamaño de página
+                if (overrides.size !== undefined) {
+                    const s = parseInt(overrides.size, 10);
+                    if (!isNaN(s) && s > 0) {
+                        u.searchParams.set('size', String(s));
+                    } else {
+                        u.searchParams.delete('size');
+                    }
+                } else if (!u.searchParams.has('size')) {
+                    const defaultSize = window.APP_CONFIG?.pagination?.defaultSize || 10;
+                    u.searchParams.set('size', String(defaultSize));
+                }
+
+                return u.href;
+            }
+
+            function fetchProveedoresByHref(href) {
+                if (!listContainer) return;
+                if (controller) controller.abort();
+                controller = new AbortController();
+                listContainer.classList.add('loading');
+                const fragmentUrl = toFragmentUrl(href);
+                return fetch(fragmentUrl, { signal: controller.signal, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(async (response) => {
+                        if (!response.ok) {
+                            const serverText = await response.text();
+                            throw new Error(serverText || ('Error ' + response.status + ': ' + response.statusText));
+                        }
+                        return response.text();
+                    })
+                    .then((html) => {
+                        listContainer.innerHTML = html;
+                        if (window.reinitializeChoices) { window.reinitializeChoices(); }
+                        const tooltipTriggerList = listContainer.querySelectorAll('[data-tooltip="true"]');
+                        [...tooltipTriggerList].forEach(el => new bootstrap.Tooltip(el));
+                        history.pushState(null, '', sanitizeUrlForHistory(href));
+                    })
+                    .catch((error) => {
+                        if (error.name !== 'AbortError') {
+                            console.error('Error al cargar proveedores:', error);
+                            listContainer.innerHTML = '<div class="alert alert-danger">Error al cargar los proveedores. Por favor, recarga la página.</div>';
+                        }
+                    })
+                    .finally(() => listContainer.classList.remove('loading'));
+            }
+
+            // Búsqueda
+            if (searchInput) {
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        const href = buildHrefFromLocation({ query: (searchInput.value || '').trim(), page: 0 });
+                        fetchProveedoresByHref(href);
+                    }, 350);
+                });
+            }
+
+            // Paginación y tamaño de página
+            if (listContainer) {
+                listContainer.addEventListener('click', (e) => {
+                    const pageLink = e.target.closest('a.page-link');
+                    if (pageLink && !pageLink.closest('.disabled')) {
+                        e.preventDefault();
+                        fetchProveedoresByHref(pageLink.href);
+                    }
+                });
+
+                listContainer.addEventListener('change', (e) => {
+                    if (e.target && e.target.id === 'pageSizeSelect') {
+                        const newSize = parseInt(e.target.value, 10);
+                        const href = buildHrefFromLocation({ size: isNaN(newSize) ? undefined : newSize, page: 0 });
+                        fetchProveedoresByHref(href);
+                    }
+                });
+
+                // Delegación de edición y eliminación dentro de la lista
+                listContainer.addEventListener('click', (e) => {
+                    const editBtn = e.target.closest('.btn-edit');
+                    if (editBtn) {
+                        e.preventDefault();
+                        const proveedorId = editBtn.getAttribute('data-id');
+                        const modalEditarEl = document.getElementById('modalEditarProveedor');
+                        if (proveedorId && modalEditarEl) {
+                            modalEditarEl.setAttribute('data-open-proveedor-id', proveedorId);
+                            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEditarEl);
+                            modalInstance.show();
+                        }
+                        return;
+                    }
+
+                    const deleteBtn = e.target.closest('.btn-delete');
+                    if (deleteBtn) {
+                        e.preventDefault();
+                        const proveedorId = deleteBtn.getAttribute('data-id');
+                        const nombre = deleteBtn.getAttribute('data-nombre') || '';
+                        const modalEliminarEl = document.getElementById('modalEliminarProveedor');
+                        if (proveedorId && modalEliminarEl) {
+                            modalEliminarEl.setAttribute('data-open-proveedor-id', proveedorId);
+                            modalEliminarEl.setAttribute('data-open-proveedor-nombre', nombre);
+                            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEliminarEl);
+                            modalInstance.show();
+                        }
+                        return;
+                    }
+                });
+            }
+
+            // FLASH para apertura de modales
+            const flashContainer = document.getElementById('flash-messages');
+            if (flashContainer) {
+                const modalCrearError = flashContainer.dataset.modalCrearError;
+                if (modalCrearError) {
+                    const modalCrearEl = document.getElementById('modalCrearProveedor');
+                    if (modalCrearEl) {
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalCrearEl);
+                        modalInstance.show();
+                    }
+                }
+
+                const errorProveedorId = flashContainer.dataset.errorProveedorId;
+                if (errorProveedorId) {
+                    const modalEditarEl = document.getElementById('modalEditarProveedor');
+                    if (modalEditarEl) {
+                        modalEditarEl.setAttribute('data-open-proveedor-id', errorProveedorId);
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEditarEl);
+                        modalInstance.show();
+                    }
+                }
+
+                const errorProveedorDeleteId = flashContainer.dataset.errorProveedorDeleteId;
+                const errorProveedorDeleteNombre = flashContainer.dataset.errorProveedorDeleteNombre;
+                if (errorProveedorDeleteId && errorProveedorDeleteNombre) {
+                    const modalEliminarEl = document.getElementById('modalEliminarProveedor');
+                    if (modalEliminarEl) {
+                        modalEliminarEl.setAttribute('data-open-proveedor-id', errorProveedorDeleteId);
+                        modalEliminarEl.setAttribute('data-open-proveedor-nombre', errorProveedorDeleteNombre);
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEliminarEl);
+                        modalInstance.show();
+                    }
+                }
+            }
+
+            // Delegación para editar/eliminar botones al abrir modal y setear acciones
+            const modalEditarEl = document.getElementById('modalEditarProveedor');
+            if (modalEditarEl) {
+                const editarProveedorContenido = document.getElementById('editar-proveedor-contenido');
+                modalEditarEl.addEventListener('show.bs.modal', async (event) => {
+                    const button = event.relatedTarget;
+                    const openId = modalEditarEl.getAttribute('data-open-proveedor-id');
+                    const proveedorId = (button?.getAttribute('data-proveedor-id')) || openId;
+                    if (!proveedorId) return;
+
+                    // Loading placeholder
+                    editarProveedorContenido.innerHTML = `<div class="d-flex justify-content-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>`;
+
+                    // Cargar fragmento de edición
+                    const url = `/proveedores/editar/${proveedorId}`;
+                    try {
+                        const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                        const html = await res.text();
+                        editarProveedorContenido.innerHTML = html;
+                        const tooltipTriggerList = modalEditarEl.querySelectorAll('[data-tooltip="true"]');
+                        [...tooltipTriggerList].forEach(el => new bootstrap.Tooltip(el));
+                    } catch (err) {
+                        console.error('Error al cargar formulario de edición:', err);
+                        editarProveedorContenido.innerHTML = `<div class="alert alert-danger m-3"><i class="ti ti-alert-circle me-2"></i>No se pudo cargar la información.</div>`;
+                    }
+                    modalEditarEl.removeAttribute('data-open-proveedor-id');
+                });
+            }
+
+            const modalEliminarEl = document.getElementById('modalEliminarProveedor');
+            if (modalEliminarEl) {
+                modalEliminarEl.addEventListener('show.bs.modal', (event) => {
+                    const button = event.relatedTarget;
+                    const openId = modalEliminarEl.getAttribute('data-open-proveedor-id');
+                    const openNombre = modalEliminarEl.getAttribute('data-open-proveedor-nombre');
+
+                    const proveedorId = (button?.getAttribute('data-proveedor-id')) || openId;
+                    const proveedorNombre = (button?.getAttribute('data-proveedor-nombre')) || openNombre;
+                    if (!proveedorId || !proveedorNombre) return;
+
+                    modalEliminarEl.querySelector('#nombreProveedorEliminar').textContent = proveedorNombre;
+            modalEliminarEl.querySelector('#formEliminarProveedor').action = `/proveedores/delete/${proveedorId}`;
+
+                    modalEliminarEl.removeAttribute('data-open-proveedor-id');
+                    modalEliminarEl.removeAttribute('data-open-proveedor-nombre');
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

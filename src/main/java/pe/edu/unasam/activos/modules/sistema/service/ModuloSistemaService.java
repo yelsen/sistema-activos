@@ -1,7 +1,5 @@
 package pe.edu.unasam.activos.modules.sistema.service;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -12,11 +10,7 @@ import pe.edu.unasam.activos.common.enums.EstadoModulo;
 import pe.edu.unasam.activos.modules.sistema.domain.ModuloSistema;
 import pe.edu.unasam.activos.modules.sistema.dto.*;
 import pe.edu.unasam.activos.modules.sistema.repository.ModuloSistemaRepository;
-import java.util.ArrayList;
-
-import java.util.List;
-
-import java.util.stream.Collectors;
+import java.text.Normalizer;
 
 @Slf4j
 @Service
@@ -47,17 +41,6 @@ public class ModuloSistemaService {
     }
 
     /**
-     * Buscar por ruta
-     */
-    @Transactional(readOnly = true)
-    public ModuloSistemaDTO.Response buscarPorRuta(String ruta) {
-        log.debug("Buscando módulo con ruta: {}", ruta);
-        ModuloSistema modulo = moduloRepository.findByRutaModulo(ruta)
-                .orElseThrow(() -> new RuntimeException("Módulo no encontrado con ruta: " + ruta));
-        return toSimpleDTO(modulo);
-    }
-
-    /**
      * Buscar con filtros
      */
     @Transactional(readOnly = true)
@@ -70,26 +53,24 @@ public class ModuloSistemaService {
                 pageable).map(this::toSimpleDTO);
     }
 
-    /**
-     * Obtener para select/combo
-     */
-    @Transactional(readOnly = true)
-    public List<ModuloSistemaDTO.Response> obtenerParaSelect() {
-        log.debug("Obteniendo módulos para select");
-        return moduloRepository.findForSelect()
-                .stream()
-                .map(this::toSimpleDTO)
-                .collect(Collectors.toList());
-    }
-    
     @Transactional
     public ModuloSistemaDTO.Response crear(ModuloSistemaDTO.Request dto) {
         log.info("Creando nuevo módulo: {}", dto.getNombreModulo());
 
         // Validaciones
         validarNombreUnico(dto.getNombreModulo(), null);
-        if (dto.getRutaModulo() != null && !dto.getRutaModulo().isEmpty()) {
+        // Ruta: si no se proporciona, generar desde el nombre y asegurar unicidad
+        if (dto.getRutaModulo() == null || dto.getRutaModulo().isBlank()) {
+            String baseRuta = buildRutaFromNombre(dto.getNombreModulo());
+            String uniqueRuta = ensureUniqueRutaForCreate(baseRuta);
+            dto.setRutaModulo(uniqueRuta);
+        } else {
             validarRutaUnica(dto.getRutaModulo(), null);
+        }
+
+        // Estado por defecto: ACTIVO (fallback por si no llega desde el cliente)
+        if (dto.getEstadoModulo() == null) {
+            dto.setEstadoModulo(EstadoModulo.ACTIVO);
         }
 
         // Asignar orden automático si no se especifica
@@ -133,21 +114,28 @@ public class ModuloSistemaService {
 
         // Validaciones
         validarNombreUnico(dto.getNombreModulo(), dto.getIdModuloSistemas());
-        if (dto.getRutaModulo() != null && !dto.getRutaModulo().isEmpty()) {
-            validarRutaUnica(dto.getRutaModulo(), dto.getIdModuloSistemas());
+        // Si viene una ruta no vacía, validar unicidad para actualización
+        if (dto.getRutaModulo() != null && !dto.getRutaModulo().trim().isBlank()) {
+            validarRutaUnica(dto.getRutaModulo().trim(), dto.getIdModuloSistemas());
         }
 
         // Actualizar campos
         modulo.setNombreModulo(dto.getNombreModulo());
         modulo.setDescripcionModulo(dto.getDescripcionModulo());
         modulo.setIconoModulo(dto.getIconoModulo());
-        modulo.setRutaModulo(dto.getRutaModulo());
-        modulo.setOrdenModulo(dto.getOrdenModulo());
-        modulo.setEstadoModulo(dto.getEstadoModulo());
+        // Actualizar ruta solo si viene una nueva no vacía
+        if (dto.getRutaModulo() != null && !dto.getRutaModulo().trim().isBlank()) {
+            modulo.setRutaModulo(dto.getRutaModulo().trim());
+        }
+        // Conservar el orden actual si no llega en el DTO
+        if (dto.getOrdenModulo() != null) {
+            modulo.setOrdenModulo(dto.getOrdenModulo());
+        }
+        if (dto.getEstadoModulo() != null) {
+            modulo.setEstadoModulo(dto.getEstadoModulo());
+        }
 
         ModuloSistema actualizado = moduloRepository.save(modulo);
-        log.info("Módulo actualizado: {}", actualizado.getIdModuloSistemas());
-
         return toSimpleDTO(actualizado);
     }
 
@@ -166,42 +154,6 @@ public class ModuloSistemaService {
 
         moduloRepository.delete(modulo); // Ejecuta el soft delete
         log.info("Módulo eliminado: {}", id);
-    }
-
-    /**
-     * Cambiar estado
-     */
-    @Transactional
-    public ModuloSistemaDTO.Response cambiarEstado(Integer id, EstadoModulo nuevoEstado) {
-        log.info("Cambiando estado del módulo ID {} a {}", id, nuevoEstado);
-
-        ModuloSistema modulo = moduloRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Módulo no encontrado con ID: " + id));
-
-        modulo.setEstadoModulo(nuevoEstado);
-        ModuloSistema actualizado = moduloRepository.save(modulo);
-
-        return toSimpleDTO(actualizado);
-    }
-
-    /**
-     * Reordenar módulos
-     */
-    @Transactional
-    public void reordenar(List<Integer> idsOrdenados) {
-        log.info("Reordenando {} módulos", idsOrdenados.size());
-        List<ModuloSistema> modulosParaActualizar = new ArrayList<>();
-
-        for (int i = 0; i < idsOrdenados.size(); i++) {
-            Integer id = idsOrdenados.get(i);
-            ModuloSistema modulo = moduloRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Módulo no encontrado con ID: " + id));
-            modulo.setOrdenModulo(i + 1);
-            modulosParaActualizar.add(modulo);
-        }
-        moduloRepository.saveAll(modulosParaActualizar);
-
-        log.info("Reordenamiento completado");
     }
 
     // ========== VALIDACIONES ==========
@@ -226,6 +178,33 @@ public class ModuloSistemaService {
         }
     }
 
+    // ========== UTILIDADES DE RUTA ==========
+    private String buildRutaFromNombre(String nombre) {
+        if (nombre == null || nombre.isBlank())
+            return "/modulo";
+        String slug = slugify(nombre);
+        return slug.startsWith("/") ? slug : ("/" + slug);
+    }
+
+    private String ensureUniqueRutaForCreate(String baseRuta) {
+        String ruta = baseRuta;
+        int sufijo = 2;
+        while (moduloRepository.existsByRutaModulo(ruta)) {
+            ruta = baseRuta + "-" + sufijo++;
+        }
+        return ruta;
+    }
+
+    private String slugify(String input) {
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        String lower = normalized.toLowerCase();
+        // Reemplazar cualquier cosa que no sea a-z, 0-9 con guiones
+        String slug = lower.replaceAll("[^a-z0-9]+", "-");
+        // Quitar guiones al inicio/fin
+        slug = slug.replaceAll("^-+", "").replaceAll("-+$", "");
+        return slug.isBlank() ? "modulo" : slug;
+    }
     // ========== CONVERSIÓN ==========
 
     private ModuloSistemaDTO.Response toSimpleDTO(ModuloSistema modulo) {
@@ -241,24 +220,5 @@ public class ModuloSistemaService {
                 .createdAt(modulo.getCreatedAt())
                 .updatedAt(modulo.getUpdatedAt())
                 .build();
-    }
-
-    // ========== ESTADÍSTICAS ==========
-
-    @Transactional(readOnly = true)
-    public EstadisticasDTO obtenerEstadisticas() {
-        long total = moduloRepository.count();
-        long activos = moduloRepository.countByEstadoModulo(EstadoModulo.ACTIVO);
-        long inactivos = moduloRepository.countByEstadoModulo(EstadoModulo.INACTIVO);
-
-        return new EstadisticasDTO(total, activos, inactivos);
-    }
-
-    @Data
-    @AllArgsConstructor
-    public static class EstadisticasDTO {
-        private long total;
-        private long activos;
-        private long inactivos;
     }
 }

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<div th:fragment="tipoOficinaList">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-nowrap">N°</th>
+                    <th>Tipo de Oficina</th>
+                    <th class="text-center" style="width: 120px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="tipo, iter : ${tipoOficinaPage.content}">
+                    <td class="text-muted"
+                        th:text="${(tipoOficinaPage.number * tipoOficinaPage.size) + iter.index + 1}"></td>
+                    <td th:text="${tipo.tipoOficina}"></td>
+                    <td class="text-end text-nowrap">
+                        <div class="d-flex justify-content-end gap-3">
+                            <button class="btn btn-primary rounded-circle btn-edit" type="button"
+                                th:attr="data-id=${tipo.idTipoOficina}"
+                                sec:authorize="hasAuthority('TIPO_OFICINAS_EDITAR')" aria-label="Editar"
+                                data-tooltip="true" data-bs-placement="top" title="Editar" data-bs-container="body" data-bs-trigger="hover">
+                                <i class="ti ti-edit"></i>
+                            </button>
+                            <button class="btn btn-danger rounded-circle btn-delete" type="button"
+                                th:attr="data-id=${tipo.idTipoOficina}, data-nombre=${tipo.tipoOficina}"
+                                sec:authorize="hasAuthority('TIPO_OFICINAS_ELIMINAR')" aria-label="Eliminar"
+                                data-tooltip="true" data-bs-placement="top" title="Eliminar" data-bs-container="body" data-bs-trigger="hover">
+                                <i class="ti ti-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Mensaje cuando no hay resultados -->
+                <tr th:if="${tipoOficinaPage.empty}">
+                    <td colspan="3" class="text-center py-5">
+                        <div class="d-flex flex-column align-items-center">
+                            <i class="ti ti-building-bank fs-1 text-muted mb-3"></i>
+                            <p class="text-muted mb-0">No se encontraron tipos de oficina</p>
+                            <small class="text-muted">Intenta ajustar los filtros de búsqueda</small>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="card-footer" th:if="${!tipoOficinaPage.empty}">
+        <div
+            th:replace="~{fragments/pagination :: pagination(page=${tipoOficinaPage}, url='/organizacion/tipo-oficinas', query=${query}, estado=${null})}">
+        </div>
+    </div>
+</div>
+
+</html>

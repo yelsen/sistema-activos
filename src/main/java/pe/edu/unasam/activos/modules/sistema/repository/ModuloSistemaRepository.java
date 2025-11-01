@@ -21,14 +21,14 @@ public interface ModuloSistemaRepository extends JpaRepository<ModuloSistema, In
 
         Optional<ModuloSistema> findByNombreModulo(String nombreModulo);
 
-        Optional<ModuloSistema> findByRutaModulo(String rutaModulo);
+        
 
         List<ModuloSistema> findByEstadoModuloOrderByOrdenModuloAsc(EstadoModulo estado);
 
         @Query("SELECT m FROM ModuloSistema m WHERE m.estadoModulo = 'ACTIVO' ORDER BY m.ordenModulo ASC")
         List<ModuloSistema> findAllActivos();
 
-        long countByEstadoModulo(EstadoModulo estado);
+        
 
         Page<ModuloSistema> findByNombreModuloContainingIgnoreCaseOrderByOrdenModuloAsc(
                         String nombre, Pageable pageable);
@@ -58,6 +58,5 @@ public interface ModuloSistemaRepository extends JpaRepository<ModuloSistema, In
         @Query("SELECT COALESCE(MAX(m.ordenModulo), 0) FROM ModuloSistema m")
         Integer findMaxOrden();
 
-        @Query("SELECT m FROM ModuloSistema m WHERE m.estadoModulo = 'ACTIVO' ORDER BY m.nombreModulo ASC")
-        List<ModuloSistema> findForSelect();
+        
 }

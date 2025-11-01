@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+    <div class="modal fade" id="modalCrearTipoOficina" th:fragment="crearModal" tabindex="-1"
+        aria-labelledby="modalCrearTipoOficinaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
+                    <div class="d-flex align-items-center gap-3 position-relative">
+                        <i class="ti ti-building-bank fs-2"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Crear Tipo de Oficina</h5>
+                            <p class="fs-10 mb-0 text-white-50">Registra un nuevo tipo de oficina.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+
+                <form th:action="@{/organizacion/tipo-oficinas}" th:object="${tipoOficina}" method="post"
+                    id="formCrearTipoOficina" class="needs-validation" novalidate>
+                    <div class="modal-body p-4">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="crearTipoOficina" class="form-label">Tipo de oficina <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="crearTipoOficina" th:field="*{tipoOficina}"
+                                    required placeholder="Ej. Oficina Administrativa">
+                                <div class="invalid-feedback">El tipo de oficina es obligatorio.</div>
+                                <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('tipoOficina')}"
+                                    th:errors="*{tipoOficina}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="btnGuardarTipoOficina">
+                            <i class="ti ti-device-floppy me-1"></i>Guardar Tipo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

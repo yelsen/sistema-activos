@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+    <div th:fragment="modalCrearAccion" class="modal fade" id="modalCrearAccion" tabindex="-1" aria-labelledby="modalCrearAccionLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
+                    <div class="d-flex align-items-center gap-3 position-relative">
+                        <i class="ti ti-plus fs-2"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Crear Nueva Acción</h5>
+                            <p class="fs-10 mb-0 text-white-50">Registra una acción del sistema.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+
+                <form th:action="@{/seguridad/acciones}" th:object="${accion}" method="post" id="formCrearAccion"
+                    class="needs-validation" novalidate>
+                    <div class="modal-body p-4">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="nombreAccionCrear" class="form-label">
+                                    Nombre de la Acción <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="nombreAccionCrear" th:field="*{nombreAccion}"
+                                    maxlength="45" required placeholder="Ingrese el nombre de la acción">
+                                <div class="invalid-feedback">El nombre de la acción es obligatorio.</div>
+                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('nombreAccion')}"
+                                    th:errors="*{nombreAccion}"></div>
+                            </div>
+                            <div class="col-12">
+                                <label for="descripcionAccionCrear" class="form-label">Descripción</label>
+                                <input type="text" class="form-control" id="descripcionAccionCrear" th:field="*{descripcionAccion}"
+                                    maxlength="100" placeholder="Descripción corta de la acción">
+                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('descripcionAccion')}"
+                                    th:errors="*{descripcionAccion}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ti ti-device-floppy me-1"></i>Guardar Acción
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+ </body>
+
+</html>

@@ -6,33 +6,35 @@
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
-                    <th class="text-nowrap" style="width: 80px;">ID</th>
+                    <th class="text-nowrap">N°</th>
                     <th>Nombre del Departamento</th>
-                    <th class="text-center" style="width: 140px;">Acciones</th>
+                    <th class="text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="dep : ${departamentoPage.content}">
-                    <td class="text-muted" th:text="${dep.idDepartamento}"></td>
+                <tr th:each="dep, iter : ${departamentoPage.content}">
+                    <td class="text-muted" th:text="${departamentoPage.number * departamentoPage.size + iter.count}"></td>
                     <td th:text="${dep.nombreDepartamento}"></td>
-                    <td class="text-center">
-                        <div class="btn-group" role="group">
-                            <button class="btn btn-sm btn-warning" type="button" data-bs-toggle="modal"
-                                data-bs-target="#modalEditarDepartamento" th:attr="data-departamento-id=${dep.idDepartamento}"
-                                sec:authorize="hasAuthority('DEPARTAMENTOS_EDITAR')">
-                                <i class="ti ti-edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"></i>
+                    <td class="text-end text-nowrap">
+                        <div class="d-flex justify-content-end gap-3">
+                            <button class="btn btn-primary rounded-circle btn-edit" type="button"
+                                th:attr="data-id=${dep.idDepartamento}"
+                                sec:authorize="hasAuthority('DEPARTAMENTOS_EDITAR')" aria-label="Editar"
+                                data-tooltip="true" data-bs-placement="top" title="Editar" data-bs-container="body" data-bs-trigger="hover">
+                                <i class="ti ti-edit"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger" type="button" data-bs-toggle="modal"
-                                data-bs-target="#modalEliminarDepartamento"
-                                th:attr="data-departamento-id=${dep.idDepartamento}, data-departamento-nombre=${dep.nombreDepartamento}"
-                                sec:authorize="hasAuthority('DEPARTAMENTOS_ELIMINAR')">
-                                <i class="ti ti-trash" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"></i>
+                            <button class="btn btn-danger rounded-circle btn-delete" type="button"
+                                th:attr="data-id=${dep.idDepartamento}, data-nombre=${dep.nombreDepartamento}"
+                                sec:authorize="hasAuthority('DEPARTAMENTOS_ELIMINAR')" aria-label="Eliminar"
+                                data-tooltip="true" data-bs-placement="top" title="Eliminar" data-bs-container="body" data-bs-trigger="hover">
+                                <i class="ti ti-trash"></i>
                             </button>
                         </div>
                     </td>
                 </tr>
                 <tr th:if="${departamentoPage.empty}">
-                    <td colspan="3" class="text-center">No se encontraron departamentos con los criterios seleccionados.</td>
+                    <td colspan="3" class="text-center">No se encontraron departamentos con los criterios seleccionados.
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -40,7 +42,9 @@
 
     <!-- Paginación -->
     <div class="card-footer" th:if="${!departamentoPage.empty}">
-        <div th:replace="~{fragments/pagination :: pagination(page=${departamentoPage}, url='/organizacion/departamentos', query=${query}, estado=${null})}"></div>
+        <div
+            th:replace="~{fragments/pagination :: pagination(page=${departamentoPage}, url='/organizacion/departamentos', query=${query}, estado=${null})}">
+        </div>
     </div>
 </body>
 

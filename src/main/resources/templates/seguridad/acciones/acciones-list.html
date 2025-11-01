@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body th:fragment="accionList">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th class="text-nowrap">N°</th>
+                    <th>Nombre</th>
+                    <th class="text-nowrap">Código</th>
+                    <th>Descripción</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="accion, iter : ${accionPage.content}">
+                    <td class="text-muted" th:text="${accionPage.number * accionPage.size + iter.count}"></td>
+                    <td th:text="${accion.nombreAccion}"></td>
+                    <td>
+                        <span class="badge bg-primary-subtle text-primary fw-semibold text-uppercase"
+                            th:text="${accion.codigoAccion}"></span>
+                    </td>
+                    <td th:text="${accion.descripcionAccion}"></td>
+                    <td class="text-end text-nowrap">
+                        <div class="d-flex justify-content-end gap-3">
+                            <button class="btn btn-primary rounded-circle btn-edit" type="button"
+                                th:attr="data-id=${accion.idAccion}"
+                                sec:authorize="hasAuthority('ACCIONES_EDITAR')" aria-label="Editar" data-tooltip="true"
+                                data-bs-placement="top" title="Editar" data-bs-container="body" data-bs-trigger="hover">
+                                <i class="ti ti-edit"></i>
+                            </button>
+                            <button class="btn btn-danger rounded-circle btn-delete" type="button"
+                                th:attr="data-id=${accion.idAccion}, data-nombre=${accion.nombreAccion}"
+                                sec:authorize="hasAuthority('ACCIONES_ELIMINAR')" aria-label="Eliminar"
+                                data-tooltip="true" data-bs-placement="top" title="Eliminar" data-bs-container="body" data-bs-trigger="hover">
+                                <i class="ti ti-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${accionPage.empty}">
+                    <td colspan="5" class="text-center">No se encontraron acciones con los criterios seleccionados.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="card-footer" th:if="${!accionPage.empty}">
+        <div
+            th:replace="~{fragments/pagination :: pagination(page=${accionPage}, url='/seguridad/acciones', query=${query}, estado=${null})}">
+        </div>
+    </div>
+</body>
+
+</html>

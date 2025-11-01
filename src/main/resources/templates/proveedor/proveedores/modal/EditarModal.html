@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+<div th:fragment="modalEditarProveedor" class="modal fade" id="modalEditarProveedor" tabindex="-1" aria-labelledby="modalEditarProveedorLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
+                <div class="d-flex align-items-center gap-3 position-relative">
+                    <i class="ti ti-edit fs-2"></i>
+                    <div>
+                        <h5 class="mb-0 text-white">Editar Proveedor</h5>
+                        <p class="fs-10 mb-0 text-white-50">Actualiza los datos del proveedor.</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <!-- Contenedor donde se insertará el formulario dinámico -->
+            <div id="editar-proveedor-contenido"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Fragmento del formulario de edición (cargado dinámicamente) -->
+<div th:fragment="editarForm">
+    <form th:action="@{/proveedores/update/{id}(id=${idProveedor})}" th:object="${proveedor}" method="post" id="formEditarProveedor" class="needs-validation" novalidate>
+        <div class="modal-body p-4">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="rucProveedorEditar" class="form-label">RUC <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="rucProveedorEditar" th:field="*{rucProveedor}" maxlength="11" required placeholder="Ingrese RUC">
+                    <div class="invalid-feedback">El RUC es obligatorio.</div>
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('rucProveedor')}" th:errors="*{rucProveedor}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label for="nombreProveedorEditar" class="form-label">Nombre <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="nombreProveedorEditar" th:field="*{nombreProveedor}" maxlength="100" required placeholder="Nombre comercial">
+                    <div class="invalid-feedback">El nombre es obligatorio.</div>
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('nombreProveedor')}" th:errors="*{nombreProveedor}"></div>
+                </div>
+                <div class="col-md-12">
+                    <label for="razonSocialEditar" class="form-label">Razón Social</label>
+                    <input type="text" class="form-control" id="razonSocialEditar" th:field="*{razonSocial}" maxlength="120" placeholder="Razón social">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('razonSocial')}" th:errors="*{razonSocial}"></div>
+                </div>
+                <div class="col-md-12">
+                    <label for="direccionEditar" class="form-label">Dirección</label>
+                    <input type="text" class="form-control" id="direccionEditar" th:field="*{direccion}" maxlength="150" placeholder="Dirección">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label for="telefonoEditar" class="form-label">Teléfono</label>
+                    <input type="text" class="form-control" id="telefonoEditar" th:field="*{telefono}" maxlength="20" placeholder="Teléfono">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label for="emailEditar" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="emailEditar" th:field="*{email}" maxlength="120" placeholder="ejemplo@correo.com">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+                <!-- NO incluir campo de Estado en edición -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">
+                <i class="ti ti-device-floppy me-1"></i>Guardar Cambios
+            </button>
+        </div>
+    </form>
+</div>
+ </body>
+
+</html>

@@ -6,27 +6,28 @@
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
-                    <th class="text-nowrap" style="width: 80px;">ID</th>
+                    <th class="text-nowrap">N°</th>
                     <th>Nombre del Cargo</th>
                     <th class="text-center" style="width: 140px;">Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="cargo : ${cargoPage.content}">
-                    <td class="text-muted" th:text="${cargo.idCargo}"></td>
+                <tr th:each="cargo, iter : ${cargoPage.content}">
+                    <td class="text-muted" th:text="${cargoPage.number * cargoPage.size + iter.count}"></td>
                     <td th:text="${cargo.nombreCargo}"></td>
-                    <td class="text-center">
-                        <div class="btn-group" role="group">
-                            <button class="btn btn-sm btn-warning" type="button" data-bs-toggle="modal"
-                                data-bs-target="#modalEditarCargo" th:attr="data-cargo-id=${cargo.idCargo}"
-                                sec:authorize="hasAuthority('CARGOS_EDITAR')">
-                                <i class="ti ti-edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"></i>
+                    <td class="text-end text-nowrap">
+                        <div class="d-flex justify-content-end gap-3">
+                            <button class="btn btn-primary rounded-circle btn-edit" type="button"
+                                th:attr="data-id=${cargo.idCargo}"
+                                sec:authorize="hasAuthority('CARGOS_EDITAR')" aria-label="Editar" data-tooltip="true"
+                                data-bs-placement="top" title="Editar" data-bs-container="body" data-bs-trigger="hover">
+                                <i class="ti ti-edit"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger" type="button" data-bs-toggle="modal"
-                                data-bs-target="#modalEliminarCargo"
-                                th:attr="data-cargo-id=${cargo.idCargo}, data-cargo-nombre=${cargo.nombreCargo}"
-                                sec:authorize="hasAuthority('CARGOS_ELIMINAR')">
-                                <i class="ti ti-trash" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"></i>
+                            <button class="btn btn-danger rounded-circle btn-delete" type="button"
+                                th:attr="data-id=${cargo.idCargo}, data-nombre=${cargo.nombreCargo}"
+                                sec:authorize="hasAuthority('CARGOS_ELIMINAR')" aria-label="Eliminar"
+                                data-tooltip="true" data-bs-placement="top" title="Eliminar" data-bs-container="body" data-bs-trigger="hover">
+                                <i class="ti ti-trash"></i>
                             </button>
                         </div>
                     </td>
@@ -40,7 +41,9 @@
 
     <!-- Paginación -->
     <div class="card-footer" th:if="${!cargoPage.empty}">
-        <div th:replace="~{fragments/pagination :: pagination(page=${cargoPage}, url='/organizacion/cargos', query=${query}, estado=${null})}"></div>
+        <div
+            th:replace="~{fragments/pagination :: pagination(page=${cargoPage}, url='/organizacion/cargos', query=${query}, estado=${null})}">
+        </div>
     </div>
 </body>
 

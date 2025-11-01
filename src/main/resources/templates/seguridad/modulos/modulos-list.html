@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body th:fragment="moduloList">
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th class="text-nowrap">N°</th>
+                    <th>Nombre</th>
+                    <th class="text-nowrap">Ruta</th>
+                    <th class="text-nowrap">Icono</th>
+                    <th class="text-nowrap">Orden</th>
+                    <th class="text-nowrap">Estado</th>
+                    <th class="text-end text-nowrap">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="modulo, iter : ${moduloPage.content}">
+                    <td th:text="${moduloPage.number * moduloPage.size + iter.count}">1</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="ti" th:classappend=" ${modulo.iconoModulo} "></i>
+                            <span th:text="${modulo.nombreModulo}">Nombre</span>
+                        </div>
+                        <div class="small text-secondary" th:text="${modulo.descripcionModulo}">Descripción</div>
+                    </td>
+                    <td>
+                        <code class="text-muted" th:text="${modulo.rutaModulo}">/ruta</code>
+                    </td>
+                    <td>
+                        <code class="text-muted" th:text="${modulo.iconoModulo}">ti-home</code>
+                    </td>
+                    <td th:text="${modulo.ordenModulo}">0</td>
+                    <td>
+                        <span class="badge rounded-pill"
+                            th:classappend="${modulo.estadoModuloTexto == 'ACTIVO' ? ' bg-success-subtle text-success-emphasis' : ' bg-secondary-subtle text-secondary-emphasis'}"
+                            th:text="${#strings.capitalize(modulo.estadoModuloTexto?.toLowerCase())}">Activo</span>
+                    </td>
+                    <td class="text-end text-nowrap">
+                        <div class="d-flex justify-content-end gap-3">
+                            <button class="btn btn-primary rounded-circle btn-edit" type="button"
+                                th:attr="data-id=${modulo.idModuloSistemas}"
+                                sec:authorize="hasAuthority('MODULOS_EDITAR')" aria-label="Editar" data-tooltip="true"
+                                data-bs-placement="top" title="Editar" data-bs-container="body" data-bs-trigger="hover">
+                                <i class="ti ti-edit"></i>
+                            </button>
+                            <button class="btn btn-danger rounded-circle btn-delete" type="button"
+                                th:attr="data-id=${modulo.idModuloSistemas}, data-nombre=${modulo.nombreModulo}"
+                                sec:authorize="hasAuthority('MODULOS_ELIMINAR')" aria-label="Eliminar"
+                                data-tooltip="true" data-bs-placement="top" title="Eliminar" data-bs-container="body" data-bs-trigger="hover">
+                                <i class="ti ti-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${moduloPage.empty}">
+                    <td colspan="7" class="text-center">No se encontraron módulos con los criterios seleccionados.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="card-footer" th:if="${!moduloPage.empty}">
+        <div
+            th:replace="~{fragments/pagination :: pagination(page=${moduloPage}, url='/seguridad/modulos', query=${query}, estado=${null})}">
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body th:fragment="content">
+    <!-- Header de la página -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="mb-2 h2">Gestión de Acciones</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/home}">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="#">Seguridad</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Acciones</li>
+                </ol>
+            </nav>
+        </div>
+        <div sec:authorize="hasAuthority('ACCIONES_CREAR')">
+            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalCrearAccion">
+                <i class="ti ti-plus me-1"></i> Nueva Acción
+            </button>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="card" id="accion-content-wrapper">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="card-title mb-0">Listado de Acciones</h5>
+                <p class="mb-0 text-secondary small">Administra las acciones del sistema.</p>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Formulario de Búsqueda -->
+            <form id="filterForm" th:action="@{/seguridad/acciones}" method="get" class="row g-3 py-2">
+                <div class="col-md-12">
+                    <input type="text" class="form-control" placeholder="Buscar por nombre de acción..."
+                        th:value="${query}" name="query" id="searchInput">
+                </div>
+            </form>
+
+            <!-- Contenedor para la lista que se actualizará dinámicamente -->
+            <div id="accion-list-container" class="pt-2">
+                <div th:replace="~{seguridad/acciones/acciones-list :: accionList}"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inclusión de Modales -->
+    <div th:replace="~{seguridad/acciones/modal/CrearModal :: modalCrearAccion}"></div>
+    <div th:replace="~{seguridad/acciones/modal/EditarModal :: modalEditarAccion}"></div>
+    <div th:replace="~{seguridad/acciones/modal/EliminarModal :: modalEliminarAccion}"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const listContainer = document.getElementById('accion-list-container');
+            const searchInput = document.getElementById('searchInput');
+            let debounceTimer;
+
+            // Inicializar tooltips en el contenido inicial (aplicados a botones)
+            const initialTooltips = document.querySelectorAll('[data-tooltip="true"]');
+            [...initialTooltips].forEach(el => new bootstrap.Tooltip(el));
+
+            function sanitizeUrlForHistory(href) {
+                const url = new URL(href);
+                url.searchParams.delete('fragment');
+                return url.href;
+            }
+
+            function fetchAccionesByHref(href) {
+                if (!listContainer) return;
+                listContainer.classList.add('loading');
+                fetch(href + (href.includes('?') ? '&' : '?') + 'fragment=true', {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(async (response) => {
+                        if (!response.ok) {
+                            const serverText = await response.text();
+                            throw new Error(serverText || ('Error ' + response.status + ': ' + response.statusText));
+                        }
+                        return response.text();
+                    })
+                    .then((html) => {
+                        listContainer.innerHTML = html;
+                        if (window.reinitializeChoices) {
+                            window.reinitializeChoices();
+                        }
+                        const tooltipTriggerList = listContainer.querySelectorAll('[data-tooltip="true"]');
+                        [...tooltipTriggerList].forEach(el => new bootstrap.Tooltip(el));
+                        history.pushState(null, '', sanitizeUrlForHistory(href));
+                    })
+                    .catch((error) => {
+                        console.error('Error al cargar acciones:', error);
+                        listContainer.innerHTML = '<div class="alert alert-danger">Error al cargar las acciones. Por favor, recarga la página.</div>';
+                    })
+                    .finally(() => {
+                        listContainer.classList.remove('loading');
+                    });
+            }
+
+            function buildHrefFromLocation(overrides = {}) {
+                const u = new URL(window.location.href);
+                if (!u.pathname.endsWith('/seguridad/acciones')) {
+                    u.pathname = '/seguridad/acciones';
+                }
+
+                if (overrides.query !== undefined) {
+                    const q = (overrides.query || '').trim();
+                    if (q) u.searchParams.set('query', q);
+                    else u.searchParams.delete('query');
+                }
+
+                if (overrides.page !== undefined) {
+                    u.searchParams.set('page', String(overrides.page));
+                } else if (!u.searchParams.has('page')) {
+                    u.searchParams.set('page', '0');
+                }
+
+                if (overrides.size !== undefined) {
+                    u.searchParams.set('size', String(overrides.size));
+                } else if (!u.searchParams.has('size')) {
+                    const defaultSize = window.APP_CONFIG?.pagination?.defaultSize || 10;
+                    u.searchParams.set('size', String(defaultSize));
+                }
+
+                return u.href;
+            }
+
+            // Búsqueda
+            if (searchInput) {
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        const href = buildHrefFromLocation({ query: (searchInput.value || '').trim(), page: 0 });
+                        fetchAccionesByHref(href);
+                    }, 350);
+                });
+            }
+
+            // Delegación de eventos para paginación y tamaño de página
+            if (listContainer) {
+                listContainer.addEventListener('click', (e) => {
+                    const pageLink = e.target.closest('a.page-link');
+                    if (pageLink && !pageLink.closest('.disabled')) {
+                        e.preventDefault();
+                        fetchAccionesByHref(pageLink.href);
+                    }
+                });
+
+                listContainer.addEventListener('change', (e) => {
+                    if (e.target && e.target.id === 'pageSizeSelect') {
+                        const newSize = parseInt(e.target.value, 10);
+                        const href = buildHrefFromLocation({ size: isNaN(newSize) ? undefined : newSize, page: 0 });
+                        fetchAccionesByHref(href);
+                    }
+                });
+
+                // Delegación de eventos para Editar y Eliminar dentro de la lista
+                listContainer.addEventListener('click', (e) => {
+                    const editBtn = e.target.closest('.btn-edit');
+                    if (editBtn) {
+                        e.preventDefault();
+                        const accionId = editBtn.getAttribute('data-id');
+                        if (accionId && window.AccionesModals?.openEdit) {
+                            window.AccionesModals.openEdit(accionId);
+                        }
+                        return;
+                    }
+
+                    const deleteBtn = e.target.closest('.btn-delete');
+                    if (deleteBtn) {
+                        e.preventDefault();
+                        const accionId = deleteBtn.getAttribute('data-id');
+                        const nombre = deleteBtn.getAttribute('data-nombre') || '';
+                        if (accionId && window.AccionesModals?.openDelete) {
+                            window.AccionesModals.openDelete(accionId, nombre);
+                        }
+                        return;
+                    }
+                });
+            }
+
+            // FLASH para apertura de modales
+            const flashContainer = document.getElementById('flash-messages');
+            if (flashContainer) {
+                const modalCrearError = flashContainer.dataset.modalCrearError;
+                if (modalCrearError) {
+                    const modalCrearEl = document.getElementById('modalCrearAccion');
+                    if (modalCrearEl) {
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalCrearEl);
+                        modalInstance.show();
+                    }
+                }
+
+                const errorAccionId = flashContainer.dataset.errorAccionId;
+                if (errorAccionId) {
+                    const modalEditarEl = document.getElementById('modalEditarAccion');
+                    if (modalEditarEl) {
+                        modalEditarEl.setAttribute('data-open-accion-id', errorAccionId);
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEditarEl);
+                        modalInstance.show();
+                    }
+                }
+
+                const errorAccionDeleteId = flashContainer.dataset.errorAccionDeleteId;
+                const errorAccionDeleteNombre = flashContainer.dataset.errorAccionDeleteNombre;
+                if (errorAccionDeleteId && errorAccionDeleteNombre) {
+                    const modalEliminarEl = document.getElementById('modalEliminarAccion');
+                    if (modalEliminarEl) {
+                        modalEliminarEl.setAttribute('data-open-accion-id', errorAccionDeleteId);
+                        modalEliminarEl.setAttribute('data-open-accion-nombre', errorAccionDeleteNombre);
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEliminarEl);
+                        modalInstance.show();
+                    }
+                }
+            }
+
+            // Editar: carga dinámica de contenido
+            const modalEditarEl = document.getElementById('modalEditarAccion');
+            if (modalEditarEl) {
+                const editarAccionContenido = document.getElementById('editar-accion-contenido');
+                modalEditarEl.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const accionId = button?.getAttribute('data-accion-id') || modalEditarEl.getAttribute('data-open-accion-id');
+                    if (!accionId) return;
+
+                    editarAccionContenido.innerHTML = `<div class="d-flex justify-content-center p-5"><div class="spinner-border text-primary" role="status"><span class="visualmente-hidden">Cargando...</span></div></div>`;
+
+                    fetch(`/seguridad/acciones/editar/${accionId}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                        .then(async (response) => {
+                            if (!response.ok) {
+                                const serverText = await response.text();
+                                throw new Error(serverText || ('Error ' + response.status + ': ' + response.statusText));
+                            }
+                            return response.text();
+                        })
+                        .then((html) => {
+                            editarAccionContenido.innerHTML = html;
+                            window.reinitializeChoices && window.reinitializeChoices();
+                        })
+                        .catch((error) => {
+                            console.error('Error al cargar acción:', error);
+                            editarAccionContenido.innerHTML = `<div class="alert alert-danger m-3"><i class="ti ti-alert-circle me-2"></i>No se pudo cargar la información.</div>`;
+                        });
+                });
+            }
+
+
+            // Eliminar: asigna nombre dinámico y action del form
+            const modalEliminarEl = document.getElementById('modalEliminarAccion');
+            if (modalEliminarEl) {
+                modalEliminarEl.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const openId = modalEliminarEl.getAttribute('data-open-accion-id');
+                    const openNombre = modalEliminarEl.getAttribute('data-open-accion-nombre');
+                    const accionId = (button?.getAttribute('data-accion-id')) || openId;
+                    const accionNombre = (button?.getAttribute('data-accion-nombre')) || openNombre;
+                    if (!accionId || !accionNombre) return;
+
+                    modalEliminarEl.querySelector('#nombreAccionEliminar').textContent = accionNombre;
+                    modalEliminarEl.querySelector('#formEliminarAccion').action = `/seguridad/acciones/delete/${accionId}`;
+
+                    modalEliminarEl.removeAttribute('data-open-accion-id');
+                    modalEliminarEl.removeAttribute('data-open-accion-nombre');
+                });
+            }
+
+            // API pública por si se necesita desde otros scripts
+            window.AccionesTable = {
+                fetchByUrl: fetchAccionesByHref,
+            };
+            window.AccionesModals = {
+                openEdit: function (accionId) {
+                    const modalEditarEl = document.getElementById('modalEditarAccion');
+                    if (!modalEditarEl) return;
+                    modalEditarEl.setAttribute('data-open-accion-id', accionId);
+                    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEditarEl);
+                    modalInstance.show();
+                },
+                openDelete: function (accionId, nombre) {
+                    const modalEliminarEl = document.getElementById('modalEliminarAccion');
+                    if (!modalEliminarEl) return;
+                    modalEliminarEl.setAttribute('data-open-accion-id', accionId);
+                    modalEliminarEl.setAttribute('data-open-accion-nombre', nombre);
+                    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEliminarEl);
+                    modalInstance.show();
+                },
+                openCreate: function () {
+                    const modalCrearEl = document.getElementById('modalCrearAccion');
+                    if (!modalCrearEl) return;
+                    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalCrearEl);
+                    modalInstance.show();
+                }
+            };
+        });
+    </script>
+
+</body>
+
+</html>

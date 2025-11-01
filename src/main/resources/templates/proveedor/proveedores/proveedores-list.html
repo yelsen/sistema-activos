@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body th:fragment="proveedorList">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th class="text-nowrap">N°</th>
+                    <th class="text-nowrap">RUC</th>
+                    <th>Nombre</th>
+                    <th>Razón Social</th>
+                    <th class="text-nowrap">Teléfono</th>
+                    <th>Email</th>
+                    <th class="text-nowrap">Estado</th>
+                    <th class="text-center" style="width: 180px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="prov, iter : ${proveedorPage.content}">
+                    <td class="text-muted" th:text="${proveedorPage.number * proveedorPage.size + iter.count}"></td>
+                    <td th:text="${prov.rucProveedor}"></td>
+                    <td th:text="${prov.nombreProveedor}"></td>
+                    <td th:text="${prov.razonSocial}"></td>
+                    <td th:text="${prov.telefono}"></td>
+                    <td th:text="${prov.email}"></td>
+                    <td>
+                        <span class="badge bg-primary-subtle text-primary fw-semibold text-uppercase"
+                            th:text="${#strings.capitalize(prov.estadoProveedor?.name()?.toLowerCase())}"></span>
+                    </td>
+                    <td class="text-end text-nowrap">
+                        <div class="d-flex justify-content-end gap-3">
+                            <button class="btn btn-primary rounded-circle btn-edit" type="button"
+                                th:attr="data-id=${prov.idProveedor}"
+                                sec:authorize="hasAuthority('PROVEEDORES_EDITAR')" aria-label="Editar"
+                                data-tooltip="true" data-bs-placement="top" title="Editar" data-bs-container="body" data-bs-trigger="hover">
+                                <i class="ti ti-edit"></i>
+                            </button>
+                            <button class="btn btn-danger rounded-circle btn-delete" type="button"
+                                th:attr="data-id=${prov.idProveedor}, data-nombre=${prov.nombreProveedor}"
+                                sec:authorize="hasAuthority('PROVEEDORES_ELIMINAR')" aria-label="Eliminar"
+                                data-tooltip="true" data-bs-placement="top" title="Eliminar" data-bs-container="body" data-bs-trigger="hover">
+                                <i class="ti ti-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${proveedorPage.empty}">
+                    <td colspan="8" class="text-center">No se encontraron proveedores con los criterios seleccionados.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="card-footer" th:if="${!proveedorPage.empty}">
+        <div
+            th:replace="~{fragments/pagination :: pagination(page=${proveedorPage}, url='/proveedores', query=${query}, estado=${null})}">
+        </div>
+    </div>
+</body>
+
+</html>

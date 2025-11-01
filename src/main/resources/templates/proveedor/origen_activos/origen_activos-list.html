@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body th:fragment="origenList">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+            <tr>
+                <th class="text-nowrap" style="width: 80px;">N°</th>
+                <th>Nombre</th>
+                <th class="text-center" style="width: 140px;">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="ori, iter : ${origenPage.content}">
+                <td class="text-muted" th:text="${origenPage.number * origenPage.size + iter.count}"></td>
+                <td th:text="${ori.nombreOrigen}"></td>
+                <td class="text-end text-nowrap">
+                    <div class="d-flex justify-content-end gap-3">
+                        <button class="btn btn-primary rounded-circle btn-edit" type="button"
+                                th:attr="data-id=${ori.idOrigen}"
+                                sec:authorize="hasAuthority('ORIGENES_EDITAR')" aria-label="Editar"
+                                data-tooltip="true" data-bs-placement="top" title="Editar" data-bs-container="body" data-bs-trigger="hover">
+                            <i class="ti ti-edit"></i>
+                        </button>
+                        <button class="btn btn-danger rounded-circle btn-delete" type="button"
+                                th:attr="data-id=${ori.idOrigen}, data-nombre=${ori.nombreOrigen}"
+                                sec:authorize="hasAuthority('ORIGENES_ELIMINAR')" aria-label="Eliminar"
+                                data-tooltip="true" data-bs-placement="top" title="Eliminar" data-bs-container="body" data-bs-trigger="hover">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            <tr th:if="${origenPage.empty}">
+                <td colspan="3" class="text-center">No se encontraron origenes con los criterios seleccionados.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="card-footer" th:if="${!origenPage.empty}">
+        <div th:replace="~{fragments/pagination :: pagination(page=${origenPage}, url='/proveedores/origenes', query=${query}, estado=${null})}"></div>
+    </div>
+</body>
+
+</html>

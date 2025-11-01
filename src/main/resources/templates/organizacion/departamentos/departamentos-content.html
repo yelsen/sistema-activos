@@ -60,6 +60,10 @@
             let debounceTimer;
             let controller;
 
+            // Inicializar tooltips en el contenido inicial (unificado con Acciones)
+            const initialTooltips = document.querySelectorAll('[data-tooltip="true"]');
+            [...initialTooltips].forEach(el => new bootstrap.Tooltip(el));
+
             function toFragmentUrl(href) {
                 const u = new URL(href, window.location.origin);
                 u.searchParams.set('fragment', 'true');
@@ -100,7 +104,7 @@
                         if (window.reinitializeChoices) {
                             window.reinitializeChoices();
                         }
-                        const tooltipTriggerList = listContainer.querySelectorAll('[data-bs-toggle="tooltip"]');
+                        const tooltipTriggerList = listContainer.querySelectorAll('[data-tooltip="true"]');
                         [...tooltipTriggerList].forEach(el => new bootstrap.Tooltip(el));
                         history.pushState(null, '', sanitizeUrlForHistory(href));
                     })
@@ -154,13 +158,48 @@
                 });
             }
 
-            // Delegación de eventos para paginación y tamaño de página
+            // Delegación de eventos para paginación, edición y eliminación
             if (listContainer) {
                 listContainer.addEventListener('click', (e) => {
                     const pageLink = e.target.closest('a.page-link');
                     if (pageLink && !pageLink.closest('.disabled')) {
                         e.preventDefault();
                         fetchDepartamentosByHref(pageLink.href);
+                        return;
+                    }
+
+                    // Editar (delegado)
+                    const editBtn = e.target.closest('.btn-edit');
+                    if (editBtn) {
+                        e.preventDefault();
+                        const id = editBtn.getAttribute('data-id') || editBtn.dataset.id;
+                        if (id) {
+                            const modalEditarEl = document.getElementById('modalEditarDepartamento');
+                            if (modalEditarEl) {
+                                modalEditarEl.setAttribute('data-open-departamento-id', id);
+                                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEditarEl);
+                                modalInstance.show();
+                            }
+                        }
+                        return;
+                    }
+
+                    // Eliminar (delegado)
+                    const deleteBtn = e.target.closest('.btn-delete');
+                    if (deleteBtn) {
+                        e.preventDefault();
+                        const id = deleteBtn.getAttribute('data-id') || deleteBtn.dataset.id;
+                        const nombre = deleteBtn.getAttribute('data-nombre') || deleteBtn.dataset.nombre;
+                        if (id && nombre) {
+                            const modalEliminarEl = document.getElementById('modalEliminarDepartamento');
+                            if (modalEliminarEl) {
+                                modalEliminarEl.setAttribute('data-open-departamento-id', id);
+                                modalEliminarEl.setAttribute('data-open-departamento-nombre', nombre);
+                                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEliminarEl);
+                                modalInstance.show();
+                            }
+                        }
+                        return;
                     }
                 });
 

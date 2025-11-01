@@ -1,6 +1,8 @@
 package pe.edu.unasam.activos.modules.ubicaciones.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import pe.edu.unasam.activos.modules.ubicaciones.domain.TipoOficina;
 
@@ -12,4 +14,6 @@ public interface TipoOficinaRepository extends JpaRepository<TipoOficina, Intege
     Optional<TipoOficina> findByTipoOficina(String tipoOficina);
 
     boolean existsByTipoOficina(String tipoOficina);
+
+    Page<TipoOficina> findByTipoOficinaContainingIgnoreCase(String query, Pageable pageable);
 }

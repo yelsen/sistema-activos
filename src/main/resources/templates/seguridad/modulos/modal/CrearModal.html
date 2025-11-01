@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+    <div th:fragment="modalCrearModulo" class="modal fade" id="modalCrearModulo" tabindex="-1"
+        aria-labelledby="modalCrearModuloLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
+                    <div class="d-flex align-items-center gap-3 position-relative">
+                        <i class="ti ti-grid-dots fs-2"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Crear Nuevo Módulo</h5>
+                            <p class="fs-10 mb-0 text-white-50">Registra un módulo del sistema.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+
+                <form th:action="@{/seguridad/modulos}" th:object="${modulo}" method="post" id="formCrearModulo"
+                    class="needs-validation" novalidate>
+                    <div class="modal-body p-4">
+                        <!-- Estado oculto: no se muestra en frontend, default ACTIVO -->
+                        <input type="hidden" th:field="*{estadoModulo}" />
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label for="nombreModuloCrear" class="form-label">
+                                    Nombre del módulo <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="nombreModuloCrear"
+                                    th:field="*{nombreModulo}" maxlength="45" required
+                                    placeholder="Ingrese el nombre del módulo">
+                                <div class="invalid-feedback">El nombre del módulo es obligatorio.</div>
+                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('nombreModulo')}"
+                                    th:errors="*{nombreModulo}"></div>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="descripcionModuloCrear" class="form-label">Descripción del módulo</label>
+                                <textarea class="form-control" id="descripcionModuloCrear"
+                                    th:field="*{descripcionModulo}" rows="2"
+                                    placeholder="Describe brevemente el módulo"></textarea>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="iconoModuloCrear" class="form-label">Icono</label>
+                                <input type="text" class="form-control" id="iconoModuloCrear" th:field="*{iconoModulo}"
+                                    maxlength="100" placeholder="Ej. ti-home">
+                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('iconoModulo')}"
+                                    th:errors="*{iconoModulo}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="rutaModuloCrear" class="form-label">Ruta</label>
+                                <input type="text" class="form-control" id="rutaModuloCrear" th:field="*{rutaModulo}"
+                                    maxlength="100" placeholder="Ej. /inventario">
+                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('rutaModulo')}"
+                                    th:errors="*{rutaModulo}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ti ti-device-floppy me-1"></i>Guardar Módulo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

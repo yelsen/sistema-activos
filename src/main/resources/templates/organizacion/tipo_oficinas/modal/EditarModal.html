@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+    <div class="modal fade" id="modalEditarTipoOficina" th:fragment="editarModal" tabindex="-1"
+        aria-labelledby="modalEditarTipoOficinaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-azulunasam text-white position-relative modal-shape-header">
+                    <div class="d-flex align-items-center gap-3 position-relative">
+                        <i class="ti ti-building-cog fs-2"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Editar Tipo de Oficina</h5>
+                            <p class="fs-10 mb-0 text-white-50">Actualiza el tipo de oficina.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="editarTipoOficinaContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fragmento del formulario de edición -->
+    <div th:fragment="editarForm">
+        <form th:action="@{/organizacion/tipo-oficinas/update/{id}(id=${tipoOficina.idTipoOficina})}"
+            th:object="${tipoOficina}" method="post" id="formEditarTipoOficina" class="needs-validation" novalidate>
+            <div class="modal-body p-4">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label for="editTipoOficina" class="form-label">Tipo de oficina <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="editTipoOficina" th:field="*{tipoOficina}" required
+                            placeholder="Ej. Oficina Administrativa">
+                        <div class="invalid-feedback">El tipo de oficina es obligatorio.</div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('tipoOficina')}"
+                            th:errors="*{tipoOficina}"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="btnActualizarTipoOficina">
+                    <i class="ti ti-device-floppy me-1"></i>Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

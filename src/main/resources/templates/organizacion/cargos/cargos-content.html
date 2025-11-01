@@ -57,8 +57,8 @@
             const searchInput = document.getElementById('searchInput');
             let debounceTimer;
 
-            // Inicializar tooltips en el contenido inicial
-            const initialTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            // Inicializar tooltips en el contenido inicial (patrón unificado con Acciones)
+            const initialTooltips = document.querySelectorAll('[data-tooltip="true"]');
             [...initialTooltips].forEach(el => new bootstrap.Tooltip(el));
 
             function sanitizeUrlForHistory(href) {
@@ -89,7 +89,7 @@
                             window.reinitializeChoices();
                         }
                         // Reinicializar tooltips de Bootstrap para elementos recién insertados
-                        const tooltipTriggerList = listContainer.querySelectorAll('[data-bs-toggle="tooltip"]');
+                        const tooltipTriggerList = listContainer.querySelectorAll('[data-tooltip="true"]');
                         [...tooltipTriggerList].forEach(el => new bootstrap.Tooltip(el));
                         history.pushState(null, '', sanitizeUrlForHistory(href));
                     })
@@ -144,13 +144,37 @@
                 });
             }
 
-            // Delegación de eventos para paginación y tamaño de página
+            // Delegación de eventos para paginación, edición y eliminación
             if (listContainer) {
                 listContainer.addEventListener('click', (e) => {
                     const pageLink = e.target.closest('a.page-link');
                     if (pageLink && !pageLink.closest('.disabled')) {
                         e.preventDefault();
                         fetchCargosByHref(pageLink.href);
+                        return;
+                    }
+
+                    // Editar (delegado)
+                    const editBtn = e.target.closest('.btn-edit');
+                    if (editBtn) {
+                        e.preventDefault();
+                        const id = editBtn.getAttribute('data-id') || editBtn.dataset.id;
+                        if (id && window.CargosModals?.openEdit) {
+                            window.CargosModals.openEdit(id);
+                        }
+                        return;
+                    }
+
+                    // Eliminar (delegado)
+                    const deleteBtn = e.target.closest('.btn-delete');
+                    if (deleteBtn) {
+                        e.preventDefault();
+                        const id = deleteBtn.getAttribute('data-id') || deleteBtn.dataset.id;
+                        const nombre = deleteBtn.getAttribute('data-nombre') || deleteBtn.dataset.nombre;
+                        if (id && nombre && window.CargosModals?.openDelete) {
+                            window.CargosModals.openDelete(id, nombre);
+                        }
+                        return;
                     }
                 });
 

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="modalEliminarAccion" class="modal fade" id="modalEliminarAccion" tabindex="-1"
+        aria-labelledby="modalEliminarAccionLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-danger text-white position-relative modal-shape-header">
+                    <div class="d-flex align-items-center gap-3 position-relative">
+                        <i class="ti ti-trash fs-2"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Eliminar Acción</h5>
+                            <p class="fs-10 mb-0 text-white-50">Esta acción no se puede deshacer.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+                <form id="formEliminarAccion" method="post" th:action="@{/seguridad/acciones/delete/__ID__}">
+                    <div class="modal-body p-4">
+                        <p>
+                            ¿Está seguro de eliminar la acción <strong id="nombreAccionEliminar">[acción]</strong>?
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-ghost-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="ti ti-trash me-1"></i>Eliminar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+ </body>
+
+</html>
