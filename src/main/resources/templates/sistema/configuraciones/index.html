@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    class="h-100">
+
+<head th:replace="~{fragments/head :: head('Configuración')}"></head>
+
+<body class="h-100">
+    <div id="main-wrapper">
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+        <!-- Main Content -->
+        <main id="content" class="position-relative h-100 d-flex flex-column">
+            <div th:replace="~{fragments/header :: header}"></div>
+
+            <div class="custom-container flex-grow-1 d-flex flex-column pb-4">
+                <div th:replace="~{sistema/configuraciones/configuraciones-content :: content}"></div>
+            </div>
+            <div class="mt-auto" th:replace="~{fragments/footer :: footer}"></div>
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/search-modal :: searchModal}"></div>
+    <div th:replace="~{fragments/notification-panel :: notificationPanel}"></div>
+
+    <th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
+</body>
+
+</html>
+
+</html>

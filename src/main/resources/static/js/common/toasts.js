@@ -8,9 +8,16 @@
     if (!show) return;
 
     const { success, error, warning, info } = flashContainer.dataset;
-    if (success) show(success, 'success');
-    if (error) show(error, 'error');
-    if (warning) show(warning, 'warning');
-    if (info) show(info, 'info');
+    // Duraciones optimizadas por tipo
+    const DURATION = {
+      success: 4000,
+      error: 7000,
+      warning: 6000,
+      info: 5000
+    };
+    if (success) show(success, 'success', DURATION.success);
+    if (error) show(error, 'error', DURATION.error);
+    if (warning) show(warning, 'warning', DURATION.warning);
+    if (info) show(info, 'info', DURATION.info);
   });
 })();

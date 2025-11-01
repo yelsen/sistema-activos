@@ -81,9 +81,9 @@ public class TecnicoController {
             model.addAttribute("estadoTecnicos", pe.edu.unasam.activos.common.enums.EstadoTecnico.values());
 
             if (fragment) {
-                return "mantenimientos/tecnicos/tecnicos-list :: tecnicoList";
+                return "mantenimiento/tecnicos/tecnicos-list :: tecnicoList";
             }
-            return "mantenimientos/tecnicos/index";
+            return "mantenimiento/tecnicos/index";
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al listar técnicos", e);
         }
@@ -127,7 +127,7 @@ public class TecnicoController {
             model.addAttribute("tecnico", tecnico);
             model.addAttribute("generos", Genero.values());
             model.addAttribute("especialidades", especialidadService.getAllEspecialidadesAsList());
-            return "mantenimientos/tecnicos/modal/EditarModal :: editarForm";
+            return "mantenimiento/tecnicos/modal/EditarModal :: editarForm";
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         } catch (BusinessException e) {

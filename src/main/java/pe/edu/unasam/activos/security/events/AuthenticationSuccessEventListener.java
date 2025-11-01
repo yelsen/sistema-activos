@@ -7,6 +7,9 @@ import org.springframework.security.authentication.event.AuthenticationSuccessEv
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import pe.edu.unasam.activos.modules.auth.service.AuthService;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 @RequiredArgsConstructor
@@ -22,5 +25,16 @@ public class AuthenticationSuccessEventListener implements ApplicationListener<A
         String username = userDetails.getUsername();
         log.info("Login exitoso para el usuario: {}. Reseteando contador de intentos fallidos.", username);
         authService.resetFailedLoginAttempts(username);
+
+        // Registrar la sesión y almacenar datos en HttpSession usando el Success Event
+        ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attrs != null) {
+            HttpServletRequest request = attrs.getRequest();
+            try {
+                authService.onFormLoginSuccess(request, event.getAuthentication());
+            } catch (Exception e) {
+                log.error("Error al registrar sesión tras login exitoso", e);
+            }
+        }
     }
 }

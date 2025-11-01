@@ -22,6 +22,6 @@ public class PermisoController {
         var permisosAgrupados = permisoService.getAllPermisosGroupedByModulo();
 
         model.addAttribute("permisosAgrupados", permisosAgrupados);
-        return "sistema/permisos/index";
+        return "seguridad/permisos/index";
     }
 }

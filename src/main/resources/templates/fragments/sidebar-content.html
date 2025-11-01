@@ -54,7 +54,7 @@
                     </li>
                 </ul>
             </li>
-            
+
             <!-- ===================== SECCIÓN PRINCIPAL ===================== -->
             <li class="nav-item">
                 <div class="nav-heading">Gestión Principal</div>
@@ -81,11 +81,11 @@
                     <li class="nav-item" sec:authorize="hasAuthority('ACTIVOS_ACCEDER')">
                         <a class='nav-link' th:href="@{/activos}">Activos</a>
                     </li>
-                    <li class="nav-item" sec:authorize="hasAuthority('EQUIPOS_ACCEDER')">
-                        <a class='nav-link' th:href="@{/equipos}">Equipos</a>
-                    </li>
                     <li class="nav-item" sec:authorize="hasAuthority('ASIGNACION_ACTIVOS_ACCEDER')">
                         <a class='nav-link' th:href="@{/activos/asignaciones}">Asignaciones</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasAuthority('EQUIPOS_ACCEDER')">
+                        <a class='nav-link' th:href="@{/equipos}">Equipos</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('CATEGORIAS_ACCEDER')">
                         <a class='nav-link' th:href="@{/equipos/categorias}">Categorías de Equipos</a>
@@ -135,16 +135,16 @@
                         <a class='nav-link' th:href="@{/aplicativos/instalaciones}">Instalaciones</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('APIS_ACCEDER')">
-                        <a class='nav-link' th:href="@{/apis}">APIs / Integraciones</a>
+                        <a class='nav-link' th:href="@{/aplicativos/apis}">APIs / Integraciones</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('LICENCIAS_ACCEDER')">
-                        <a class='nav-link' th:href="@{/licencias}">Licencias</a>
+                        <a class='nav-link' th:href="@{/aplicativos/licencias}">Licencias</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('TIPO_APLICATIVOS_ACCEDER')">
-                        <a class='nav-link' th:href="@{/aplicativos/tipos}">Tipos de Aplicativos</a>
+                        <a class='nav-link' th:href="@{/aplicativos/tipo-aplicativos}">Tipos de Aplicativos</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('TIPO_LICENCIAS_ACCEDER')">
-                        <a class='nav-link' th:href="@{/licencias/tipos}">Tipos de Licencias</a>
+                        <a class='nav-link' th:href="@{/aplicativos/tipo-licencias}">Tipos de Licencias</a>
                     </li>
                 </ul>
             </li>
@@ -235,7 +235,7 @@
 
             <!-- Menú Personas y Ubicaciones (Consolidado) -->
             <li class="nav-item dropdown"
-                th:with="subItems=${#lists.size(#authorization.expression('hasAuthority(''PERSONAS_ACCEDER'')') ? {'1'} : {}) + #lists.size(#authorization.expression('hasAuthority(''RESPONSABLES_ACCEDER'')') ? {'1'} : {}) + #lists.size(#authorization.expression('hasAuthority(''OFICINAS_ACCEDER'')') ? {'1'} : {}) + #lists.size(#authorization.expression('hasAuthority(''DEPARTAMENTOS_ACCEDER'')') ? {'1'} : {})}">
+                th:with="subItems=${#lists.size(#authorization.expression('hasAuthority(''RESPONSABLES_ACCEDER'')') ? {'1'} : {}) + #lists.size(#authorization.expression('hasAuthority(''OFICINAS_ACCEDER'')') ? {'1'} : {}) + #lists.size(#authorization.expression('hasAuthority(''DEPARTAMENTOS_ACCEDER'')') ? {'1'} : {}) + #lists.size(#authorization.expression('hasAuthority(''CARGOS_ACCEDER'')') ? {'1'} : {})}">
                 <a th:if="${subItems > 0}" class="nav-link dropdown-toggle" href="#" role="button"
                     data-bs-toggle="dropdown" aria-expanded="false" title="Organización">
                     <span class="nav-icon">
@@ -252,23 +252,20 @@
                     <span class="text">Organización</span>
                 </a>
                 <ul class="dropdown-menu flex-column">
-                    <li class="nav-item" sec:authorize="hasAuthority('PERSONAS_ACCEDER')">
-                        <a class='nav-link' th:href="@{/personas}">Personas</a>
-                    </li>
                     <li class="nav-item" sec:authorize="hasAuthority('RESPONSABLES_ACCEDER')">
-                        <a class='nav-link' th:href="@{/personas/responsables}">Responsables</a>
+                        <a class='nav-link' th:href="@{/organizacion/responsables}">Responsables</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('OFICINAS_ACCEDER')">
-                        <a class='nav-link' th:href="@{/ubicaciones/oficinas}">Oficinas</a>
+                        <a class='nav-link' th:href="@{/organizacion/oficinas}">Oficinas</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('DEPARTAMENTOS_ACCEDER')">
-                        <a class='nav-link' th:href="@{/ubicaciones/departamentos}">Departamentos</a>
+                        <a class='nav-link' th:href="@{/organizacion/departamentos}">Departamentos</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('CARGOS_ACCEDER')">
-                        <a class='nav-link' th:href="@{/personas/cargos}">Cargos</a>
+                        <a class='nav-link' th:href="@{/organizacion/cargos}">Cargos</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('TIPO_OFICINAS_ACCEDER')">
-                        <a class='nav-link' th:href="@{/ubicaciones/tipo-oficinas}">Tipos de Oficinas</a>
+                        <a class='nav-link' th:href="@{/organizacion/tipo-oficinas}">Tipos de Oficinas</a>
                     </li>
                 </ul>
             </li>
@@ -332,9 +329,6 @@
                     <li class="nav-item" sec:authorize="hasAuthority('ROLES_ACCEDER')">
                         <a class='nav-link' th:href="@{/seguridad/roles}">Roles</a>
                     </li>
-                    <li class="nav-item" sec:authorize="hasAuthority('PERMISOS_ACCEDER')">
-                        <a class='nav-link' th:href="@{/seguridad/permisos}">Permisos</a>
-                    </li>
                     <li class="nav-item" sec:authorize="hasAuthority('MODULOS_ACCEDER')">
                         <a class='nav-link' th:href="@{/seguridad/modulos}">Módulos</a>
                     </li>
@@ -363,10 +357,10 @@
                 </a>
                 <ul class="dropdown-menu flex-column">
                     <li class="nav-item" sec:authorize="hasAuthority('CONFIGURACION_ACCEDER')">
-                        <a class='nav-link' th:href="@{/sistema/configuracion}">Configuración</a>
+                        <a class='nav-link' th:href="@{/sistema/configuraciones}">Configuración</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('AUDITORIA_ACCEDER')">
-                        <a class='nav-link' th:href="@{/sistema/auditoria}">Auditoría</a>
+                        <a class='nav-link' th:href="@{/sistema/auditorias}">Auditoría</a>
                     </li>
                     <li class="nav-item" sec:authorize="hasAuthority('SESIONES_ACCEDER')">
                         <a class='nav-link' th:href="@{/sistema/sesiones}">Sesiones</a>

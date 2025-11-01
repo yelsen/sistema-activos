@@ -2,6 +2,7 @@ package pe.edu.unasam.activos.modules.sistema.web;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,7 +12,6 @@ import pe.edu.unasam.activos.common.enums.EstadoSesion;
 import pe.edu.unasam.activos.modules.sistema.service.SesionUsuarioService;
 import pe.edu.unasam.activos.config.PaginationProperties;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Controller
@@ -26,23 +26,27 @@ public class SesionUsuarioController {
     @GetMapping
     @PreAuthorize("hasAuthority('SESIONES_ACCEDER')")
     public String listSesiones(Model model,
-                               @RequestParam(required = false) String q,
-                               @RequestParam(required = false) EstadoSesion estado,
-                               Pageable pageable) {
-        
-        java.util.Map<String, Object> params = new HashMap<>();
-        params.put("q", q);
-        if (estado != null) {
-            params.put("estado", estado.name());
+            @RequestParam(required = false, name = "query") String query,
+            @RequestParam(required = false, name = "estado") String estadoParam,
+            Pageable pageable) {
+
+        EstadoSesion estadoFiltro = null;
+        if (StringUtils.hasText(estadoParam) && !"todos".equalsIgnoreCase(estadoParam)) {
+            try {
+                estadoFiltro = EstadoSesion.valueOf(estadoParam);
+            } catch (IllegalArgumentException ex) {
+                // Si llega un valor inválido, no filtrar por estado
+                estadoFiltro = null;
+            }
         }
 
-        model.addAttribute("page", sesionUsuarioService.getSesiones(q, estado, pageable));
-        model.addAttribute("params", params);
+        model.addAttribute("page", sesionUsuarioService.getSesiones(query, estadoFiltro, pageable));
+        model.addAttribute("query", query);
+        model.addAttribute("estado", StringUtils.hasText(estadoParam) ? estadoParam : "todos");
         model.addAttribute("estados", EstadoSesion.values());
         model.addAttribute("pageSizes", paginationProperties.getAllowedSizes());
-        return "sistema/sesiones/list";
+        return "sistema/sesiones/index";
     }
-
 
     @PostMapping("/cerrar/{id}")
     @PreAuthorize("hasAuthority('SESIONES_ELIMINAR')")

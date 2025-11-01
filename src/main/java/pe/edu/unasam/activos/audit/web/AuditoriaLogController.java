@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/sistema/auditoria")
+@RequestMapping("/sistema/auditorias")
 @RequiredArgsConstructor
 public class AuditoriaLogController {
     private final AuditoriaLogService auditoriaLogService;
@@ -61,6 +61,6 @@ public class AuditoriaLogController {
         model.addAttribute("acciones", AccionAuditoria.values());
         model.addAttribute("pageSizes", paginationProperties.getAllowedSizes());
 
-        return "sistema/auditoria/index";
+        return "sistema/auditorias/index";
     }
 }

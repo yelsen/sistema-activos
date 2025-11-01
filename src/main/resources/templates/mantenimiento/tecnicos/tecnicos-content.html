@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body th:fragment="content">
+    <!-- Header de la página -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="mb-2 h2">Gestión de Técnicos</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/home}">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="#">Mantenimientos</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Técnicos</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="card" id="tecnico-content-wrapper">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="card-title mb-0">Listado de Técnicos</h5>
+                <p class="mb-0 text-secondary small">Administra los técnicos.</p>
+            </div>
+            <div sec:authorize="hasAuthority('TECNICOS_CREAR')">
+                <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+                    data-bs-target="#modalCrearTecnico">
+                    <i class="ti ti-plus me-1"></i> Nuevo Técnico
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Formulario de Búsqueda y Filtro -->
+            <form id="filterForm" th:action="@{/mantenimientos/tecnicos}" method="get" class="row g-3 py-2">
+                <div class="col-md-8">
+                    <input type="text" class="form-control" placeholder="Buscar por dni, nombres, especialidad..."
+                        th:value="${query}" name="query" id="searchInput">
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="estado" name="estado" data-choices>
+                        <option value="">Todos los estados</option>
+                        <option th:each="e : ${estadoTecnicos}" th:value="${e.name()}"
+                            th:text="${#strings.capitalize(e.name().toLowerCase())}" th:selected="${estado == e}">
+                        </option>
+                    </select>
+                </div>
+            </form>
+
+            <!-- Contenedor para la lista de técnicos que se actualizará dinámicamente -->
+            <div id="tecnico-list-container" class="pt-2">
+                <div th:replace="~{mantenimiento/tecnicos/tecnicos-list :: tecnicoList}"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inclusión de Modales -->
+    <div th:replace="~{mantenimiento/tecnicos/modal/CrearModal :: modalCrear}"></div>
+    <div th:replace="~{mantenimiento/tecnicos/modal/EditarModal :: modalEditar}"></div>
+    <div th:replace="~{mantenimiento/tecnicos/modal/EliminarModal :: modalEliminar}"></div>
+
+    <!-- Utilidad global reutilizable -->
+    <script th:src="@{/js/persona-search.js}"></script>
+
+    <!-- Scripts de la tabla -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const listContainer = document.getElementById('tecnico-list-container');
+            const searchInput = document.getElementById('searchInput');
+            const estadoSelect = document.getElementById('estado');
+
+            let debounceTimer;
+            let controller;
+
+            function toFragmentUrl(href) {
+                const u = new URL(href, window.location.origin);
+                u.searchParams.set('fragment', 'true');
+                return u.pathname + '?' + u.searchParams.toString();
+            }
+
+            function sanitizeUrlForHistory(href) {
+                const u = new URL(href, window.location.origin);
+                u.searchParams.delete('fragment');
+                const params = u.searchParams.toString();
+                return u.pathname + (params ? ('?' + params) : '');
+            }
+
+            function fetchTecnicosByHref(href) {
+                if (!listContainer) return;
+
+                if (controller) {
+                    controller.abort();
+                }
+                controller = new AbortController();
+
+                listContainer.classList.add('loading');
+                const fragmentUrl = toFragmentUrl(href);
+
+                return fetch(fragmentUrl, {
+                    signal: controller.signal,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(async (response) => {
+                        if (!response.ok) {
+                            const serverText = await response.text();
+                            throw new Error(serverText || ('Error ' + response.status + ': ' + response.statusText));
+                        }
+                        return response.text();
+                    })
+                    .then((html) => {
+                        listContainer.innerHTML = html;
+                        if (window.reinitializeChoices) {
+                            window.reinitializeChoices();
+                        }
+                        // Reinicializar tooltips de Bootstrap para elementos recién insertados
+                        const tooltipTriggerList = listContainer.querySelectorAll('[data-bs-toggle="tooltip"]');
+                        [...tooltipTriggerList].forEach(el => new bootstrap.Tooltip(el));
+                        history.pushState(null, '', sanitizeUrlForHistory(href));
+                    })
+                    .catch((error) => {
+                        if (error.name !== 'AbortError') {
+                            console.error('Error al cargar técnicos:', error);
+                            listContainer.innerHTML = '<div class="alert alert-danger">Error al cargar los técnicos. Por favor, recarga la página.</div>';
+                        }
+                    })
+                    .finally(() => {
+                        listContainer.classList.remove('loading');
+                    });
+            }
+
+            function buildHrefFromLocation(overrides = {}) {
+                const u = new URL(window.location.href);
+                // Aseguramos que la ruta sea la de técnicos
+                if (!u.pathname.endsWith('/mantenimientos/tecnicos')) {
+                    u.pathname = '/mantenimientos/tecnicos';
+                }
+
+                if (overrides.query !== undefined) {
+                    const q = (overrides.query || '').trim();
+                    if (q) u.searchParams.set('query', q);
+                    else u.searchParams.delete('query');
+                }
+
+                if (overrides.estado !== undefined) {
+                    const e = overrides.estado;
+                    if (e) u.searchParams.set('estado', e);
+                    else u.searchParams.delete('estado');
+                }
+
+                if (overrides.page !== undefined) {
+                    u.searchParams.set('page', String(overrides.page));
+                } else if (!u.searchParams.has('page')) {
+                    u.searchParams.set('page', '0');
+                }
+
+                if (overrides.size !== undefined) {
+                    u.searchParams.set('size', String(overrides.size));
+                } else if (!u.searchParams.has('size')) {
+                    const defaultSize = window.APP_CONFIG?.pagination?.defaultSize || 10;
+                    u.searchParams.set('size', String(defaultSize));
+                }
+
+                return u.href;
+            }
+
+            // Búsqueda
+            if (searchInput) {
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        const href = buildHrefFromLocation({ query: (searchInput.value || '').trim(), page: 0 });
+                        fetchTecnicosByHref(href);
+                    }, 350);
+                });
+            }
+
+            // Filtro por estado
+            if (estadoSelect) {
+                estadoSelect.addEventListener('change', () => {
+                    const href = buildHrefFromLocation({ estado: estadoSelect.value || '', page: 0 });
+                    fetchTecnicosByHref(href);
+                });
+            }
+
+            // Delegación de eventos para paginación y tamaño de página
+            if (listContainer) {
+                listContainer.addEventListener('click', (e) => {
+                    const pageLink = e.target.closest('a.page-link');
+                    if (pageLink && !pageLink.closest('.disabled')) {
+                        e.preventDefault();
+                        fetchTecnicosByHref(pageLink.href);
+                    }
+                });
+
+                listContainer.addEventListener('change', (e) => {
+                    if (e.target && e.target.id === 'pageSizeSelect') {
+                        const newSize = parseInt(e.target.value, 10);
+                        const href = buildHrefFromLocation({ size: isNaN(newSize) ? undefined : newSize, page: 0 });
+                        fetchTecnicosByHref(href);
+                    }
+                });
+            }
+
+            // API pública por si se necesita desde otros scripts
+            window.TecnicosTable = {
+                fetchByUrl: fetchTecnicosByHref,
+            };
+        });
+    </script>
+
+    <!-- Scripts de módulos de Técnicos -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Flash messages container
+            const flashContainer = document.getElementById('flash-messages');
+            if (flashContainer) {
+                // Toasts movidos a index (toasts.js); aquí solo apertura de modales programática
+
+                // Abrir modal Editar si hay error para un técnico específico
+                const errorTecnicoId = flashContainer.dataset.errorTecnicoId;
+                if (errorTecnicoId) {
+                    const modalEditarEl = document.getElementById('modalEditarTecnico');
+                    if (modalEditarEl) {
+                        modalEditarEl.setAttribute('data-open-tecnico-id', errorTecnicoId);
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEditarEl);
+                        modalInstance.show();
+                    }
+                }
+
+                // Abrir modal Crear si falló validación
+                const modalCrearError = flashContainer.dataset.modalCrearError;
+                if (modalCrearError) {
+                    const modalCrearEl = document.getElementById('modalCrearTecnico');
+                    if (modalCrearEl) {
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalCrearEl);
+                        modalInstance.show();
+                    }
+                }
+
+                // Abrir modal Eliminar si hay error para un técnico específico
+                const errorTecnicoDeleteId = flashContainer.dataset.errorTecnicoDeleteId;
+                const errorTecnicoDeleteNombre = flashContainer.dataset.errorTecnicoDeleteNombre;
+                if (errorTecnicoDeleteId && errorTecnicoDeleteNombre) {
+                    const modalEliminarEl = document.getElementById('modalEliminarTecnico');
+                    if (modalEliminarEl) {
+                        modalEliminarEl.setAttribute('data-open-tecnico-id', errorTecnicoDeleteId);
+                        modalEliminarEl.setAttribute('data-open-tecnico-nombre', errorTecnicoDeleteNombre);
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEliminarEl);
+                        modalInstance.show();
+                    }
+                }
+            }
+
+            // Crear: reinitialize choices on show and init PersonaSearch
+            const modalCrearEl = document.getElementById('modalCrearTecnico');
+            if (modalCrearEl) {
+                modalCrearEl.addEventListener('shown.bs.modal', () => {
+                    window.reinitializeChoices && window.reinitializeChoices();
+                    if (window.PersonaSearch) {
+                        window.PersonaSearch.init({
+                            modalId: 'modalCrearTecnico',
+                            formId: 'formCrearTecnicos',
+                            saveButtonId: 'btnGuardarTecnico',
+                            checkField: 'esTecnico',
+                            checkFieldLabel: 'Técnico'
+                        });
+                    }
+                });
+            }
+
+            // Editar: carga dinámica de contenido; soporta apertura programática via data-open-tecnico-id
+            const modalEditarEl = document.getElementById('modalEditarTecnico');
+            if (modalEditarEl) {
+                const editarTecnicoContenido = document.getElementById('editar-tecnico-contenido');
+                modalEditarEl.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const tecnicoId = button?.getAttribute('data-tecnico-id') || modalEditarEl.getAttribute('data-open-tecnico-id');
+                    if (!tecnicoId) return;
+
+                    editarTecnicoContenido.innerHTML = `<div class="d-flex justify-content-center p-5"><div class="spinner-border text-primary" role="status"><span class="visualmente-hidden">Cargando...</span></div></div>`;
+
+                    fetch(`/mantenimientos/tecnicos/editar/${tecnicoId}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                        .then(async response => {
+                            if (!response.ok) {
+                                const status = response.status;
+                                const serverText = await response.text();
+                                let msg = serverText || '';
+                                if (!msg) {
+                                    if (status === 404) msg = 'Usuario no encontrado (404).';
+                                    else if (status === 400) msg = 'Solicitud inválida (400).';
+                                    else if (status >= 500) msg = 'Error del servidor (' + status + ').';
+                                    else if (status >= 300 && status < 400) msg = 'Redirección inesperada (' + status + ').';
+                                    else msg = 'Error al cargar datos (' + status + ').';
+                                }
+                                window.showToast && window.showToast(msg, 'error');
+                                editarTecnicoContenido.innerHTML = `<div class="alert alert-danger m-3"><i class="ti ti-alert-circle me-2"></i>${msg}</div>`;
+                                throw new Error(msg);
+                            }
+                            return response.text();
+                        })
+                        .then(html => {
+                            editarTecnicoContenido.innerHTML = html;
+                            if (window.reinitializeChoices) window.reinitializeChoices(editarTecnicoContenido);
+                            // Init PersonaSearch for Edit modal after content is loaded
+                            if (window.PersonaSearch) {
+                                // Ensure form exists before init
+                                const formEditar = document.getElementById('formEditarTecnico');
+                                if (formEditar) {
+                                    window.PersonaSearch.init({
+                                        modalId: 'modalEditarTecnico',
+                                        formId: 'formEditarTecnico',
+                                        saveButtonId: 'btnActualizarTecnico',
+                                        checkField: 'esTecnico',
+                                        checkFieldLabel: 'Técnico'
+                                    });
+                                }
+                            }
+                            modalEditarEl.removeAttribute('data-open-tecnico-id');
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            if (!editarTecnicoContenido.innerHTML || editarTecnicoContenido.innerHTML.trim() === '') {
+                                editarTecnicoContenido.innerHTML = `<div class="alert alert-danger m-3"><i class="ti ti-alert-circle me-2"></i>No se pudo cargar la información.</div>`;
+                            }
+                        });
+                });
+            }
+
+            // Eliminar: asigna nombre dinámico y action del form; soporta apertura programática
+            const modalEliminarEl = document.getElementById('modalEliminarTecnico');
+            if (modalEliminarEl) {
+                modalEliminarEl.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const openId = modalEliminarEl.getAttribute('data-open-tecnico-id');
+                    const openNombre = modalEliminarEl.getAttribute('data-open-tecnico-nombre');
+                    const tecnicoId = (button?.getAttribute('data-tecnico-id')) || openId;
+                    const tecnicoNombre = (button?.getAttribute('data-tecnico-nombre')) || openNombre;
+                    if (!tecnicoId || !tecnicoNombre) return;
+
+                    modalEliminarEl.querySelector('#nombreTecnicoEliminar').textContent = tecnicoNombre;
+                    modalEliminarEl.querySelector('#formEliminarTecnico').action = `/mantenimientos/tecnicos/delete/${tecnicoId}`;
+
+                    // reset programmatic attributes
+                    modalEliminarEl.removeAttribute('data-open-tecnico-id');
+                    modalEliminarEl.removeAttribute('data-open-tecnico-nombre');
+                });
+            }
+        });
+
+        // Optional public API
+        window.TecnicosModals = {
+            openEdit: function (tecnicoId) {
+                const modalEditarEl = document.getElementById('modalEditarTecnico');
+                if (!modalEditarEl) return;
+                modalEditarEl.setAttribute('data-open-tecnico-id', tecnicoId);
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEditarEl);
+                modalInstance.show();
+            },
+            openDelete: function (tecnicoId, nombre) {
+                const modalEliminarEl = document.getElementById('modalEliminarTecnico');
+                if (!modalEliminarEl) return;
+                modalEliminarEl.setAttribute('data-open-tecnico-id', tecnicoId);
+                modalEliminarEl.setAttribute('data-open-tecnico-nombre', nombre);
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEliminarEl);
+                modalInstance.show();
+            },
+            openCreate: function () {
+                const modalCrearEl = document.getElementById('modalCrearTecnico');
+                if (!modalCrearEl) return;
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalCrearEl);
+                modalInstance.show();
+            }
+        };
+    </script>
+
+</body>
+
+</html>

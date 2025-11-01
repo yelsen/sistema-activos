@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/sistema/configuracion")
+@RequestMapping("/sistema/configuraciones")
 @RequiredArgsConstructor
 public class ConfiguracionController {
 
@@ -33,7 +33,7 @@ public class ConfiguracionController {
                         Collectors.toList()));
 
         model.addAttribute("configsByCategory", configsByCategory);
-        return "sistema/configuracion/index";
+        return "sistema/configuraciones/index";
     }
 
     @PostMapping("/guardar")
@@ -41,6 +41,6 @@ public class ConfiguracionController {
     public String saveConfiguracion(ConfiguracionDTO.BulkUpdateRequest request, RedirectAttributes redirectAttributes) {
         configuracionService.updateFromMap(request.configs());
         redirectAttributes.addFlashAttribute("success", "Configuración guardada exitosamente.");
-        return "redirect:/sistema/configuracion";
+        return "redirect:/sistema/configuraciones";
     }
 }

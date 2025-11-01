@@ -20,6 +20,8 @@ import pe.edu.unasam.activos.modules.sistema.domain.ConfiguracionSistema;
 import pe.edu.unasam.activos.modules.sistema.repository.ConfiguracionSistemaRepository;
 import pe.edu.unasam.activos.security.JwtService;
 import pe.edu.unasam.activos.common.enums.EstadoUsuario;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import java.util.Collections;
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ public class AuthService {
     private final SesionService sesionService;
     private final PasswordEncoder passwordEncoder;
     private final ConfiguracionSistemaRepository configuracionSistemaRepository;
+    private final PasswordResetService passwordResetService;
 
     @Transactional
     public TokenResponse login(LoginRequest request, String userAgent) {
@@ -71,6 +74,29 @@ public class AuthService {
             registrarIntentoFallido(usuario);
             throw new UnauthorizedException("Credenciales inválidas");
         }
+    }
+
+    /**
+     * Invocado desde el SuccessHandler para el login por formulario de Spring Security.
+     * Crea el registro de sesión y setea atributos en la HttpSession.
+     */
+    @Transactional
+    public void onFormLoginSuccess(HttpServletRequest request, Authentication authentication) {
+        String username = authentication.getName();
+        Usuario usuario = usuarioRepository.findByUsuarioWithRelations(username)
+                .orElseThrow(() -> new UnauthorizedException("Usuario no encontrado"));
+
+        HttpSession session = request.getSession();
+        String tokenSesion = session.getId();
+        String userAgent = request.getHeader("User-Agent");
+
+        // Registrar sesión en BD
+        sesionService.crearSesion(usuario, tokenSesion, userAgent);
+
+        // Construir info de usuario y dejarla disponible en la sesión
+        UserInfoResponse userInfo = buildUserInfo(usuario, authentication);
+        session.setAttribute("token", tokenSesion);
+        session.setAttribute("user", userInfo);
     }
 
     @Transactional
@@ -142,6 +168,35 @@ public class AuthService {
 
         // Actualizar contraseña
         usuario.setContrasena(passwordEncoder.encode(passwordNueva));
+        usuarioRepository.save(usuario);
+    }
+
+    @Transactional
+    public void solicitarCodigoRecuperacion(String username) {
+        passwordResetService.generateAndSendCode(username);
+    }
+
+    @Transactional
+    public void resetPasswordWithCode(String username, String code, String nuevaPassword) {
+        log.info("Reset de contraseña por código para usuario: {}", username);
+        boolean ok = passwordResetService.verifyAndConsumeCode(username, code);
+        if (!ok) {
+            throw new BusinessException("Código de verificación inválido");
+        }
+
+        Usuario usuario = usuarioRepository.findByUsuario(username)
+                .orElseThrow(() -> new UnauthorizedException("Usuario no encontrado"));
+
+        // Validación de seguridad: longitud mínima configurable
+        int minLength = configuracionSistemaRepository.findByClaveConfig("seguridad.longitud_minima_password")
+                .map(ConfiguracionSistema::getValorConfig)
+                .map(Integer::parseInt)
+                .orElse(8);
+        if (nuevaPassword.length() < minLength) {
+            throw new BusinessException("La contraseña debe tener al menos " + minLength + " caracteres");
+        }
+
+        usuario.setContrasena(passwordEncoder.encode(nuevaPassword));
         usuarioRepository.save(usuario);
     }
 

@@ -22,6 +22,7 @@ import pe.edu.unasam.activos.security.CustomUserDetailsService;
 import pe.edu.unasam.activos.security.JwtAuthenticationFilter;
 import pe.edu.unasam.activos.security.handler.CustomAuthenticationFailureHandler;
 import pe.edu.unasam.activos.security.handler.CustomAuthenticationSuccessHandler;
+import pe.edu.unasam.activos.security.filter.SessionLoginRateLimitFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -32,6 +33,7 @@ public class SecurityConfig {
         private final JwtAuthenticationFilter jwtAuthFilter;
         private final CustomAuthenticationFailureHandler authenticationFailureHandler;
         private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+        private final SessionLoginRateLimitFilter sessionLoginRateLimitFilter;
 
         @Bean
         @Order(1)
@@ -52,7 +54,7 @@ public class SecurityConfig {
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authenticationProvider(authenticationProvider())
-                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); 
+                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();
         }
@@ -62,11 +64,12 @@ public class SecurityConfig {
         public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
                 http.securityMatcher("/**")
                                 .headers(headers -> headers
-                                .frameOptions(frameOptions -> frameOptions.sameOrigin())
-                                .contentSecurityPolicy(csp -> csp.policyDirectives(
-                                                "script-src 'self' 'unsafe-inline'; object-src 'none';"))
-                                .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true)
-                                                .maxAgeInSeconds(31536000))) // Fin de la configuración de headers
+                                                .frameOptions(frameOptions -> frameOptions.sameOrigin())
+                                                .contentSecurityPolicy(csp -> csp.policyDirectives(
+                                                                "script-src 'self' 'unsafe-inline'; object-src 'none';"))
+                                                .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true)
+                                                                .maxAgeInSeconds(31536000))) // Fin de la configuración
+                                                                                             // de headers
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                                                 .permitAll()
@@ -77,13 +80,13 @@ public class SecurityConfig {
                                                                 "/error/**",
                                                                 "/uploads/**",
                                                                 "/forgot-password",
+                                                                "/reset-password",
                                                                 // Rutas de recursos estáticos
-                                                                "/css/**", 
+                                                                "/css/**",
                                                                 "/js/**",
-                                                                "/images/**", 
-                                                                "/fonts/**", 
-                                                                "/libs/**"
-                                                                )
+                                                                "/images/**",
+                                                                "/fonts/**",
+                                                                "/libs/**")
                                                 .permitAll()
                                                 .anyRequest()
                                                 .authenticated())
@@ -102,6 +105,7 @@ public class SecurityConfig {
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                                 .authenticationProvider(authenticationProvider())
+                                .addFilterBefore(sessionLoginRateLimitFilter, UsernamePasswordAuthenticationFilter.class)
                                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();
