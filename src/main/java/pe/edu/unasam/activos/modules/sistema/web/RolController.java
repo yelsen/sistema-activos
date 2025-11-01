@@ -52,7 +52,7 @@ public class RolController {
                 Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
                                 : Sort.by(sortBy).descending();
                 Pageable pageable = PageRequest.of(page, size, sort);
-                Page<RolDTO.Response> rolesPage = rolService.findAll(query, estado, pageable, "ROLES_LEER");
+                Page<RolDTO.Response> rolesPage = rolService.findAll(query, estado, pageable, "ROLES_ACCEDER");
                 model.addAttribute("rolesPage", rolesPage);
                 model.addAttribute("searchQuery", query);
                 model.addAttribute("estado", estado);

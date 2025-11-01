@@ -23,7 +23,7 @@ public class ConfiguracionController {
     private final ConfiguracionService configuracionService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('CONFIGURACION_LEER')")
+    @PreAuthorize("hasAuthority('CONFIGURACION_ACCEDER')")
     public String showConfiguracionPage(Model model) {
         // Obtenemos todas las configuraciones y las agrupamos por categoría
         List<ConfiguracionDTO.Response> allConfigs = configuracionService.getAllAsList();

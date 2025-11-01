@@ -9,5 +9,5 @@ import lombok.*;
 @AllArgsConstructor
 public class EquipoEspecificacionId implements Serializable {
     private Equipo equipo;
-    private Especificacion especificacion;
+    private Componente componente;
 }

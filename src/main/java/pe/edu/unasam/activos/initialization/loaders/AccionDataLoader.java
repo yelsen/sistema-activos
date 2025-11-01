@@ -58,11 +58,6 @@ public class AccionDataLoader extends AbstractDataLoader {
                                                 .build(),
 
                                 Accion.builder()
-                                                .nombreAccion("Leer")
-                                                .codigoAccion("LEER")
-                                                .descripcionAccion("Permite ver listas de elementos").build(),
-
-                                Accion.builder()
                                                 .nombreAccion("Generar")
                                                 .codigoAccion("GENERAR")
                                                 .descripcionAccion("Permite generar reportes o archivos")

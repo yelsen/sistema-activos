@@ -1,5 +1,5 @@
 package pe.edu.unasam.activos.common.enums;
 
 public enum TipoServidor {
-    WEB, BASE_DATOS, APLICACIONES, ARCHIVOS, CORREO, DNS, PROXY, BACKUP
+    FISICO, VIRTUAL, APPLIANCE, WEB, BASE_DATOS, APLICACIONES, ARCHIVOS, CORREO, DNS, PROXY, BACKUP
 }

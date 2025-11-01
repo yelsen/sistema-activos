@@ -17,7 +17,7 @@ public class PermisoController {
     private final PermisoService permisoService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('PERMISOS_LEER')")
+    @PreAuthorize("hasAuthority('PERMISOS_ACCEDER')")
     public String listPermisos(Model model) {
         var permisosAgrupados = permisoService.getAllPermisosGroupedByModulo();
 

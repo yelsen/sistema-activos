@@ -45,8 +45,8 @@ public class RolPermisoDataLoader extends AbstractDataLoader {
 
         List<Permiso> todosLosPermisos = permisoRepository.findAllWithModuloAndAccion();
 
-        Set<String> accionesConsulta = Set.of("LEER", "VER", "ACCEDER");
-        Set<String> accionesEditor = Set.of("LEER", "VER", "ACCEDER", "CREAR", "EDITAR", "GENERAR");
+        Set<String> accionesConsulta = Set.of("VER", "ACCEDER");
+        Set<String> accionesEditor = Set.of("VER", "ACCEDER", "CREAR", "EDITAR", "ELIMINAR");
 
         Set<String> modulosRestringidosEditor = Set.of(
                 "Usuarios", "Roles", "Permisos", "Politicas",
@@ -57,17 +57,17 @@ public class RolPermisoDataLoader extends AbstractDataLoader {
             String nombreModulo = permiso.getModuloSistema().getNombreModulo();
 
             // Rol ADMIN_GENERAL: tiene todos los permisos
-            rolPermisoRepository.insertRolPermiso(adminRol.getIdRol(), permiso.getIdPermiso(), true); // Siempre
-                                                                                                      // permitido
-
+            rolPermisoRepository.insertRolPermiso(adminRol.getIdRol(), permiso.getIdPermiso(), true);
+            
             // Rol EDITOR: tiene permisos de edición, pero no en módulos restringidos
-            boolean permitidoParaEditor = accionesEditor.contains(codigoAccion)
+            boolean permitidoParaEditor = (accionesEditor.contains(codigoAccion)
+                    || ("GENERAR".equals(codigoAccion) && "Reportes".equalsIgnoreCase(nombreModulo)))
                     && !modulosRestringidosEditor.contains(nombreModulo);
             if (permitidoParaEditor) {
                 rolPermisoRepository.insertRolPermiso(editorRol.getIdRol(), permiso.getIdPermiso(), true);
             }
 
-            // Rol USUARIO_CONSULTA: solo tiene permisos de lectura
+            // Rol USUARIO_CONSULTA: solo acceso y vista
             boolean permitidoParaConsulta = accionesConsulta.contains(codigoAccion);
             if (permitidoParaConsulta) {
                 rolPermisoRepository.insertRolPermiso(consultaRol.getIdRol(), permiso.getIdPermiso(), true);

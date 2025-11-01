@@ -35,14 +35,17 @@ public class Proveedor {
     @Column(name = "nombre_proveedor", length = 255, nullable = false)
     private String nombreProveedor;
     
-    @Column(name = "direccion_proveedor", columnDefinition = "TEXT")
-    private String direccionProveedor;
+    @Column(name = "razon_social", columnDefinition = "TEXT")
+    private String razonSocial;
+
+    @Column(name = "direccion", columnDefinition = "TEXT")
+    private String direccion;
     
-    @Column(name = "telefono_proveedor", length = 20)
-    private String telefonoProveedor;
+    @Column(name = "telefono", length = 20)
+    private String telefono;
     
-    @Column(name = "correo_proveedor", length = 100)
-    private String correoProveedor;
+    @Column(name = "email", length = 100)
+    private String email;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado_proveedor")

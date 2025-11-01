@@ -9,8 +9,10 @@ import java.util.List;
 
 @Repository
 public interface EquipoEspecificacionRepository extends JpaRepository<EquipoEspecificacion, EquipoEspecificacionId> {
-    
-    List<EquipoEspecificacion> findByEquipo_IdEquipo(Integer idEquipo);
-    
-    List<EquipoEspecificacion> findByEspecificacion_IdEspecificacion(Integer idEspecificacion);
+
+    List<EquipoEspecificacion> findByEquipo_IdEquipoAndComponente_CategoriaComponente_CategoriaComponente(
+            Integer idEquipo, String categoriaComponente);
+
+    List<EquipoEspecificacion> findByEquipo_IdEquipoAndComponente_NombreComponente(Integer idEquipo,
+            String nombreComponente);
 }

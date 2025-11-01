@@ -24,7 +24,7 @@ public class SesionUsuarioController {
     private final PaginationProperties paginationProperties;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('SESIONES_LEER')")
+    @PreAuthorize("hasAuthority('SESIONES_ACCEDER')")
     public String listSesiones(Model model,
                                @RequestParam(required = false) String q,
                                @RequestParam(required = false) EstadoSesion estado,

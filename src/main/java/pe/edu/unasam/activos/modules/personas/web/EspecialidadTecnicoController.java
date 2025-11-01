@@ -22,19 +22,19 @@ public class EspecialidadTecnicoController {
     private final EspecialidadTecnicoService especialidadService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ESPECIALIDADES_LEER')")
+    @PreAuthorize("hasAuthority('ESPECIALIDADES_ACCEDER')")
     public ResponseEntity<Page<EspecialidadTecnicoDTO.Response>> getAllEspecialidades(Pageable pageable) {
         return ResponseEntity.ok(especialidadService.getAllEspecialidades(pageable));
     }
 
     @GetMapping("/list")
-    @PreAuthorize("hasAuthority('ESPECIALIDADES_LEER')")
+    @PreAuthorize("hasAuthority('ESPECIALIDADES_ACCEDER')")
     public ResponseEntity<List<EspecialidadTecnicoDTO.Response>> getAllEspecialidadesAsList() {
         return ResponseEntity.ok(especialidadService.getAllEspecialidadesAsList());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ESPECIALIDADES_LEER')")
+    @PreAuthorize("hasAuthority('ESPECIALIDADES_ACCEDER')")
     public ResponseEntity<EspecialidadTecnicoDTO.Response> getEspecialidadById(@PathVariable Integer id) {
         return ResponseEntity.ok(especialidadService.getEspecialidadById(id));
     }
